@@ -10,14 +10,20 @@ import DeleteIcon from "../../../../public/Images/DeleteIcon.png";
 import EditIcon from "../../../../public/Images/EditIcon.png";
 import Background from "../../../../public/Images/Background.jpg";
 import ButtonAdd from "../../../../public/Images/Button.png";
-import { getImages } from "@/services/repoImage";
+import { getImages_talleresAdmin } from "@/services/repoImage";
+import { getAlumno, deleteAlumno } from "@/services/Alumno";
 // #endregion
 
-const Profesionales = () => {
+const Usuarios = () => {
     // #region UseStates
     const [profesionales, setProfesionales] = useState<any[]>([]);
     const [selectedProfesional, setSelectedProfesional] = useState<any>(null);
     const [profesionalDetails, setProfesionalDetails] = useState<any>({});
+
+    const [alumnos, setAlumnos] = useState<any[]>([]);
+    const [selectedAlumno, setSelectedAlumno] = useState<any>(null);
+    const [Details, setAlumnoDetails] = useState<any>({});
+
     // Estado para almacenar mensajes de error
     const [errorMessage, setErrorMessage] = useState<string>("");
     //Estado para almacenar las imagenes
@@ -58,7 +64,7 @@ const Profesionales = () => {
 
     // Método para obtener las imagenes
     const fetchImages = async () => {
-        const result = await getImages();
+        const result = await getImages_talleresAdmin();
         if (result.error) {
             setErrorMessage(result.error)
         } else {
@@ -124,6 +130,82 @@ const Profesionales = () => {
         }
     }
 
+        // #region UseEffects
+    //useEffect para obtener los profesionales
+    useEffect(() => {
+        fetchAlumnos();
+        fetchImages();
+    }, []);
+
+    useEffect(() => {
+        if (selectedAlumno !== null) {
+            setAlumnoDetails({
+                nombre: selectedAlumno.nombre,
+                apellido: selectedAlumno.apellido,
+                dni: selectedAlumno.dni,
+                email: selectedAlumno.email,
+                
+            });
+        } else {
+            setAlumnoDetails({});
+        }
+    }, [selectedAlumno, alumnos]);
+    // #endregion
+
+    // #region Métodos
+    async function fetchAlumnos() {
+        try {
+            const data = await getAlumno();
+            console.log(data);
+            setAlumnos(data);
+        } catch (error) {
+            console.error("Imposible obetener Alumnos", error);
+        }
+    }
+
+
+
+
+    function validateAlumnoDetails() {
+        const { nombre, apellido, dni, email } = Details;
+
+        //validar que el nombre sea de al menos 2 caracteres
+        if (nombre.length < 2) {
+            return "El nombre debe tener al menos 2 caracteres";
+        }
+        //validar que el apellido sea de al menos 2 caracteres
+        if (apellido.length < 2) {
+            return "El apellido debe tener al menos 2 caracteres";
+        }
+    }
+
+    async function handleSaveAlumnoChanges() {
+        const validationError = validateAlumnoDetails();
+        if (validationError) {
+            setErrorMessage(validationError);
+            return;
+        }
+        if (selectedAlumno === null) {
+            try {
+                await updateProfesional(selectedAlumno.id, Details); //actualizar el profesional
+                setSelectedAlumno(null);
+                fetchAlumnos();
+                setErrorMessage("");
+            } catch (error) {
+                console.error("Error al actualizar el profesional", error);
+            }
+        };
+    }
+
+    async function handleEliminarAlumno(alumno: any) {
+        try {
+            await deleteAlumno(alumno.id);
+            fetchAlumnos();
+        } catch (error) {
+            console.error("Error al eliminar el profesional", error);
+        }
+    }
+
     // #endregion
 
 
@@ -148,8 +230,10 @@ const Profesionales = () => {
                                     className="w-full h-full"
                                     layout="fill"
                                 />}
-                                <button onClick={() => handleEliminarProfesional(profesional)} className="absolute top-0 right-0 text-red-600 font-bold"></button>
+                                <button onClick={() => handleEliminarProfesional(profesional)} className="absolute top-0 right-0 text-red-600 font-bold">
                                 <Image src={DeleteIcon} alt="Eliminar" width={27} height={27} />
+                                </button>
+                                
                                 <button onClick={() => setSelectedProfesional(profesional)} className="absolute top-0 right-8 text-red-600 font-bold">
                                     <Image src={EditIcon} alt="Editar" width={27} height={27} />
                                 </button>
@@ -233,8 +317,50 @@ const Profesionales = () => {
                     </div>
                 </div>
             )}
+            <h1 className="absolute left-60 mb-5 text-3xl" style={{top:600}}>Alumnos</h1>
+            <div className="top-60 border p-1 absolute left-40 h-90 max-h-90" style={{ background: "#D9D9D9" , top:700}}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 my-4">
+                    {alumnos.map((alumno, index) => (
+                        <div key={index} className="border p-4 mx-2 relative w-47 h-47 justify-center items-center" >
+                            <div className="relative w-80 h-70">
+                                {<Image
+                                    src={images[0]}
+                                    alt="Background Image"
+                                    objectFit="cover"
+                                    className="w-full h-full"
+                                    layout="fill"
+                                />}
+                                <button onClick={() => handleEliminarAlumno(alumno)} className="absolute right-0 text-red-600 font-bold">
+                                    <Image src={DeleteIcon} alt="Eliminar" width={27} height={27} />
+                                </button>
+                                
+                                <button onClick={() => setSelectedAlumno(alumno)} className="absolute top-0 right-8 text-red-600 font-bold">
+                                    <Image src={EditIcon} alt="Editar" width={27} height={27} />
+                                </button>
+                            </div>
+                            <h3 className="flex  bottom-0 text-black z-1">{alumno.nombre} {alumno.apellido}</h3>
+                        </div>
+                    ))}
+                </div>
+            </div>
+            <div className="fixed bottom-0 mt-20 bg-white w-full" style={{ opacity: 0.66 }}>
+                <But_aside />
+            </div>
+
         </main>
     )
     // #endregion
 }
-export default Profesionales
+export default Usuarios
+
+
+
+
+
+
+
+
+
+
+
+

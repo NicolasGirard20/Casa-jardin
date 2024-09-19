@@ -20,6 +20,9 @@ export type Alumno = {
 // Crear Alumnos
 // Crear Alumnos
 
+export async function getAlumno(){
+  return await prisma.alumno.findMany();
+}
 
 export async function createAlumno(data: {
   nombre: string;
@@ -161,6 +164,17 @@ export async function getAlumnoByCooki() {
       return alumno;
   } else return null;
 }
+
+  export async function deleteAlumno(id: number) {
+
+    return await prisma.alumno.delete({
+      where: {
+        id,
+      },
+      }
+  )};
+
+
 
 
   
