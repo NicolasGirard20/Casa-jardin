@@ -51,16 +51,16 @@ const RotatingImages: React.FC = () => {
 // Constante de inicio utlizando el Navigate y But_aside
 const Inicio = () => {
   return (
-    <main className="relative min-h-screen w-screen">
-      <Image src={Background} alt="Background" layout="fill" objectFit="cover" quality={80} priority={true} />
-      <div>
+    <main className="relative min-h-screen w-screen overflow-hidden">
+      <Image src={Background} alt="Background" layout="fill" objectFit="cover" quality={80} priority={true} className="z-0" />
+      <div className="fixed top-0 w-full z-50">
         <div className="fixed bg-blue-400 justify-between w-full p-4">
           <Navigate />
         </div>
-        <div className="fixed bottom-0 py-5 border-t bg-white w-full" style={{ opacity: 0.66 }}>
+        <div className="fixed bottom-0 py-5 border-t bg-white w-full z-30" style={{ opacity: 0.66 }}>
           <But_aside />
         </div>
-        <div className="relative z-10 flex items-center h-40 ml-20">
+        <div className="relative z-10 mt-40 ml-20">
           <h1 className="text-2xl text-black mt-40">Bienvenidos a Casa Jardin</h1>
         </div>
         <div>
