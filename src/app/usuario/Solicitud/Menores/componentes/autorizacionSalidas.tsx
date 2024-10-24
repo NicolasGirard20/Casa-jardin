@@ -31,7 +31,7 @@ const AutorizacionSalidas: React.FC<Datos> = ({ setDatosAutorizacionSalidas }) =
                 <div className='p-2   w-full justify-center mt-10'>
                     <div className='flex flex-col p-2  items-center'>
                         <label  htmlFor="firma">Firma de Padre/Madre/Tutor</label>
-                        <input  className="w-[50vh] border rounded-md" type="text" name="firma" id="firma" onChange={(e) => setDatosAutorizacionSalidas(prev => ({ ...prev, firma: e.target.value }))}/>
+                        <input  className="w-[50vh] border rounded-md" placeholder='Ingrese su firma' type="text" name="firma" id="firma" onChange={(e) => setDatosAutorizacionSalidas(prev => ({ ...prev, firma: e.target.value }))}/>
                     </div>
 
                     <div className='flex flex-col p-2  items-center'>

@@ -15,7 +15,7 @@ const Reglamentacion: React.FC<Datos> = ({ setDatosReglamentacion }) => {
     return (
         <div>
             <div className='p-4'>
-                <h3 className='p-2 shadow-md w-60'>Inscripción a talleres - Menores</h3>
+                <h3 className='p-2 shadow-md w-60'>Inscripción a talleres - Mayores</h3>
             </div>
 
             <div className=' px-4 pb-8 w-full '>
@@ -84,7 +84,7 @@ const Reglamentacion: React.FC<Datos> = ({ setDatosReglamentacion }) => {
                     </div>
                 <div>
                     <div className='flex justify-center items-center mt-8 flex-col'>
-                        <label htmlFor="firma">Firma de Padre/Madre/Tutor</label>
+                        <label htmlFor="firma">Firma</label>
                         <input type="text" name="firma" id="firma" className="border rounded w-96" placeholder='Ingrese su firma' onChange={(e) => setDatosReglamentacion(prev => ({ ...prev, firma: e.target.value }))} />
                     </div>
                     

@@ -33,15 +33,14 @@ interface Datos {
 const DatosMayor: React.FC<Datos> = ({ setDatosMayor, datosMayor, setError}) => {
     // Estado para almacenar mensajes de error
 
-   
     return (
         <div>
             <div className='p-4'>
-                <h3 className='p-2 shadow-md w-60'>Inscripción a talleres - Menores</h3>
+                <h3 className='p-2 shadow-md w-60'>Inscripción a talleres - Mayores</h3>
             </div>
 
             <div className='flex flex-col'>
-                <h1 className='flex  items-center justify-center  font-bold text-2xl'>Datos del Mayor</h1>
+                <h1 className='flex  items-center justify-center  font-bold text-2xl'>Datos del Alumno</h1>
                 <div className='flex  justify-center '>
                     <div className=" mx-auto  rounded-lg  px-8 py-6 grid grid-cols-2 gap-x-12 max-w-2xl">
                         <div className='flex-col p-3 flex '>

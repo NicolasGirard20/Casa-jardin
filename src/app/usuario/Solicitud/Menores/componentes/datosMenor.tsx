@@ -8,11 +8,12 @@ interface Datos {
         apellido: string;
         edad: number;
         fechaNacimiento: string;
-        dni: string;
+        dni: number;
         pais: string;
         provincia: string;
         localidad: string;
         calle: string;
+        numero: number;
     }>>;
 }
 
@@ -52,7 +53,7 @@ const DatosMenor: React.FC<Datos> = ({ setDatosMenor }) => {
 
                         <div className='flex-col p-3 flex'>
                             <label htmlFor="dni">DNI</label>
-                            <input id='dni' type="text" placeholder="Ingrese su DNI" className="border rounded" onChange={(e) => setDatosMenor(prev => ({ ...prev, dni: e.target.value }))} />
+                            <input id='dni' type="text" placeholder="Ingrese su DNI" className="border rounded" onChange={(e) => setDatosMenor(prev => ({ ...prev, dni: parseInt(e.target.value) }))} />
                         </div>
 
                         <div className='flex-col p-3 flex '>
@@ -73,6 +74,11 @@ const DatosMenor: React.FC<Datos> = ({ setDatosMenor }) => {
                         <div className='flex-col p-3 flex'>
                             <label htmlFor="calle">Calle</label>
                             <input id='calle' type="text" placeholder="Ingrese su calle" className="border rounded" onChange={(e) => setDatosMenor(prev => ({ ...prev, calle: e.target.value }))} />
+                        </div>
+
+                        <div className='flex-col p-3 flex '>
+                            <label htmlFor="numero">Número</label>
+                            <input id='numero' type="text" placeholder="Ingrese el número" className="border rounded" onChange={(e) => setDatosMenor(prev => ({ ...prev, numero: parseInt(e.target.value) }))} />
                         </div>
                     </div>
                 </div>

@@ -27,9 +27,9 @@ const CondicionSalud: React.FC<Datos> = ({ setDatosSalud }) => {
             <div className='p-4'>
                 <h3 className='p-2 shadow-md w-60'>Inscripción a talleres - Menores</h3>
             </div>
-            <div className='bg-green-200 flex flex-col p-5 items-center'>
+            <div className=' flex flex-col p-5 items-center'>
                 <h1 className='flex font-bold text-2xl'>Condición de salud</h1>
-                <div className='flex bg-red-300 flex-col w-[80vh] justify-center items-center'>
+                <div className='flex  flex-col w-[80vh] justify-center items-center'>
                     <div className='border-b w-full p-2'>
                         <label htmlFor="enfermedad">¿Tiene o ha tenido alguna enfermedad?</label>
                         <div className='flex items-center '>
@@ -38,18 +38,9 @@ const CondicionSalud: React.FC<Datos> = ({ setDatosSalud }) => {
                                 type="text"
                                 className='w-[40vh] rounded-md border'
                                 onChange={(e) => setDatosSalud(prev => ({ ...prev, enfermedad: e.target.value }))}
-                                disabled={!inputEnfermedad}
+                              
                             />
-                            <div className='space-x-5 mx-auto'>
-                                <button type="button" className="bg-black text-white rounded-full px-5 py-1" onClick={() => {
-                                    setDatosSalud(prev => ({ ...prev, enfermedad: "" }));
-                                    setInputEnfermedad(true);
-                                }}>Si</button>
-                                <button type="button" className="bg-black text-white rounded-full px-5 py-1" onClick={() => {
-                                    setDatosSalud(prev => ({ ...prev, enfermedad: "" }));
-                                    setInputEnfermedad(false);
-                                }}>No</button>
-                            </div>
+ 
                         </div>
                     </div>
                     <div className='border-b w-full p-2'>
@@ -60,18 +51,9 @@ const CondicionSalud: React.FC<Datos> = ({ setDatosSalud }) => {
                                 type="text"
                                 className='w-[40vh] rounded-md border'
                                 onChange={(e) => setDatosSalud(prev => ({ ...prev, alergia: e.target.value }))}
-                                disabled={!inputAlergia}
+                                
                             />
-                            <div className='space-x-5 mx-auto'>
-                                <button type="button" className="bg-black text-white rounded-full px-5 py-1" onClick={() => {
-                                    setDatosSalud(prev => ({ ...prev, alergia: "" }));
-                                    setInputAlergia(true);
-                                }}>Si</button>
-                                <button type="button" className="bg-black text-white rounded-full px-5 py-1" onClick={() => {
-                                    setDatosSalud(prev => ({ ...prev, alergia: "" }));
-                                    setInputAlergia(false);
-                                }}>No</button>
-                            </div>
+                           
                         </div>
                     </div>
                     <div className='border-b w-full p-2'>
@@ -82,18 +64,9 @@ const CondicionSalud: React.FC<Datos> = ({ setDatosSalud }) => {
                                 type="text"
                                 className='w-[40vh] rounded-md border'
                                 onChange={(e) => setDatosSalud(prev => ({ ...prev, tratamiento: e.target.value }))}
-                                disabled={!inputTratamiento}
+                         
                             />
-                            <div className='space-x-5 mx-auto'>
-                                <button type="button" className="bg-black text-white rounded-full px-5 py-1" onClick={() => {
-                                    setDatosSalud(prev => ({ ...prev, tratamiento: "" }));
-                                    setInputTratamiento(true);
-                                }}>Si</button>
-                                <button type="button" className="bg-black text-white rounded-full px-5 py-1" onClick={() => {
-                                    setDatosSalud(prev => ({ ...prev, tratamiento: "" }));
-                                    setInputTratamiento(false);
-                                }}>No</button>
-                            </div>
+    
                         </div>
                     </div>
                     <div className='border-b w-full p-2'>
@@ -104,18 +77,8 @@ const CondicionSalud: React.FC<Datos> = ({ setDatosSalud }) => {
                                 type="text"
                                 className='w-[40vh] rounded-md border'
                                 onChange={(e) => setDatosSalud(prev => ({ ...prev, terapia: e.target.value }))}
-                                disabled={!inputTerapia}
+                            
                             />
-                            <div className='space-x-5 mx-auto'>
-                                <button type="button" className="bg-black text-white rounded-full px-5 py-1" onClick={() => {
-                                    setDatosSalud(prev => ({ ...prev, terapia: "" }));
-                                    setInputTerapia(true);
-                                }}>Si</button>
-                                <button type="button" className="bg-black text-white rounded-full px-5 py-1" onClick={() => {
-                                    setDatosSalud(prev => ({ ...prev, terapia: "" }));
-                                    setInputTerapia(false);
-                                }}>No</button>
-                            </div>
                         </div>
                     </div>
                     <div className='border-b w-full p-2'>
@@ -126,18 +89,7 @@ const CondicionSalud: React.FC<Datos> = ({ setDatosSalud }) => {
                                 type="text"
                                 className='w-[40vh] rounded-md border'
                                 onChange={(e) => setDatosSalud(prev => ({ ...prev, consultasEspecialistas: e.target.value }))}
-                                disabled={!inputConsultasEspec}
                             />
-                            <div className='space-x-5 mx-auto'>
-                            <button type="button" className="bg-black text-white rounded-full px-5 py-1" onClick={() => {
-                                    setDatosSalud(prev => ({ ...prev, consultasEspecialistas: "" }));
-                                    setInputConsultasEspec(true);
-                                }}>Si</button>
-                                <button type="button" className="bg-black text-white rounded-full px-5 py-1" onClick={() => {
-                                    setDatosSalud(prev => ({ ...prev, consultasEspecialistas: "" }));
-                                    setInputConsultasEspec(false);
-                                }}>No</button>
-                            </div>
                         </div>
                     </div>
 

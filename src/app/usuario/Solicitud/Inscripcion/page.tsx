@@ -15,7 +15,7 @@ const Inscripcion: React.FC<{}> = () => {
             <div className='p-4'>
                 <h3 className='p-2 shadow-md w-40'>Inscripción a talleres</h3>
             </div>
-            <div className='flex justify-center mt-20'>
+            <div className='flex justify-center mt-10'>
                 <h1 className='font-bold text-xg'>Elija el tipo de inscripción</h1>
             </div>
             <div className='mt-4 border-b mx-auto px-8 py-6 grid grid-cols-2 gap-x-12 max-w-2xl'>
@@ -24,7 +24,7 @@ const Inscripcion: React.FC<{}> = () => {
                     <span className='mt-2'>Inscripción para menores <br/> Uso de imagen y salidas cercanas</span>
                 </button>
 
-                <button className="flex flex-col items-center" onClick={() => window.location.href = "/usuario/Solicitud/#"}>
+                <button className="flex flex-col items-center" onClick={() => window.location.href = "/usuario/Solicitud/Adultos"}>
                     <Image src={adultos} alt="adultos" width={280} height={100} />
                     <span className='mt-2'>Inscripción para adultos</span>
                 </button>

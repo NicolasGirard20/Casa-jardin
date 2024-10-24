@@ -16,7 +16,7 @@ const AutorizacionImg: React.FC<Datos> = ({ setDatosAutorizacionImage }) => {
     return (
         <div>
             <div className='p-4'>
-                <h3 className='p-2 shadow-md w-60'>Inscripción a talleres - Menores</h3>
+                <h3 className='p-2 shadow-md w-60'>Inscripción a talleres - Mayores</h3>
             </div>
 
             <div className='flex flex-col '>
@@ -36,7 +36,7 @@ const AutorizacionImg: React.FC<Datos> = ({ setDatosAutorizacionImage }) => {
                 </div>
                 <div className='p-2   w-full justify-center mt-10'>
                     <div className='flex flex-col p-2  items-center'>
-                        <label htmlFor="firma">Firma de Padre/Madre/Tutor</label>
+                        <label htmlFor="firma">Firma</label>
                         <input className="w-[50vh] border rounded-md" type="text" placeholder='Ingrese su firma' name="firma" id="firma" onChange={(e) => setDatosAutorizacionImage(prev => ({ ...prev, firma: e.target.value }))}/>
                     </div>
 
