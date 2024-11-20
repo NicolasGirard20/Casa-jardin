@@ -3,7 +3,7 @@ import { hashPassword } from "@/helpers/hashPassword";
 import { Curso, PrismaClient, Profesional_Curso } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { getUserFromCookie } from "@/helpers/jwt";
-import { emailExists } from "./Alumno";
+import { emailExists, verifyusuario } from "./Alumno";
 
 const prisma = new PrismaClient();
 
@@ -43,9 +43,9 @@ export async function createProfesional(data: {
 }) {
 
   // Verificar si el email ya existe
-  const existingProfesional = emailExists(data.email);
+  const existingProfesional = await emailExists(data.email);
 
-  if (!existingProfesional) {
+  if (existingProfesional) {
     return ('El email ya está en uso');
   }
 
@@ -56,7 +56,7 @@ export async function createProfesional(data: {
     password: hashedPassword,
     rolId: 3,
   }
-  console.log("CREANDO PROFESIONAL")
+ 
   return await prisma.profesional.create({
     data: newProfesional
   });
@@ -79,6 +79,10 @@ export async function updateProfesional(id: number, Data: {
   });
   if (!profesional) {
     return "Profesional no encontrado";
+  }
+  const existingProfesional = await verifyusuario(id, String(Data.email), String(profesional.email));
+  if (!existingProfesional) {
+    return "El email ya está en uso";
   }
   let profesionalData: any = {};
   // Si se envía la contraseña, se actualiza

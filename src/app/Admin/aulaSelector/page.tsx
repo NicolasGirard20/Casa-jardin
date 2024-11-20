@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Navigate from "../../../components/Admin/navigate/page";
-import But_aside from "../../../components/but_aside/page";
+
 import { createAula, getAulas, getAulaByNombre, deleteAulas } from "../../../services/aulas";
 import Image from "next/image";
 import withAuth from "../../../components/Admin/adminAuth";
@@ -49,11 +49,14 @@ const Aulas: React.FC = () => {
     }
     //Define the handleCreateAula function to create a nueva aula  
     const handleCreateAula = async () => {
+        // Comprueba si el nombre del aula es obligatorio
+        // Comprueba si el nombre del aula ya existe
+        
         if (!aulaDetails.nombre) {
             showError("El nombre del aula es obligatorio");
             return;
         }
-        if (await getAulaByNombre(aulaDetails.nombre)) { // Comprueba si el nombre del aula ya existe
+        if ( await getAulaByNombre(aulaDetails.nombre)) { // Comprueba si el nombre del aula ya existe
             showError("El nombre del aula ya existe");
             return;
         }
@@ -81,12 +84,16 @@ const Aulas: React.FC = () => {
             setSelectedAulaIdCrear(null);
         } catch (error) {
             showError("Error al crear el aula");
+            setSelectedAulaIdCrear(null);
+            setSelectedAulaNombre("");
         }
+      
     };
     // Define para eliminar el aula por su id
     const handleEliminarAula = async (id: number) => {
         try {
             await deleteAulas(id); // Corrige el código de eliminación
+            setSelectedAulaIdEliminar(null); // Resetea el estado del ID del a
             fetchAulas(); // Vuelve a cargar las aulas después de la eliminación
         } catch (error) {
             showError("No se puede eliminar el aula, porque tiene horarios asignados");
@@ -189,7 +196,9 @@ const Aulas: React.FC = () => {
                         </div>
                         <div className="flex justify-end space-x-4">
                             <button
-                                onClick={handleCreateAula}
+                                onClick={handleCreateAula
+                                    
+                                }
                                 className="bg-red-700 py-2 px-5 text-white rounded hover:bg-red-800"
                             >
                                 Guardar
@@ -198,6 +207,8 @@ const Aulas: React.FC = () => {
                                 onClick={() => {
                                     setSelectedAulaIdCrear(null);
                                     setErrorMessage(null); // Resetea el mensaje de error
+                                    setAulaDetails({ nombre: "" }); // Resetea el nombre del aula
+                                    setSelectedAulaIdEliminar(null);
 
                                 }}
                                 className="bg-gray-700 py-2 px-5 text-white rounded hover:bg-gray-800"
@@ -224,6 +235,7 @@ const Aulas: React.FC = () => {
                         <div className="flex justify-end space-x-4">
                             <button
                                 onClick={() => handleEliminarAula(selectedAulaIdEliminar)}
+                                
                                 className="bg-red-700 py-2 px-5 text-white rounded hover:bg-red-800"
                             >
                                 Eliminar
@@ -232,6 +244,8 @@ const Aulas: React.FC = () => {
                                 onClick={() => {
                                     setSelectedAulaIdEliminar(null);
                                     setErrorMessage(null);
+                                  
+
                                 }}
                                 className="bg-gray-700 py-2 px-5 text-white rounded hover:bg-gray-800"
                             >
@@ -242,7 +256,6 @@ const Aulas: React.FC = () => {
                 </div>
             )}
 
-            <But_aside />
         </main>
     );
 

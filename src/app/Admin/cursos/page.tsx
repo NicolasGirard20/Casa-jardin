@@ -206,7 +206,7 @@ const Cursos: React.FC = () => {
       // Hacer un console.log de las imageUrl después de actualizar el estado
       updatedCursos.forEach((curso) => {
         if (curso.imageUrl) {
-          console.log(`Curso: ${curso.nombre}, Image URL: ${curso.imageUrl}`);
+          console.log("Imagen URL:", curso.imageUrl);
         }
       });
     }
@@ -250,6 +250,13 @@ const Cursos: React.FC = () => {
     if (new Date(fechaInicio) >= new Date(fechaFin)) {
       return "La fecha de inicio debe ser anterior a la fecha de fin.";
     }
+    // el rango de fechas no puede ser menor a 7 días
+    const diffTime = Math.abs(new Date(fechaFin).getTime() - new Date(fechaInicio).getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 7) {
+      return "El rango de fechas no puede ser menor a 7 días.";
+    }
 
     // Validar rango de edades si ambos están definidos
     // Validar que la edad mínima sea un número entero positivo
@@ -268,6 +275,7 @@ const Cursos: React.FC = () => {
     }
     return null; // Retorna null si no hay errores
   }
+
 
   // Función para manejar el guardado de cambios en el curso
   async function handleSaveChanges() {

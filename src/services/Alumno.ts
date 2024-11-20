@@ -83,8 +83,7 @@ export async function createAlumnoAdmin(data: {
   const hashedPassword = await hashPassword(data.password);
   data.password = hashedPassword;
 
-//  console.log("fecha:", data.fechaNacimiento)
-  console.log("CREANDO ALUMNO COMO ADMIN")
+
   // Guardar el alumno
   const alum = await prisma.alumno.create({
     data: data,
@@ -135,14 +134,20 @@ export async function updateAlumno(id: number, data: {
   password?: string;
 
 }) {
+  
   // Verificar si el alumno existe
   const alumno = await prisma.alumno.findUnique({ where: { id } });
   if (!alumno) {
     return("El alumno no existe.");
   }
-  console.log("paso prueba de exist")
+  // Verificar si el email ya existe en la base de datos
+  const existingAlumno = await verifyusuario(id, data.email, alumno.email);
+  if (!existingAlumno) {
+    return("El email ya está registrado");
+  }
+  
   if (data.fechaNacimiento) data.fechaNacimiento = new Date(data.fechaNacimiento);
-  console.log()
+ 
 
   //console.log("Actualizando alumno password", data.password);
   // Crear objeto de datos del alumno
@@ -257,19 +262,31 @@ export async function getAlumnoByEmail(email: string) {
 }
 
 
-// ferificar que el emial existe  en la base de datos en la tabla alumno, administrador o profesional
+// verificar que el emial existe  en la base de datos en la tabla alumno, administrador o profesional
 export async function emailExists(email: string): Promise<boolean> {
   const tables = ['alumno', 'administrador', 'profesional'] as const;
   type Table = typeof tables[number];
-  // Realiza búsquedas en paralelo para cada tabla y espera el primer resultado exitoso
-  const userResults = await Promise.all(
-    tables.map((table) => (prisma[table as Table] as any).findUnique({ where: { email } }))
-  );
-  // Busca el primer usuario que no sea null
-  // si existe el email retorna true
-  return userResults.some((user) => user !== null);
 
+  try {
+    const userResults = await Promise.all(
+      tables.map(async (table) => {
+        try {
+          return await (prisma[table as Table] as any).findUnique({ where: { email } });
+        } catch (error) {
+          console.error(`Error buscando en tabla ${table}:`, error);
+          return null; // Si hay error en la consulta, devolvemos null
+        }
+      })
+    );
+  
+    return userResults.some((user) => user !== null);
+  } catch (error) {
+    console.error('Error en la verificación del email:', error);
+    return false; // Si hay algún error general, devolvemos false
+  }
 }
+
+
 
 //verificar si el dni existe en la base de datos
 export async function dniExists(dni: number): Promise<boolean> {
@@ -289,6 +306,40 @@ export async function dniExists(dni: number): Promise<boolean> {
     return false;
   }
 
+}
+
+
+// verifico si el id de alumno y el correoa son los mismos para poder modificar el alumno sin problemas
+
+export async function verifyusuario(id: number, email: string, currentEmail: string): Promise<boolean> {
+  const tables = ['alumno', 'administrador', 'profesional'] as const;
+  type Table = typeof tables[number];
+
+  // Si el email no ha cambiado, no es necesario hacer nada
+  if (email === currentEmail) {
+    return true; // No se realiza ningún cambio en el correo
+  }
+
+  try {
+    // Verificamos si el nuevo email ya existe en las tablas
+    const userResults = await Promise.all(
+      tables.map(async (table) => {
+        try {
+          // Aquí buscamos solo por el email, no por el id, para saber si ya existe en otro usuario
+          return await (prisma[table as Table] as any).findUnique({ where: { email } });
+        } catch (error) {
+          console.error(`Error al buscar en la tabla ${table}:`, error);
+          return null; // Si hay error, devolvemos null
+        }
+      })
+    );
+
+    // Si alguna de las tablas tiene un usuario con el email, retornamos false
+    return !userResults.some((user) => user !== null);
+  } catch (error) {
+    console.error('Error en la verificación del usuario:', error);
+    return false; // Si ocurre algún error, devolvemos false
+  }
 }
 
 

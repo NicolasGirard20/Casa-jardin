@@ -21,13 +21,10 @@ import { createProfesional_Curso, getCursosByIdProfesional } from "@/services/pr
 import { Curso, getCursoById } from "@/services/cursos";
 import { addPais, getPaisById } from "@/services/ubicacion/pais";
 import withAuth from "../../../components/Admin/adminAuth";
-import PasswordComponent from "@/components/Password/page";
-import { hashPassword } from "@/helpers/hashPassword";
+
 //para subir imagenes:
 import { handleUploadProfesionalImage, handleDeleteProfesionalImage, } from "@/helpers/repoImages";
 import { mapearImagenes } from "@/helpers/repoImages";
-import { validateApellido, validateDireccion, validateDni, validateEmail, validateNombre, validatePasswordComplexity, validatePhoneNumber } from "@/helpers/validaciones";
-import { dniExists, emailExists } from "@/services/Alumno";
 // #endregion
 
 const Profesionales = () => {
@@ -42,7 +39,6 @@ const Profesionales = () => {
     const [obProfesional, setObProfesional] = useState<any>(null);
 
     const [profesionalDetails, setProfesionalDetails] = useState<any>({});
-    const [profesionalDetailsCopia, setProfesionalDetailsCopia] = useState<any>({});
 
     // Estado para almacenar mensajes de error
     const [errorMessage, setErrorMessage] = useState<string>("");
@@ -139,26 +135,8 @@ const Profesionales = () => {
                 especialidad: selectedProfesional.especialidad || '',
                 direccionId: selectedProfesional.direccionId || '',
             });
-            setProfesionalDetailsCopia({
-                id: selectedProfesional.id,
-                nombre: selectedProfesional.nombre || '',
-                apellido: selectedProfesional.apellido || '',
-                email: selectedProfesional.email || '',
-                password: '',
-                telefono: selectedProfesional.telefono ? selectedProfesional.telefono : '',
-                especialidad: selectedProfesional.especialidad || '',
-                direccionId: selectedProfesional.direccionId || '',
-            });
         } else if (selectedProfesional === -1) {
             setProfesionalDetails({
-                nombre: '',
-                apellido: '',
-                email: '',
-                password: '',
-                telefono: '',
-                especialidad: '',
-            });
-            setProfesionalDetailsCopia({
                 nombre: '',
                 apellido: '',
                 email: '',
@@ -181,17 +159,14 @@ const Profesionales = () => {
             setProfesionales(data);
             setProfesionalesListaCompleta(data);
         } catch (error) {
-            console.error("Imposible obetener Profesionales", error);
+            setErrorMessage("Error al obtener los profesionales");
         }
     }
     async function getUbicacion(userUpdate: any) {
         // Obtener la dirección del usuario por su ID
         //console.log("SI DIRECCIONID ES FALSE:", Number(userUpdate?.direccionId));
         const direccion = await getDireccionCompleta(userUpdate?.direccionId);
-        /* console.log("DIRECCION", direccion);
-        console.log("LOCALIDAD", direccion?.localidad);
-        console.log("PROVINCIA", direccion?.localidad?.provincia);
-        console.log("PAIS", direccion?.localidad?.provincia?.nacionalidad); */
+
         //console.log("NACIONALIDAD", nacionalidad);
         // Actualizar los estados con los datos obtenidos
         setLocalidadName(String(direccion?.localidad?.nombre));
@@ -206,14 +181,14 @@ const Profesionales = () => {
     //region solo considera repetidos
     async function createUbicacion() {
         // Obtener la localidad asociada a la dirección
-        console.log("Antes de crear la ubicacion", (localidadName), calle, numero, provinciaName, nacionalidadName);
+
         const nacionalidad = await addPais({ nombre: String(nacionalidadName) });
         const prov = await addProvincias({ nombre: String(provinciaName), nacionalidadId: Number(nacionalidad?.id) });
 
         const localidad = await addLocalidad({ nombre: String(localidadName), provinciaId: Number(prov?.id) });
-        console.log("LOCALIDAD", localidad);
+
         const direccion = await addDireccion({ calle: String(calle), numero: Number(numero), localidadId: Number(localidad?.id) });
-        console.log("DIRECCION", direccion);
+
         return direccion;
     }
     // #region Métodos
@@ -248,18 +223,17 @@ const Profesionales = () => {
             const fileExtension =
                 lastDotIndex !== -1 ? fileName.substring(lastDotIndex + 1) : ""; // Obtener la extensión del archivo
             // Concatenar id, nombre y apellido del profesional con la extensión // Concatenar nombre del profesional con la extensión
-            console.log("ProfesionalDetails inside onFileChange: ", profesionalDetails);
+
             const fileNameWithExtension = `${profesionalDetails.id}_${profesionalDetails.nombre}_${profesionalDetails.apellido}.${fileExtension}`;
             setProfesionalDetails({ ...profesionalDetails, imagen: fileNameWithExtension });
-            console.log("Imagen seleccionada:", fileNameWithExtension);
+
         }
     };
 
     // Método para obtener las imagenes
     const fetchImages = async () => {
         const result = await getImagesUser();
-        console.log(result.images, "LAS IMAGENESSSSS");
-        console.log(result.downloadurls, "LOS DOWNLOADURLS");
+
         if (result.error) {
             setErrorMessage(result.error);
         } else {
@@ -288,59 +262,89 @@ const Profesionales = () => {
             // Hacer un console.log de las imageUrl después de actualizar el estado
             updatedProfesionales.forEach((profesional) => {
                 if (profesional.imageUrl) {
-                    console.log(
-                        `Profesional: ${profesional.id}, Image URL: ${profesional.imageUrl}`
-                    );
+                    console.log(profesional.imageUrl);
                 }
             });
         }
     };
     //region check validation!!
-    async function validateProfesional() {
-        const { nombre, apellido, password, email, telefono, dni } = profesionalDetails || {};
-
-        //validar que el nombre sea de al menos 2 caracteres y no contenga números
-        let resultValidate;
-        if (profesionalDetails) {
-            resultValidate = validateNombre(nombre);
-            if (resultValidate) return resultValidate;
-
-            resultValidate = validateApellido(apellido);
-            if (resultValidate) return resultValidate;
-
-            resultValidate = validateEmail(email);
-            if (resultValidate) return resultValidate;
-            if (email !== profesionalDetailsCopia.email) {
-                const estado = await emailExists(email)
-                if (estado) {
-                    return "El email ya está registrado.";
-                }
-                if (resultValidate) return resultValidate;
-            }
-
-
-            resultValidate = validateDni(String(dni));
-            if (resultValidate) return resultValidate;
-            if (dni !== profesionalDetailsCopia.dni) {
-                const estado = await dniExists(Number(dni))
-                if (estado) {
-                    return "El dni ya está registrado.";
-                }
-            }
-            if (telefono && typeof (telefono) === "number") {
-                resultValidate = validatePhoneNumber(String(telefono));
-                if (resultValidate) return resultValidate;
-            }
-            if (password && password.length > 0) {
-                resultValidate = validatePasswordComplexity(password);
-                if (resultValidate) return resultValidate;
-            }
-
+    function validateProfesionalDetails() {
+        const { nombre, apellido, email, especialidad, password, telefono } = profesionalDetails;
+        const nameRegex = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\u00fc\u00dc\s]*$/; // caracteres permitidos
+        if (!nameRegex.test(nombre)) {
+            return "El nombre solo debe contener letras y espacios.";
         }
-        resultValidate = validateDireccion(nacionalidadName, provinciaName, localidadName, String(calle), Number(numero));
-        if (resultValidate) return resultValidate
+        if (!nameRegex.test(apellido)) {
+            return "El apellido solo debe contener letras y espacios.";
+        }
+        if (!nameRegex.test(especialidad)) {
+            return "La especialidad solo debe contener letras y espacios.";
+        }
 
-        return null;
+        //validar que el nombre sea de al menos 2 caracteres
+        if (nombre.length < 2 || nombre.length > 35) {
+            return "El nombre debe tener al menos 2 caracteres";
+        }
+        //validar que el apellido sea de al menos 2 caracteres
+        if (apellido.length < 2 || apellido.length > 35) {
+            return "El apellido debe tener al menos 2 caracteres";
+        }
+
+        if (password.length > 0) {
+            const passwordRegex = /^(?=.*[A-Z])[\wÀ-ÿ\d@$!%*?&]{8,}$/
+                ;
+            if (!passwordRegex.test(password)) return "La contraseña debe tener al menos una letra mayúscula y 8 caracteres";
+        }
+        //  const phoneRegex = /^\+54\d{9}$/; ---> para guardarlo en la base de datos
+
+        //validar que el nuemero de telefono sea de solo numeros
+        if (isNaN(Number(telefono))) {
+            return "El teléfono debe contener solo números";
+        }
+        //validar que el telefono no sea menor 9 caracteres
+        if (telefono.length < 9) {
+            return "El número de telefono con cumple con el formato correcto";
+        }
+        //validar que el email sea valido 
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(email)) {
+            return "El email no es válido";
+        }
+        // validar que la especialidad no sea menor a 2 caracteres
+        if (especialidad.length < 2 || especialidad.length > 35) {
+            return "La especialidad debe tener al menos 2 caracteres";
+        }
+
+
+        // Validar que el número sea un número y mayor que 0
+        if (isNaN(Number(numero)) || Number(numero) <= 0) {
+            return "El número de la dirección debe ser un número mayor que 0";
+        }
+
+        // Validar la dirección
+        if (!calle?.trim() || calle.length < 2 || calle.length > 20) {
+            return "La dirección debe tener entre 2 y 20 caracteres y no puede estar vacía.";
+        }
+
+
+
+        // Validar la localidad
+        if (!localidadName?.trim() || localidadName.length < 2 || localidadName.length > 35) {
+            return "La localidad debe tener entre 2 y 35 caracteres.";
+        }
+
+        // Validar la provincia
+        if (!provinciaName?.trim() || provinciaName.length < 2 || provinciaName.length > 35) {
+            return "La provincia debe tener entre 2 y 35 caracteres.";
+        }
+
+        // Validar la nacionalidad
+        if (!nacionalidadName?.trim() || nacionalidadName.length < 2 || nacionalidadName.length > 35) {
+            return "La nacionalidad debe tener entre 2 y 35 caracteres.";
+        }
+        return null; // Si todo es válido
+
+
     }
 
     //para ver las imagenes agregadas sin refresh de pagina
@@ -352,15 +356,15 @@ const Profesionales = () => {
         if (result.error) {
             setUploadError(result.error);
         } else {
-            console.log("Image uploaded successfully:", result.result);
+
             setImagesLoaded(false); // Establecer en falso para que se vuelvan a cargar las imágenes
         }
     };
 
     async function handleSaveChanges() {
 
-        const validationError = await validateProfesional();
-        console.log(obProfesional)
+        const validationError = validateProfesionalDetails();
+
 
         if (validationError) {
             setErrorMessage(validationError);
@@ -391,12 +395,12 @@ const Profesionales = () => {
                 numero: Number(numero),
                 localidadId: Number(direcciProf?.localidad.id)
             });
-            console.log("newDireccion", newDireccion);
+
             const newLocalidad = await updateLocalidad(Number(direcciProf?.localidad?.id), {
                 nombre: String(localidadName),
                 provinciaId: Number(direcciProf?.localidad.provincia.id)
             });
-            console.log("newLocalidad", newLocalidad);
+
             await updateProvinciaById(Number(direcciProf?.localidad.provincia?.id), {
                 nombre: String(provinciaName),
                 nacionalidadId: Number(direcciProf?.localidad.provincia.nacionalidad.id)
@@ -439,7 +443,7 @@ const Profesionales = () => {
     }
 
     async function handleCreateProfesional() {
-        const validationError = await validateProfesional();
+        const validationError = validateProfesionalDetails();
         const direccion = await createUbicacion();
         console.log("newDireccion", direccion);
         if (validationError) {
@@ -600,6 +604,8 @@ const Profesionales = () => {
                                 type="text"
                                 id="nombre"
                                 name="nombre"
+                                pattern="\d{35}" // Este patrón asegura que solo se acepten 25 caracteres
+                                maxLength={35}  // Limitar a 25 caracteres
                                 value={profesionalDetails.nombre}
                                 onChange={handleChange}
                                 className="p-2 w-full border rounded"
@@ -609,6 +615,8 @@ const Profesionales = () => {
                                 type="text"
                                 id="apellido"
                                 name="apellido"
+                                pattern="\d{35}" // Este patrón asegura que solo se acepten 25 caracteres
+                                maxLength={35}  // Limitar a 25 caracteres
                                 value={profesionalDetails.apellido}
                                 onChange={handleChange}
                                 className="p-2 w-full border rounded"
@@ -620,6 +628,8 @@ const Profesionales = () => {
                                 type="email"
                                 id="email"
                                 name="email"
+                                pattern="\d{35}" // Este patrón asegura que solo se acepten 25 caracteres
+                                maxLength={35}  // Limitar a 25 caracteres
                                 value={profesionalDetails.email}
                                 onChange={handleChange}
                                 className="p-2 w-full border rounded"
@@ -631,6 +641,8 @@ const Profesionales = () => {
                                 type="text"
                                 id="especialidad"
                                 name="especialidad"
+                                pattern="\d{35}" // Este patrón asegura que solo se acepten 25 caracteres
+                                maxLength={35}  // Limitar a 25 caracteres
                                 value={profesionalDetails.especialidad}
                                 onChange={handleChange}
                                 className="p-2 w-full border rounded"
@@ -641,13 +653,16 @@ const Profesionales = () => {
                             <div className="flex">
                                 <h3 className="p-2">+54</h3>
                                 <input
-                                    type="number"
+                                    type="tel"
                                     id="telefono"
                                     name="telefono"
-                                    placeholder="Ingrese su código de área y los dígitos de su teléfono"
-                                    value={profesionalDetails.telefono ? profesionalDetails.telefono : null}
+                                    placeholder="Ej: 11-23456789"
+                                    value={profesionalDetails.telefono}
                                     onChange={handleChange}
                                     className="p-2 w-full border rounded"
+                                    pattern="\d{11}" // Este patrón asegura que solo se acepten 9 dígitos
+                                    maxLength={11}  // Limitar a 9 dígitos después del +54
+                                    required
                                 />
                             </div>
                         </div>
@@ -675,6 +690,8 @@ const Profesionales = () => {
                                         name="pais"
                                         value={String(nacionalidadName)}
                                         onChange={(e) => setNacionalidadName(e.target.value)}
+                                        pattern="\d{35}" // Este patrón asegura que solo se acepten 25 caracteres
+                                        maxLength={35}  // Limitar a 25 caracteres
                                         className="p-2 w-full border rounded"
                                     />
                                 </div>
@@ -684,6 +701,8 @@ const Profesionales = () => {
                                         type="text"
                                         id="provincia"
                                         name="provincia"
+                                        pattern="\d{35}" // Este patrón asegura que solo se acepten 25 caracteres
+                                        maxLength={35}  // Limitar a 25 caracteres
                                         value={String(provinciaName)}
                                         onChange={(e) => setProvinciaName(e.target.value)}
                                         className="p-2 w-full border rounded"
@@ -695,6 +714,8 @@ const Profesionales = () => {
                                         type="text"
                                         id="localidad"
                                         name="localidad"
+                                        pattern="\d{35}" // Este patrón asegura que solo se acepten 25 caracteres
+                                        maxLength={35}  // Limitar a 25 caracteress
                                         value={String(localidadName)}
                                         onChange={(e) => setLocalidadName(e.target.value)}
                                         className="p-2 w-full border rounded"
@@ -706,6 +727,8 @@ const Profesionales = () => {
                                         type="text"
                                         id="calle"
                                         name="calle"
+                                        pattern="\d{35}" // Este patrón asegura que solo se acepten 25 caracteres
+                                        maxLength={35}  // Limitar a 25 caracteres
                                         value={String(calle)}
                                         onChange={(e) => setcalle(e.target.value)}
                                         className="p-2 w-full border rounded"
@@ -714,7 +737,7 @@ const Profesionales = () => {
                                 <div className="mb-4">
                                     <label htmlFor="numero" className="block">Número:</label>
                                     <input
-                                        type="text"
+                                        type="number"
                                         id="numero"
                                         name="numero"
                                         value={Number(numero)}
