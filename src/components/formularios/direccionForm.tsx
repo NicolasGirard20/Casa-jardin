@@ -39,7 +39,15 @@ export const DireccionForm: React.FC = () => {
       </div>
       <div>
         <Label htmlFor="numero">Número</Label>
-        <Input id="numero" type="number" {...register("direccion.numero")} className="mt-1" />
+        <Input
+          id="numero"
+          type="number"
+          {...register("direccion.numero", {
+            valueAsNumber: true,
+            setValueAs: (value) => (value === "" ? undefined : Number(value)),
+          })}
+          className="mt-1"
+        />
         {errors.direccion?.numero && <p className="text-destructive text-sm mt-1">{errors.direccion.numero.message}</p>}
       </div>
     </div>
