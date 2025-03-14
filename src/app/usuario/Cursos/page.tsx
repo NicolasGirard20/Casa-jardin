@@ -12,7 +12,7 @@ import withAuthUser from "../../../components/alumno/userAuth";
 import NoImage from "../../../../public/Images/default-no-image.png";
 import { getImages_talleresAdmin } from "@/services/repoImage";
 import { mapearImagenes } from "@/helpers/repoImages";
-import Loader from "@/components/Loaders/loading/page";
+import Loader from "@/components/Loaders/loader/loader";
 import TallerCard from "@/components/start/tallerCard";
 
 
@@ -76,17 +76,16 @@ const MisCursos = () => {
 
   if (loading) {
     return (
-      <main
-        className="flex flex-col min-h-screen bg-cover bg-center justify-center items-center"
-        style={{
-          backgroundImage: `url(${Background.src})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
+      <main className="min-h-screen flex flex-col bg-cover bg-center" style={{ backgroundImage: `url(${Background.src})` }}>
         <Navigate />
-        <div className="flex flex-col items-center">
-          <Loader /> {/* Componente de carga */}
+        <div className="flex-grow flex items-center justify-center bg-white/50">
+          <div className="flex flex-col items-center gap-4">
+            <Loader />
+            <h1 className="text-gray-700">Cargando cursos</h1>
+          </div>
+        </div>
+        <div className="w-full bg-sky-600 py-2">
+          <But_aside />
         </div>
       </main>
     );
@@ -95,12 +94,14 @@ const MisCursos = () => {
   return (
     <>
       {/* Navegación fija */}
-      <header className="fixed top-0 left-0 w-full z-10 h-[64px] bg-white shadow-md">
-        <Navigate />
-      </header>
+
 
       <main className="relative min-h-screen pb-20 text-gray-600 body-font pt-[64px]">
         {/* Fondo */}
+
+
+
+        <div className="container px-5 py-14 mx-auto">
         <div className="fixed inset-0 z-[-1] h-full w-full">
           <Image
             src={Background}
@@ -111,8 +112,9 @@ const MisCursos = () => {
             priority={true}
           />
         </div>
-
-        <div className="container px-5 py-14 mx-auto">
+          <div className="fixed top-0 left-0 w-full z-20 bg-white shadow-md">
+            <Navigate />
+          </div>
           <div className="flex flex-wrap w-full mb-20">
             <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
               <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">
@@ -123,7 +125,7 @@ const MisCursos = () => {
           </div>
           {/* Loader o contenido */}
           {loading ? (
-            <div className="flex justify-center items-center w-full h-[60vh]">
+            <div className="absolute  w-full">
               <Loader />
             </div>
           ) : cursos.length === 0 ? (

@@ -9,7 +9,7 @@ export const DireccionForm: React.FC = () => {
   const {
     register,
     formState: { errors },
-  } = useFormContext<{ direccion: DireccionSchemaType}>()
+  } = useFormContext<{ direccion: DireccionSchemaType }>()
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

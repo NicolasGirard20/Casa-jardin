@@ -8,6 +8,7 @@ import withAuthUser from "../../../components/alumno/userAuth";
 import Navigate from "../../../components/alumno/navigate/page";
 import Background from "../../../../public/Images/Background.jpeg";
 import Loader from "@/components/Loaders/loader/loader";
+import But_aside from "@/components/but_aside/page";
 interface Curso {
   id: number;
   nombre: string;
@@ -83,11 +84,14 @@ function Horario() {
   if (loading) {
     return (
       <main className=" flex-col items-center justify-center min-h-screen bg-gray-100">
-          <Navigate />
-          <div className="flex items-center justify-center h-screen">
-            <Loader />
-          </div>
-        </main>
+        <Navigate />
+        <div className="flex items-center justify-center h-screen">
+          <Loader />
+        </div>
+        <div className="w-full bg-sky-600 py-2">
+          <But_aside />
+        </div>
+      </main>
     );
   }
 
@@ -98,6 +102,9 @@ function Horario() {
 
         <div className="flex items-center justify-center h-screen">
           <div className="text-xl font-bold text-red-500">{error}</div>
+        </div>
+        <div className="w-full bg-sky-600 py-2">
+          <But_aside />
         </div>
       </main>
     );
@@ -193,6 +200,9 @@ function Horario() {
           </div>
         </div>
       </div>
+      <div className="w-full bg-sky-600 py-2">
+          <But_aside />
+        </div>
     </main>
 
   );
