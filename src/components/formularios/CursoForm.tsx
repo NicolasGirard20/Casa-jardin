@@ -20,20 +20,43 @@ const cursoSchema = z
   .object({
     id: z.number().optional(),
     nombre: z
-      .string()
-      .min(2, { message: "Debe completar el nombre" })
-      .max(50, { message: "El nombre no puede tener más de 50 letras" })
-      .trim(),
+    .string()
+    .min(2, { message: "Debe completar el nombre" })
+    .max(50, { message: "El nombre no puede tener más de 50 caracteres" })
+    .trim()
+    .regex(/^[a-zA-Z0-9À-ÿ\u00f1\u00d1\u00fc\u00dc\s.,:-]*$/, {
+      message: "El nombre contiene caracteres no permitidos",
+    }),
     descripcion: z
-      .string()
-      .trim()
-      .refine((value) => value.split(" ").filter((word) => word.length > 0).length >= 5, {
-        message: "La descripción debe contener al menos 5 palabras",
-      }),
+    .string()
+    .min(2, { message: "Debe completar la descripción" })
+    .max(500, { message: "La descripción no puede tener más de 500 caracteres" })
+    .trim()
+   
+
+    .regex(/^[a-zA-Z0-9À-ÿ\u00f1\u00d1\u00fc\u00dc\s.,:-]*$/, {
+      message
+      : "La descripción contiene caracteres no permitidos",
+    })
+    .refine((value) => value.length > 2, {
+      message: "La descripción debe tener al menos 5 palabras",
+    })
+    .refine((value) => value.length < 500, {
+      message: "La descripción no puede tener más de 500 caracteres",
+    }),
+    
     fechaInicio: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Debe ser una fecha válida" }),
     fechaFin: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Debe ser una fecha válida" }),
-    edadMinima: z.number({ message: "Inserte un número válido" }).min(1).optional(),
-    edadMaxima: z.number({ message: "Inserte un número válido" }).min(1).optional(),
+
+    edadMinima: z
+      .number({ message: "Inserte un número válido" })
+      .min(2, { message: "La edad mínima no puede ser menor a 2 años" })
+      .max(99, { message: "La edad mínima no puede superar los 99 años" }),
+    edadMaxima: z
+      .number({ message: "Inserte un número válido" })
+      .min(2, { message: "La edad máxima no puede ser menor a 2 años" })
+      .max(99, { message: "La edad máxima no puede superar los 99 años" }),
+
     imagen: z.any().nullable().optional(),
     cantidadParticipantes: z.number().optional(),
   })
@@ -46,6 +69,8 @@ const cursoSchema = z
     const fechaInicio = new Date(data.fechaInicio);
     const fechaFin = new Date(data.fechaFin);
     const diffTime = Math.abs(fechaFin.getTime() - fechaInicio.getTime());
+   //valide que sea menor a un año  
+   
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays >= 7;
   }, {
@@ -99,6 +124,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
     formState: { errors, isSubmitting },
     reset,
     setValue,
+    watch,
   } = methods
 
   useEffect(() => {
@@ -220,14 +246,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
   }
 
   const handleCancel = async () => {
-    console.log("errors", errors)
-     // Log specific field values
-    console.log("Nombre:", methods.getValues("nombre"));
-    console.log("Descripción:", methods.getValues("descripcion"));
-    console.log("Fecha de Inicio:", methods.getValues("fechaInicio"));
-    console.log("Fecha de Fin:", methods.getValues("fechaFin"));
-    console.log("Edad Mínima:", methods.getValues("edadMinima"));
-    console.log("Edad Máxima:", methods.getValues("edadMaxima"));
+   
     
     resetState()
   }
@@ -276,7 +295,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
                     id="nombre"
                     type="text"
                     placeholder="Nombre del taller"
-                    maxLength={50}
+                    maxLength={75}
                     {...register("nombre")}
                     className="mt-1"
                   />
@@ -291,6 +310,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
                   <textarea
                     id="descripcion"
                     placeholder="Descripción del taller"
+                    maxLength={500}
                     rows={5}
                     {...register("descripcion")}
                     className="w-full p-2 border rounded-md mt-1"
@@ -306,10 +326,9 @@ const CursoForm: React.FC<CursoFormProps> = ({
                     </Label>
                     <Input
                       id="edadMinima"
-                      type="number"
+                      type="text"
                       placeholder="Ingrese la edad mínima"
-                      min={1}
-                      max={99}
+                      
                       {...register("edadMinima", { valueAsNumber: true })}
                       className="mt-1"
                     />
@@ -327,6 +346,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
                       placeholder="Ingrese la edad máxima"
                       min={1}
                       max={99}
+                      
                       {...register("edadMaxima", { valueAsNumber: true })}
                       className="mt-1"
                     />
@@ -335,32 +355,74 @@ const CursoForm: React.FC<CursoFormProps> = ({
                 </div>
                 <div className="mb-4 flex gap-4">
                   <div className="flex-1">
-                    <label htmlFor="fechaInicio" className="block text-sm font-medium mb-2">
-                      <Calendar className="w-4 h-4 inline-block mr-2" />
-                      Fecha de inicio del taller:
-                    </label>
-                    <input
-                      type="date"
-                      id="fechaInicio"
-                      {...register("fechaInicio")}
-                      className="w-full p-2 border rounded-md"
-                    />
-                    {errors.fechaInicio && (
-                      <p className="text-destructive text-sm mt-1">{errors.fechaInicio.message}</p>
-                    )}
+                  <label htmlFor="fechaInicio" className="block text-sm font-medium mb-2">
+                    <Calendar className="w-4 h-4 inline-block mr-2" />
+                    Fecha de inicio del taller:
+                  </label>
+                  <input
+                    type="date"
+                    id="fechaInicio"
+                    name="fechaInicio"
+                    value={
+                    watch('fechaInicio') &&
+                    !isNaN(new Date(watch('fechaInicio')).getTime())
+                      ? new Date(watch('fechaInicio')).toISOString().split('T')[0]
+                      : ""
+                    }
+                    min={
+                    selectedCursoId !== -1
+                      ? new Date(selectedCurso?.fechaInicio || "").toISOString().split('T')[0]
+                      : new Date().toISOString().split('T')[0]
+                    }
+                    max={new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+                    .toISOString()
+                    .split('T')[0]}
+                    onChange={(e) => setValue('fechaInicio', new Date(e.target.value).toISOString().split('T')[0])}
+                    className={`p-2 w-full border rounded text-sm ${errors.fechaInicio ? 'border-red-500' : 'border-gray-300'}`}
+                  />
+                  {errors.fechaInicio && (
+                    <p className="text-destructive text-sm mt-1">{errors.fechaInicio.message}</p>
+                  )}
                   </div>
                   <div className="flex-1">
                     <label htmlFor="fechaFin" className="block text-sm font-medium mb-2">
-                      <Calendar className="w-4 h-4 inline-block mr-2" />
-                      Fecha de fin del taller:
+                    <Calendar className="w-4 h-4 inline-block mr-2" />
+                    Fecha de fin del taller:
                     </label>
                     <input
-                      type="date"
-                      id="fechaFin"
-                      {...register("fechaFin")}
-                      className="w-full p-2 border rounded-md"
+                    type="date"
+                    id="fechaFin"
+                    name="fechaFin"
+                    value={
+                      watch('fechaFin') && 
+                      !isNaN(new Date(watch('fechaFin')).getTime())
+                      ? new Date(watch('fechaFin')).toISOString().split('T')[0]
+                      : ""
+                    }
+                    min={
+                      selectedCursoId !== -1
+                      ? new Date(new Date(watch('fechaInicio') || "").setDate(new Date(watch('fechaInicio') || "").getDate() + 7))
+                        .toISOString()
+                        .split('T')[0]
+                      : new Date(new Date().setDate(new Date().getDate() + 7))
+                        .toISOString()
+                        .split('T')[0]
+                    }
+                    max={
+                      selectedCursoId !== -1
+                      ? new Date(new Date(watch('fechaInicio') || "").setFullYear(new Date(watch('fechaInicio') || "").getFullYear() + 1))
+                        .toISOString()
+                        .split('T')[0]
+                      : new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+                        .toISOString()
+                        .split('T')[0]
+                    }
+                    onChange={(e) => setValue('fechaFin', new Date(e.target.value).toISOString().split('T')[0])}
+                    className={`p-2 w-full border rounded text-sm ${errors.fechaFin ? 'border-red-500' : 'border-gray-300'}`}
                     />
+
                     {errors.fechaFin && <p className="text-destructive text-sm mt-1">{errors.fechaFin.message}</p>}
+                    
                   </div>
                 </div>
 
