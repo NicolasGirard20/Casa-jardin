@@ -14,7 +14,7 @@ import { getImages_talleresAdmin } from "@/services/repoImage";
 import { mapearImagenes } from "@/helpers/repoImages";
 import Loader from "@/components/Loaders/loading/page";
 //componente para cada taller
-import TallerCard  from "@/components/start/tallerCard";
+import TallerCard from "@/components/start/tallerCard";
 // #endregion Imports
 
 const Talleres = () => {
@@ -59,7 +59,7 @@ const Talleres = () => {
     // Método para obtener las imagenes
     const fetchImages = async () => {
         const result = await getImages_talleresAdmin();
-    
+
         if (result.error) {
             setErrorMessage(result.error);
         } else {
@@ -89,44 +89,44 @@ const Talleres = () => {
     };
     return (
         <>
-        <main className="relative min-h-screen pb-20 text-gray-600 body-font">
-            <Navigate />
-            <div className="fixed inset-0 z-[-1] h-full w-full">
-                <Image src={Background}
-                    alt="Background"
-                    layout="fill"
-                    objectFit="cover"
-                    quality={80}
-                    priority={true}
-                />
-            </div>
+            <main className="relative min-h-screen pb-5 text-gray-600 body-font">
+                <Navigate />
+                <div className="fixed inset-0 opacity-70 z-[-1] h-full w-full">
+                    <Image src={Background}
+                        alt="Background"
+                        layout="fill"
+                        objectFit="cover"
+                        quality={80}
+                        priority={true}
+                    />
+                </div>
 
-            <div className="container px-5 py-14 mx-auto">
-                <div className="flex flex-wrap w-full mb-20">
-                    <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
-                        <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Conozca nuestros talleres</h1>
-                        <div className="h-1 w-20 bg-indigo-500 rounded"></div>
+                <div className="container px-5 py-12 mb-10 mx-auto">
+                    <div className="flex flex-wrap w-full mb-12">
+                        <div className="lg:w-1/2 w-full mb-6 lg:mb-0">
+                            <h1 className="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Conozca nuestros talleres</h1>
+                            <div className="h-1 w-20 bg-indigo-500 rounded"></div>
+                        </div>
+                    </div>
+                    {cursos.length === 0 && (
+                        <div className="flex justify-center items-center  w-full"><Loader /></div>
+                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 my-4">
+
+                        {cursos.length !== 0 && cursos.map((curso) => (
+                            <TallerCard key={curso.id} taller={curso} profesionales={profesionalesDict[curso.id]} />
+                        ))}
+
                     </div>
                 </div>
-                {cursos.length === 0 && (
-                    <div className="flex justify-center items-center  w-full"><Loader /></div>
-                )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 my-4">
-
-                    {cursos.length !== 0 && cursos.map((curso) => (
-                        <TallerCard key={curso.id} taller={curso} profesionales={profesionalesDict[curso.id]}/>
-                    ))}
-                   
+                <div
+                    className="mt-12 absolute bottom-0  border-t w-full opacity-90 bg-sky-600"
+                >
+                    <But_aside />
                 </div>
-            </div>
-            
-        </main>
-        <footer
-        className="pt-1 bottom-0  border-t w-full opacity-90 bg-sky-600"
-    >
-        <But_aside />
-    </footer>
-    </>
+            </main>
+
+        </>
     );
 };
 

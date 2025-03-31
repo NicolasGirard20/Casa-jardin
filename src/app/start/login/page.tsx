@@ -152,7 +152,7 @@ function Login() {
                             <input
                                 type="email"
                                 id="email"
-                                className="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
+                                className={`w-full border  rounded-lg ${errors.email ? "border-red-600":"border-gray-200" } p-4 pe-12 text-sm shadow-md`}
                                 placeholder="Ingrese su email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -185,7 +185,7 @@ function Login() {
                             <input
                                 type={passwordVisible ?  "text": "password"}
                                 id="password"
-                                className="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
+                                className={`w-full border rounded-lg ${errors.password ? "border-red-600":"border-gray-200" } p-4 pe-12 text-sm shadow-md`}
                                 placeholder="Ingrese su contraseña"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}

@@ -12,9 +12,10 @@ interface Datos {
   setCorrecto: React.Dispatch<React.SetStateAction<boolean>>;
   correcto: boolean;
   setVerificarEmail: React.Dispatch<React.SetStateAction<boolean>>;
+  setSaving: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SignupEmail: React.FC<Datos> = ({ email, setCorrecto, correcto, setVerificarEmail }) => {
+const SignupEmail: React.FC<Datos> = ({ email, setCorrecto, correcto, setVerificarEmail, setSaving }) => {
   const [codigo, setCodigo] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -114,7 +115,7 @@ const SignupEmail: React.FC<Datos> = ({ email, setCorrecto, correcto, setVerific
     <div className="fixed inset-0 flex items-center justify-center bg-gray-50/80">
       <div className="relative h-auto">
         <Button 
-          onClick={() => setVerificarEmail(false)} 
+          onClick={() =>{ setVerificarEmail(false); setSaving(false); }} 
           className="absolute top-0 right-0 text-slate-600 hover:text-red-600" 
           variant="ghost"
           size="icon"

@@ -6,12 +6,13 @@ import { createAlumno, emailExists } from "../../../services/Alumno";
 import { validateApellido, validateEmail, validateNombre, validatePasswordComplexity } from '@/helpers/validaciones';
 import Loader from '@/components/Loaders/loadingSave/page';
 import Consentimiento from './Consentimiento';
+import { XCircle } from "lucide-react";
 
 import SignupEmail from '@/components/start/SignupEmail';
 /*emailPage props: {email: string;
   setCorrecto: React.Dispatch<React.SetStateAction<boolean>>;
   correcto: boolean;
-  setVerificarEmail: React.Dispatch<React.SetStateAction<boolean>>;}*/ 
+  setVerificarEmail: React.Dispatch<React.SetStateAction<boolean>>;}*/
 
 function Signup() {
     // Se crean los estados para los campos del formulario de registro
@@ -26,69 +27,106 @@ function Signup() {
     const edadMinima = new Date(Hoy.getFullYear() - 3, Hoy.getMonth(), Hoy.getDate());
     const edadMaxima = new Date(Hoy.getFullYear() - 100, Hoy.getMonth(), Hoy.getDate());
 
-    const [errors, setErrors] = useState<string[]>([]);
+    const [alertaFinal, setAlertaFinal] = useState<boolean>(false);
+    const [errors, setErrors] = useState<{ nombre?: string; apellido?: string; email?: string; password?: string; fechaNacimiento?: Date | undefined }>({});
     const [isSaving, setIsSaving] = useState(false);
     const [showEmailVerification, setShowEmailVerification] = useState(false);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
 
     // en para los errores de registro se muestra un mensaje de error por 5 segundos
     // 
+    useEffect(() => {
+        if (errors.email) {
+            const timer = setTimeout(() => {
+                setErrors({ email: "" }); // Limpiar los errores después de 5 segundos
+            }, 10000);
 
+            return () => clearTimeout(timer); // Limpiar el timer si el componente se desmonta
+        }
+        if (errors.nombre) {
+            const timer = setTimeout(() => {
+                setErrors({ nombre: "" }); // Limpiar los errores después de 5 segundos
+            }, 10000);
+
+            return () => clearTimeout(timer); // Limpiar el timer si el componente se desmonta
+        }
+        if (errors.apellido) {
+            const timer = setTimeout(() => {
+                setErrors({ apellido: "" }); // Limpiar los errores después de 5 segundos
+            }, 10000);
+
+            return () => clearTimeout(timer); // Limpiar el timer si el componente se desmonta
+        }
+        if (errors.password) {
+            const timer = setTimeout(() => {
+                setErrors({ password: "" }); // Limpiar los errores después de 5 segundos
+            }, 10000);
+
+            return () => clearTimeout(timer); // Limpiar el timer si el componente se desmonta
+        }
+        if (errors.fechaNacimiento) {
+            const timer = setTimeout(() => {
+                setErrors({ fechaNacimiento: undefined }); // Limpiar los errores después de 5 segundos
+            }, 10000);
+
+            return () => clearTimeout(timer); // Limpiar el timer si el componente se desmonta
+        }
+
+    }, [errors]);
     // en esta funsion se valida el formulario de registro 
     // para que los datos sean correctos
     //region validateForm
-    const validateForm = async (trimmedData: { nombre: string; apellido: string; email: string; password: string; fechaNacimiento: Date | undefined; }) => {
-        const errors: string[] = [];
-    
+    const validateForm = async () => {
+        const newErrors: { nombre?: string; apellido?: string; email?: string; password?: string; fechaNacimiento?: Date | undefined; } = {};
+
         const estado = await emailExists(email)
         if (estado) {
-            errors.push("El email ya está registrado.");
+            newErrors.email = ("El email ya está registrado.");
         }
-    
+
         let validateInput;
+        if (!nombre.trim()) {
+            newErrors.nombre = ("El nombre es requerido");
+        }
+
         validateInput = validateNombre(nombre);
-        if (typeof(validateInput) === "string") errors.push(validateInput);
-    
+        if (typeof (validateInput) === "string") newErrors.nombre = (validateInput);
+
         validateInput = validateApellido(apellido);
-        if (validateInput) errors.push(validateInput);
-    
+        if (validateInput) newErrors.apellido = (validateInput);
+
         validateInput = validateEmail(email);
-        if (validateInput) errors.push(validateInput);
-    
-        if (validateInput) errors.push(validateInput);
-    
+        if (validateInput) newErrors.email = (validateInput);
+
+        /*         if (validateInput) errors.push(validateInput); */
+
         validateInput = validatePasswordComplexity(password);
-        if (validateInput) errors.push(validateInput);
+        if (validateInput) newErrors.password = (validateInput);
         // fecha de nacimiento
-       
-       
-        if(password !== confirmPassword) errors.push("Las contraseñas no coinciden");
-    
-        return errors;
-    
-    
-      };
+
+
+        if (password !== confirmPassword) newErrors.password = ("Las contraseñas no coinciden");
+        // Actualiza el estado de errores
+        setErrors(newErrors);
+        return newErrors;
+
+
+    };
     // en esta funsion se envian los datos del formulario de registro
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setIsSaving(true);
-        
-        const trimmedData = {
-            nombre: nombre.trim(),
-            apellido: apellido.trim(),
-            email: email.trim(),
-            password: password.trim(),
-            fechaNacimiento: fechaNacimiento ? new Date(fechaNacimiento) : undefined,
-        };
-        
-        const validationErrors = await validateForm(trimmedData);
-        if (validationErrors.length > 0) {
-            setErrors(validationErrors);
+
+
+
+        const validationErrors = await validateForm();
+        if (Object.keys(validationErrors).length > 0) {
+            /* setErrors(validationErrors); */
             setIsSaving(false);
             return;
         }
-        
-        setErrors([]);
+
+        //setErrors([]);
         setShowEmailVerification(true);
     };
 
@@ -106,12 +144,12 @@ function Signup() {
                     };
                     const response = await createAlumno(trimmedData);
                     if (typeof response === "string") {
-                        setErrors([response]);
+                        setErrors({ email: response });
                     } else {
                         window.location.href = "/start/login";
                     }
                 } catch (err) {
-                    setErrors(["Error al registrar el usuario"]);
+                    setErrors({ email: "Error al registrar el usuario" });
                 }
                 setIsSaving(false);
             }
@@ -163,15 +201,15 @@ function Signup() {
                         <div className="flex justify-center mb-6">
                             <Image src={Logo || "/placeholder.svg"} alt="Logo Casa Jardin" width={150} height={150} />
                         </div>
-                        {errors.length > 0 && (
+                        {/*                         {errors.length > 0 && (
                             <div className="mb-4 text-red-600 mx-16">
                                 {errors.map((error, index) => (
                                     <p key={index}>{error}</p>
                                 ))}
                             </div>
-                        )}
+                        )} */}
                         <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <div>
+                            <div className='mb-7'>
                                 <label
                                     className="font-semibold text-sm text-gray-600 pb-1 block"
                                     htmlFor="nombre"
@@ -180,19 +218,20 @@ function Signup() {
                                     Nombre
                                 </label>
                                 <input
-                                    className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                                    className={` rounded-lg px-3  py-2 mt-1 ${errors.nombre ? "border-red-600":"border-gray-200"}  text-sm w-full  border`}
                                     type="text"
                                     id="nombre"
-                                    pattern = '[A-Za-zÀ-ÿ ]+'
+                                    pattern='[A-Za-zÀ-ÿ ]+'
 
                                     placeholder='Ej: Juan'
-                                     maxLength={40 }
+                                    maxLength={40}
                                     value={nombre}
                                     onChange={(e) => setNombre(e.target.value)}
-                                    required
+
                                 />
+                                {errors && <p className="absolute max-w-56 text-red-500 text-sm mt-1">{errors.nombre}</p>}
                             </div>
-                            <div>
+                            <div className='mb-7'>
                                 <label
                                     className="font-semibold text-sm text-gray-600 pb-1 block"
                                     htmlFor="apellido"
@@ -200,20 +239,21 @@ function Signup() {
                                     Apellido
                                 </label>
                                 <input
-                                    className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                                    className={` rounded-lg px-3 py-2 mt-1 ${errors.apellido ? "border-red-600":"border-gray-200"}  text-sm w-full border `}
                                     type="text"
                                     id="apellido"
-                                    
+
                                     pattern='[A-Za-zÀ-ÿ ]+'
                                     placeholder='Ej: Pérez'
                                     maxLength={40}
 
                                     value={apellido}
                                     onChange={(e) => setApellido(e.target.value)}
-                                    required
+
                                 />
+                                {errors && <p className="absolute max-w-56 text-red-500 text-sm mt-1">{errors.apellido}</p>}
                             </div>
-                            <div>
+                            <div className='mb-7'>
                                 <label
                                     className="font-semibold text-sm text-gray-600 pb-1 block"
                                     htmlFor="email"
@@ -221,17 +261,18 @@ function Signup() {
                                     Email
                                 </label>
                                 <input
-                                    className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                                    className={` rounded-lg px-3 py-2 mt-1 ${errors.email ? "border-red-600":"border-gray-200"}  text-sm w-full border `}
                                     type="email"
                                     id="email"
                                     placeholder='Ej: dominio@email.com'
                                     maxLength={70}
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    required
+
                                 />
+                                {errors && <p className="absolute max-w-56 text-red-500 text-sm mt-1">{errors.email}</p>}
                             </div>
-                            <div>
+                            <div className='mb-7'>
                                 <label
                                     className="font-semibold text-sm text-gray-600 pb-1 block"
                                     htmlFor="password"
@@ -239,16 +280,17 @@ function Signup() {
                                     Contraseña
                                 </label>
                                 <input
-                                    className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                                    className={` rounded-lg px-3 py-2 mt-1 ${errors.password ? "border-red-600":"border-gray-200"}  text-sm w-full border`}
                                     type="password"
                                     id="password"
                                     placeholder='Ingrese su contraseña'
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    required
+
                                 />
+                                {errors && <p className="absolute max-w-56 text-red-500 text-sm mt-1 ">{errors.password}</p>}
                             </div>
-                            <div>
+                            <div className='mb-7'>
                                 <label
                                     className="font-semibold text-sm text-gray-600 pb-1 block"
                                     htmlFor="Confirmpassword"
@@ -256,16 +298,17 @@ function Signup() {
                                     Confirmar contraseña
                                 </label>
                                 <input
-                                    className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                                    className={` rounded-lg px-3 py-2 mt-1  text-sm w-full ${errors.password ? "border-red-600":"border-gray-200"} border `}
                                     type="password"
                                     id="Confirmpassword"
                                     placeholder='Confirme su contraseña'
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    required
+
                                 />
+                                {errors && <p className="absolute max-w-56 text-red-500 text-sm mt-1">{errors.password}</p>}
                             </div>
-                            <div>
+                            <div className='mb-7'>
                                 <label
                                     className="font-semibold text-sm text-gray-600 pb-1 block"
                                     htmlFor="fechaNac"
@@ -273,28 +316,29 @@ function Signup() {
                                     Fecha de nacimiento
                                 </label>
                                 <input
-                                    className="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                                    className={` rounded-lg px-3 py-2 mt-1 text-sm w-full ${errors.fechaNacimiento ? "border-red-600":"border-gray-200"} border  `}
                                     type="date"
                                     id="fechaNac"
                                     value={!fechaNacimiento ? "" : !isNaN(fechaNacimiento.getTime()) ? fechaNacimiento.toISOString().split('T')[0] : ""}
                                     min={new Date(new Date().setFullYear(new Date().getFullYear() - 100)).toISOString().split('T')[0]} // Set min to 100 years ago
                                     max={new Date(new Date().setFullYear(new Date().getFullYear() - 3)).toISOString().split('T')[0]} // Set max to 3 years ago
                                     onChange={(e) => setFechaNacimiento(new Date(e.target.value))}
-                                    required
                                 />
+                                {errors && <p className="absolute max-w-56 text-red-500 text-sm mt-1">{errors.fechaNacimiento ? errors.fechaNacimiento.toString() : ""}</p>}
                             </div>
+                            
                         </div>
-                        
-                        <Consentimiento />  
-                        
-                        <div className="mt-5">
-                        
+
+                        <Consentimiento />
+
+                        <div className="mb-5">
+
                             <button
                                 className="py-2 px-4 bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
                                 type="submit"
                                 disabled={isSaving}
                             >
-                            {isSaving ? <div className=' w-full flex justify-center'><Loader  /></div> : "Registrarse"}
+                                {isSaving ? <div className=' w-full flex justify-center'><Loader /></div> : "Registrarse"}
                             </button>
                         </div>
                         <div className="flex items-center justify-between mt-4">
@@ -315,6 +359,7 @@ function Signup() {
                             setCorrecto={setIsEmailVerified}
                             correcto={isEmailVerified}
                             setVerificarEmail={setShowEmailVerification}
+                            setSaving={setIsSaving}
                         />
                     )}
                 </div>

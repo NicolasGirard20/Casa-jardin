@@ -3,6 +3,7 @@ import { Search, Plus, X, Loader, Trash2 } from 'lucide-react';
 import { getCursos } from '@/services/cursos';
 import { getCursosByIdAlumno, createAlumno_Curso, deleteAlumno_Curso } from '@/services/alumno_curso';
 import { getCursosByIdProfesional, createProfesional_Curso, deleteProfesional_Curso } from '@/services/profesional_curso';
+import { set } from 'zod';
 
 interface Curso {
   id: number;
@@ -29,6 +30,11 @@ export default function CursoSelector(props: Props) {
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [loading, setLoading] = useState(false);
   const [cursosSeleccionados, setCursosSeleccionados] = useState<Curso[]>([]);
+  const [cursoBaja, setcursoBaja] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [cursoAlta, setcursoAlta] = useState<any>(null);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,6 +87,7 @@ export default function CursoSelector(props: Props) {
     if (cursosSeleccionados.length === 0) return;
     
     setLoading(true);
+    setIsAdding(true);
     try {
       // Agregar cursos seleccionados a curso_alumnos / curso_profesionales
       const promises = cursosSeleccionados.map(curso => {
@@ -89,8 +96,9 @@ export default function CursoSelector(props: Props) {
         } else {
           return createProfesional_Curso({ cursoId: curso.id, profesionalId: persona.id });
         }
+        
       });
-
+      
       await Promise.all(promises);
       await fetchCursosPersona();
       setCursosSeleccionados([]);
@@ -98,11 +106,15 @@ export default function CursoSelector(props: Props) {
       console.error('Error al agregar cursos:', error);
     } finally {
       setLoading(false);
+      setIsAdding(false);
+      setcursoAlta(null);
+
     }
   };
 
   const onEliminarCurso = async (cursoId: number) => {
     setLoading(true);
+    setIsDeleting(true);
     try {
       if (props.esAlumno) {
         await deleteAlumno_Curso(persona.id, cursoId);
@@ -110,15 +122,83 @@ export default function CursoSelector(props: Props) {
         await deleteProfesional_Curso(persona.id, cursoId);
       }
       await fetchCursosPersona();
+
     } catch (error) {
       console.error('Error al eliminar curso:', error);
     } finally {
       setLoading(false);
+      setIsDeleting(false);
+      setcursoBaja(null);
+
     }
   };
 
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-4">
+      
+      {cursoBaja && (
+            <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
+                {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+
+                <h2 className="text-lg mb-4">Confirmar Eliminación</h2>
+                <p>
+                    ¿Estás seguro de que deseas eliminar al usuario del curso:{" "}
+                    <strong>{cursoBaja.nombre}</strong>?
+                </p>
+                <div className="flex justify-end space-x-4 mt-4">
+                    <button
+                    onClick={() => {
+                      onEliminarCurso(cursoBaja.id);
+                    }}
+                    disabled={isDeleting}
+                    className="bg-red-700 py-2 px-5 text-white rounded hover:bg-red-800"
+                    >
+                    {isDeleting ? "Eliminando..." : "Confirmar Eliminación"}
+                    </button>
+                    <button
+                    onClick={() => setcursoBaja(null)}
+                    disabled={isDeleting}
+                    className="bg-gray-700 py-2 px-5 text-white rounded hover:bg-gray-800"
+                    >
+                    Cancelar
+                    </button>
+                </div>
+                </div>
+            </div>
+            )}
+          {cursoAlta && (
+            <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
+                {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+
+                <h2 className="text-lg mb-4">Confirmar Alta</h2>
+                <p>
+                    ¿Estás seguro de que deseas dar de alta al usuario en los siguientes cursos:{" "}
+                    <strong>{cursosSeleccionados.map(curso => curso.nombre).join(", ")}</strong>?
+                </p>
+                <div className="flex justify-end space-x-4 mt-4">
+                    <button
+                    onClick={() => {
+                      onAgregarCurso();
+                    }}
+                    disabled={isAdding}
+                    className="bg-red-700 py-2 px-5 text-white rounded hover:bg-red-800"
+                    > 
+                    {isAdding ? "Agregando..." : "Agregar"}
+                    </button>
+                    <button
+                    onClick={() => setcursoAlta(null)}
+                    disabled={isAdding}
+                    className="bg-gray-700 py-2 px-5 text-white rounded hover:bg-gray-800"
+                    >
+                    Cancelar
+                    </button>
+                </div>
+                </div>
+            </div>
+            )}
       {loading ? (
         <Loader className="h-12 w-12 animate-spin text-white" />
       ) : (
@@ -146,7 +226,7 @@ export default function CursoSelector(props: Props) {
                     >
                       <span>{curso.nombre}</span>
                       <button
-                        onClick={() => onEliminarCurso(curso.id)}
+                        onClick={() => setcursoBaja(curso)}
                         className="text-red-500 hover:text-red-700 transition-colors"
                         title="Eliminar curso"
                       >
@@ -161,7 +241,7 @@ export default function CursoSelector(props: Props) {
             {/* Botón para inscripción con contador */}
             <div className="flex items-center gap-4 p-2">
               <button 
-                onClick={onAgregarCurso}
+                onClick={() => setcursoAlta(true)}
                 disabled={cursosSeleccionados.length === 0}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                   cursosSeleccionados.length === 0 

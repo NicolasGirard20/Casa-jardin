@@ -6,7 +6,7 @@ import But_aside from "../../../components/but_aside/page";
 import Image from "next/image";
 import childStartImage from "../../../../public/Images/childStarImage.jpg";
 import goalSectionStartImage from "../../../../public/Images/goalSectionStartImage.jpg";
-import { getImages_procesoInscrip, getImages_talleresAdmin } from "@/services/repoImage";
+import { getImages_procesoInscrip, get_rotatingImages } from "@/services/repoImage";
 import Logo from "../../../../public/Images/LogoCasaJardin.png";
 import Background from "../../../../public/Images/BackgroundSolicitudes.jpg";
 import { mapearImagenes } from "@/helpers/repoImages";
@@ -35,7 +35,7 @@ const RotatingImages: React.FC = () => {
   }, [images]);
 
   const fetchImages = async () => {
-    const result = await getImages_talleresAdmin();
+    const result = await get_rotatingImages();
     if (result.images) {
       setImages(result.images);
       setDownloadurls(result.downloadurls);
@@ -43,17 +43,19 @@ const RotatingImages: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-60 flex items-center justify-center overflow-hidden">
+    <div className="w-full h-96 flex items-center justify-center overflow-hidden">
       {downloadurls.length > 0 && (
+      <div className="relative rounded-lg w-full lg:w-4/5 h-full">
         <Image
-          src={downloadurls[currentImageIndex]}
-          alt="Rotating Banner"
-          layout="fill"
-          objectFit="cover"
-          quality={80}
-          priority={true}
-          className="z-0"
+        src={downloadurls[currentImageIndex]}
+        alt="Rotating Banner"
+        layout="fill"
+        objectFit="cover"
+        quality={80}
+        priority={true}
+        className="z-0"
         />
+      </div>
       )}
     </div>
   );
@@ -101,10 +103,9 @@ const Inicio = () => {
   return (
     <main className="relative min-h-screen">
       {/* Fondo */}
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src={Background}
-          alt="Fondo de la academia"
+      <div className="fixed inset-0 z-[-1] opacity-70 h-full w-full">
+        <Image src={Background}
+          alt="Background"
           layout="fill"
           objectFit="cover"
           quality={80}
@@ -117,7 +118,7 @@ const Inicio = () => {
       </div>
 
       {/* Banner de imágenes */}
-      <div className="relative  z-30 mt-16"> {/* mt-16 para dar espacio al Navigate */}
+      <div className="relative  z-30 mt-18 md:mt-20 lg:mt-20"> {/* mt-16 para dar espacio al Navigate */}
         <RotatingImages />
       </div>
 
@@ -153,30 +154,30 @@ const Inicio = () => {
           </div>
         </section>
         <section className="  mx-auto w-full lg:w-2/3 md:w-2/3  ">
-          <div className=" text-pretty font-sans text-lg leading-relaxed mx-auto bg-blue-200 shadow-lg rounded-lg max-w-screen-xl px-4 py-8 sm:px-6 lg:px-8 ">
-            <div className="ml-5 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 md:items-center md:gap-8">
-              <div className="md:col-span-1 mb-8 md:mb-0">
-              <div className="max-w-lg md:max-w-none">
-                <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl md:text-3xl">
-                Compartiendo una misma meta
-                </h2>
-                <p className="mt-4 text-gray-600 lg:text-lg">
-                Nuestro objetivo es ofrecer un entorno inclusivo y acogedor donde cada estudiante
-                se sienta inspirado para alcanzar su máximo potencial. Ya sea que busques explorar un
-                nuevo pasatiempo, mejorar tus habilidades o disfrutar de un espacio creativo, aquí
-                encontrarás una comunidad apasionada y comprometida contigo.
-                </p>
+          <div className=" text-pretty font-sans text-lg leading-relaxed mx-auto bg-blue-200 shadow-lg rounded-lg max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8 ">
+            <div className="ml-5 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 md:items-center md:gap-6">
+              <div className="md:col-span-4 lg:col-span-1 mb-8 md:mb-0 w-full">
+                <div className="max-w-2xl mx-auto">
+                  <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl md:text-3xl">
+                    Compartiendo una misma meta
+                  </h2>
+                  <p className="mt-4 w-full text-gray-600 lg:text-lg">
+                    Nuestro objetivo es ofrecer un entorno inclusivo y acogedor donde cada estudiante
+                    se sienta inspirado para alcanzar su máximo potencial. Ya sea que busques explorar un
+                    nuevo pasatiempo, mejorar tus habilidades o disfrutar de un espacio creativo, aquí
+                    encontrarás una comunidad apasionada y comprometida contigo.
+                  </p>
+                </div>
               </div>
-              </div>
-              <div className="md:col-span-1 lg:ml-40 lg:col-span-3 mt-8 md:mt-0">
-              <Image className="lg:max-h-80 max-h-60 min-h-45 lg:ml-5 xl:ml-15 md:ml-0 sm:ml-0 rounded-md object-cover" src={goalSectionStartImage} alt="goalChild" width={500} height={400} />
+              <div className="md:col-span-2 lg:ml-40 lg:col-span-3 mt-8 md:mt-0">
+                <Image className="lg:max-h-80 max-h-60 min-h-72 lg:ml-5 xl:ml-15 md:ml-0 sm:ml-0 rounded-md object-cover" src={goalSectionStartImage} alt="goalChild" width={500} height={500} />
               </div>
             </div>
           </div>
         </section>
 
 
-        <div className="lg:flex md:flex sm:flex-col justify-center items-center lg:justify-around p-2  rounded-lg shadow-lg w-full lg:w-2/3 md:w-2/3 h-full mt-10 bg-white">
+        <div className=" lg:flex md:flex sm:flex-col justify-center items-center lg:justify-around p-2  rounded-lg shadow-lg w-full lg:w-2/3 md:w-2/3 h-full mt-10 bg-white">
           <div className=" flex flex-col p-4">
             <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">Pasos a seguir para registrarse:</h1>
             <h2 className="mb-8 max-w-xl text-zinc-600 lg:text-xl">¡Únete a nosotros y forma parte de esta experiencia única!</h2>
