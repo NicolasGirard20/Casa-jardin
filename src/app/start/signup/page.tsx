@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Logo from '../../../../public/Images/LogoCasaJardin.png';
 import { useState, useEffect } from "react";
 import { createAlumno, emailExists } from "../../../services/Alumno";
-import { validateApellido, validateEmail, validateNombre, validatePasswordComplexity } from '@/helpers/validaciones';
+import { validateApellido, validateEmail, validateFechaNacimiento, validateNombre, validatePasswordComplexity } from '@/helpers/validaciones';
 import Loader from '@/components/Loaders/loadingSave/page';
 import Consentimiento from './Consentimiento';
 import { XCircle } from "lucide-react";
@@ -28,10 +28,11 @@ function Signup() {
     const edadMaxima = new Date(Hoy.getFullYear() - 100, Hoy.getMonth(), Hoy.getDate());
 
     const [alertaFinal, setAlertaFinal] = useState<boolean>(false);
-    const [errors, setErrors] = useState<{ nombre?: string; apellido?: string; email?: string; password?: string; fechaNacimiento?: Date | undefined }>({});
+    const [errors, setErrors] = useState<{ nombre?: string; apellido?: string; email?: string; password?: string; fechaNacimiento?: string}>({});
     const [isSaving, setIsSaving] = useState(false);
     const [showEmailVerification, setShowEmailVerification] = useState(false);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
     // en para los errores de registro se muestra un mensaje de error por 5 segundos
     // 
@@ -77,7 +78,9 @@ function Signup() {
     // para que los datos sean correctos
     //region validateForm
     const validateForm = async () => {
-        const newErrors: { nombre?: string; apellido?: string; email?: string; password?: string; fechaNacimiento?: Date | undefined; } = {};
+        const newErrors: { nombre?: string; apellido?: string; email?: string; password?: string; fechaNacimiento?: string; } = {};
+  
+
 
         const estado = await emailExists(email)
         if (estado) {
@@ -104,6 +107,8 @@ function Signup() {
         if (validateInput) newErrors.password = (validateInput);
         // fecha de nacimiento
 
+        validateInput = validateFechaNacimiento(fechaNacimiento);
+        if (validateInput) newErrors.fechaNacimiento = (validateInput);
 
         if (password !== confirmPassword) newErrors.password = ("Las contraseñas no coinciden");
         // Actualiza el estado de errores
@@ -218,7 +223,7 @@ function Signup() {
                                     Nombre
                                 </label>
                                 <input
-                                    className={` rounded-lg px-3  py-2 mt-1 ${errors.nombre ? "border-red-600":"border-gray-200"}  text-sm w-full  border`}
+                                    className={` rounded-lg px-3  py-2 mt-1 ${errors.nombre ? "border-red-600" : "border-gray-200"}  text-sm w-full  border`}
                                     type="text"
                                     id="nombre"
                                     pattern='[A-Za-zÀ-ÿ ]+'
@@ -239,7 +244,7 @@ function Signup() {
                                     Apellido
                                 </label>
                                 <input
-                                    className={` rounded-lg px-3 py-2 mt-1 ${errors.apellido ? "border-red-600":"border-gray-200"}  text-sm w-full border `}
+                                    className={` rounded-lg px-3 py-2 mt-1 ${errors.apellido ? "border-red-600" : "border-gray-200"}  text-sm w-full border `}
                                     type="text"
                                     id="apellido"
 
@@ -261,7 +266,7 @@ function Signup() {
                                     Email
                                 </label>
                                 <input
-                                    className={` rounded-lg px-3 py-2 mt-1 ${errors.email ? "border-red-600":"border-gray-200"}  text-sm w-full border `}
+                                    className={` rounded-lg px-3 py-2 mt-1 ${errors.email ? "border-red-600" : "border-gray-200"}  text-sm w-full border `}
                                     type="email"
                                     id="email"
                                     placeholder='Ej: dominio@email.com'
@@ -272,23 +277,44 @@ function Signup() {
                                 />
                                 {errors && <p className="absolute max-w-56 text-red-500 text-sm mt-1">{errors.email}</p>}
                             </div>
-                            <div className='mb-7'>
-                                <label
+                            <div className='mb-7 relative'>
+                            <label
                                     className="font-semibold text-sm text-gray-600 pb-1 block"
-                                    htmlFor="password"
+                                    htmlFor="email"
                                 >
                                     Contraseña
                                 </label>
                                 <input
-                                    className={` rounded-lg px-3 py-2 mt-1 ${errors.password ? "border-red-600":"border-gray-200"}  text-sm w-full border`}
-                                    type="password"
+                                    type={passwordVisible ? "text" : "password"}
                                     id="password"
-                                    placeholder='Ingrese su contraseña'
+                                    className={` rounded-lg px-3 py-2 mt-1 ${errors.password ? "border-red-600" : "border-gray-200"}  text-sm w-full border `}
+                                    placeholder="Ingrese su contraseña"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-
                                 />
-                                {errors && <p className="absolute max-w-56 text-red-500 text-sm mt-1 ">{errors.password}</p>}
+                                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                     className="absolute inset-y-5 end-0 h-5 w-5 m-4 text-gray-400 cursor-pointer"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    onClick={() => { setPasswordVisible(!passwordVisible); console.log(passwordVisible); }}
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                    />
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                    />
+                                </svg>
                             </div>
                             <div className='mb-7'>
                                 <label
@@ -298,7 +324,7 @@ function Signup() {
                                     Confirmar contraseña
                                 </label>
                                 <input
-                                    className={` rounded-lg px-3 py-2 mt-1  text-sm w-full ${errors.password ? "border-red-600":"border-gray-200"} border `}
+                                    className={` rounded-lg px-3 py-2 mt-1  text-sm w-full ${errors.password ? "border-red-600" : "border-gray-200"} border `}
                                     type="password"
                                     id="Confirmpassword"
                                     placeholder='Confirme su contraseña'
@@ -316,7 +342,7 @@ function Signup() {
                                     Fecha de nacimiento
                                 </label>
                                 <input
-                                    className={` rounded-lg px-3 py-2 mt-1 text-sm w-full ${errors.fechaNacimiento ? "border-red-600":"border-gray-200"} border  `}
+                                    className={` rounded-lg px-3 py-2 mt-1 text-sm w-full ${errors.fechaNacimiento ? "border-red-600" : "border-gray-200"} border  `}
                                     type="date"
                                     id="fechaNac"
                                     value={!fechaNacimiento ? "" : !isNaN(fechaNacimiento.getTime()) ? fechaNacimiento.toISOString().split('T')[0] : ""}
@@ -326,7 +352,7 @@ function Signup() {
                                 />
                                 {errors && <p className="absolute max-w-56 text-red-500 text-sm mt-1">{errors.fechaNacimiento ? errors.fechaNacimiento.toString() : ""}</p>}
                             </div>
-                            
+
                         </div>
 
                         <Consentimiento />

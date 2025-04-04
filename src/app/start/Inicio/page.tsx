@@ -99,7 +99,9 @@ const Inicio = () => {
         }
       });
     }
-  };
+  }
+
+  //region Return
   return (
     <main className="relative min-h-screen">
       {/* Fondo */}
@@ -126,37 +128,38 @@ const Inicio = () => {
       <div className="flex flex-col items-center justify-center mt-10 ">
         <section className="py-42 w-full lg:w-2/3 md:w-2/3 text-pretty font-sans text-lg leading-relaxed ">
           <div className="container">
-            <div className="grid items-center gap-8 lg:grid-cols-2 shadow-lg rounded-lg p-2">
-              <div className="flex flex-col p-2 items-center text-center lg:items-start lg:text-left">
-                <div
-                  className="mt-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground">
-                  Qué somos?<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    className="lucide lucide-arrow-down-right ml-2 size-4">
-                    <path d="m7 7 10 10"></path>
-                    <path d="M17 7v10H7"></path>
-                  </svg>
-                </div>
-                <h1 className="my-2 mb-4 p-2 text-pretty text-4xl font-bold lg:text-6xl">Bienvenidos a Casa Jardin</h1>
-                <p className="mb-8 max-w-xl text-zinc-600 lg:text-xl py-2 px-6">
-                  ¡Bienvenidos a Casa Jardin, un espacio para Aprender, Crear y Crecer!
-                  <br />
-                  <br />
-                  En nuestra academia, creemos que el aprendizaje no tiene límites de edad.
-                  Por eso, hemos diseñado un lugar donde personas de todas las generaciones,
-                  desde los más pequeños hasta adultos, pueden desarrollar nuevas habilidades,
-                  descubrir sus talentos y explorar su creatividad.
-                </p>
-
+            <div className="grid items-center gap-8 2xl:grid-cols-2 shadow-lg bg-slate-50 rounded-lg p-2">
+              <div className="flex flex-col p-2 items-center text-center 2xl:items-start 2xl:text-left">
+              <div
+                className="mt-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground">
+                Qué somos?<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                className="lucide lucide-arrow-down-right ml-2 size-4">
+                <path d="m7 7 10 10"></path>
+                <path d="M17 7v10H7"></path>
+                </svg>
               </div>
-              <Image className="max-h-96 w-full rounded-md object-cover" src={childStartImage} alt="childStart" width={500} height={400} />
+              <h1 className="my-2 mb-4 p-2 text-pretty text-4xl font-bold lg:text-6xl">Bienvenidos a Casa Jardin</h1>
+              <p className="mb-8 max-w-xl text-zinc-600 lg:text-xl py-2 px-6">
+                ¡Bienvenidos a Casa Jardin, un espacio para Aprender, Crear y Crecer!
+                <br />
+                <br />
+                En nuestra academia, creemos que el aprendizaje no tiene límites de edad.
+                Por eso, hemos diseñado un lugar donde personas de todas las generaciones,
+                desde los más pequeños hasta adultos, pueden desarrollar nuevas habilidades,
+                descubrir sus talentos y explorar su creatividad.
+              </p>
+              </div>
+              <div className="flex justify-center">
+              <Image className="max-h-96 object-cover rounded-md" src={childStartImage} alt="childStart" width={500} height={400} />
+              </div>
             </div>
           </div>
         </section>
         <section className="  mx-auto w-full lg:w-2/3 md:w-2/3  ">
           <div className=" text-pretty font-sans text-lg leading-relaxed mx-auto bg-blue-200 shadow-lg rounded-lg max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8 ">
-            <div className="ml-5 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 md:items-center md:gap-6">
-              <div className="md:col-span-4 lg:col-span-1 mb-8 md:mb-0 w-full">
+            <div className="ml-5 grid grid-cols-1 gap-8 md:grid-cols-2 2xl:grid-cols-4 md:items-center md:gap-6">
+              <div className="md:col-span-4 2xl:col-span-1 mb-8 md:mb-0 w-full">
                 <div className="max-w-2xl mx-auto">
                   <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl md:text-3xl">
                     Compartiendo una misma meta
@@ -169,7 +172,7 @@ const Inicio = () => {
                   </p>
                 </div>
               </div>
-              <div className="md:col-span-2 lg:ml-40 lg:col-span-3 mt-8 md:mt-0">
+              <div className="md:col-span-2 xl:ml-40 xl:col-span-3 mt-8 md:mt-0">
                 <Image className="lg:max-h-80 max-h-60 min-h-72 lg:ml-5 xl:ml-15 md:ml-0 sm:ml-0 rounded-md object-cover" src={goalSectionStartImage} alt="goalChild" width={500} height={500} />
               </div>
             </div>
@@ -177,7 +180,7 @@ const Inicio = () => {
         </section>
 
 
-        <div className=" lg:flex md:flex sm:flex-col justify-center items-center lg:justify-around p-2  rounded-lg shadow-lg w-full lg:w-2/3 md:w-2/3 h-full mt-10 bg-white">
+        <div className=" lg:flex md:flex sm:flex-col justify-center items-center lg:justify-around p-2  rounded-lg shadow-lg w-full lg:w-2/3 md:w-2/3 h-full mt-10 bg-slate-50">
           <div className=" flex flex-col p-4">
             <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">Pasos a seguir para registrarse:</h1>
             <h2 className="mb-8 max-w-xl text-zinc-600 lg:text-xl">¡Únete a nosotros y forma parte de esta experiencia única!</h2>

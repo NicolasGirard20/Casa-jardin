@@ -26,17 +26,25 @@ export default function Navigate() {
 
   return (
     <nav className="flex justify-between items-center w-full p-3 bg-sky-600">
-      <div className="flex items-center cursor-pointer" onClick={()=> window.location.href = "/start/Inicio"}>
-        <Image src={Logo} alt="Logo Casa Jardin" width={50} height={50} draggable="false"/>
-        <h1 className="ml-2 text-white">Casa Jardín</h1>
+      {/* Logo Section */}
+      <div
+        className="flex items-center cursor-pointer "
+        onClick={() => (window.location.href = "/start/Inicio")}
+      >
+        <Image src={Logo} alt="Logo Casa Jardin" width={50} height={50} draggable="false" />
+        <h1 className="ml-2 text-white text-lg sm:text-xl">Casa Jardín</h1>
       </div>
-      <div className="hidden md:flex ml-auto space-x-4 py-2 text-white">
+
+      {/* Desktop Navigation */}
+      <div className="hidden lg:flex ml-auto space-x-4 py-2  text-white">
         <NavLink href="/start/Inicio">Inicio</NavLink>
         <NavLink href="/start/Nosotros">Nosotros</NavLink>
         <NavLink href="/start/Talleres">Talleres</NavLink>
         <NavLink href="/start/login">Ingresar</NavLink>
       </div>
-      <div className="md:hidden flex items-center">
+
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden flex items-center">
         <button onClick={() => setMenuOpen(!menuOpen)} className="text-white focus:outline-none">
           <svg
             className="w-6 h-6"
@@ -54,11 +62,12 @@ export default function Navigate() {
           </svg>
         </button>
       </div>
+
+      {/* Mobile Navigation */}
       {menuOpen && (
         <div
-          className="md:hidden fixed top-16 left-0 w-full bg-sky-600 text-white flex flex-col items-center space-y-4 py-4 max-h-[70vh] overflow-y-auto z-50 shadow-lg"
+          className="lg:hidden fixed top-16 left-0 w-full bg-sky-600 text-white flex flex-col items-center space-y-4 py-4 max-h-[70vh] overflow-y-auto z-50 shadow-lg"
         >
-          <div className="border-t w-full"></div>
           <NavLink href="/start/Inicio">Inicio</NavLink>
           <div className="border-t w-full"></div>
           <NavLink href="/start/Nosotros">Nosotros</NavLink>

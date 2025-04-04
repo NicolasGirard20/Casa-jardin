@@ -208,7 +208,7 @@ const allEmptyFields = [...userEmptyFields, ...responsableEmptyFields]
   return (
     <div className="flex flex-col min-h-screen">
       <main
-        className="flex-grow relative overflow-auto bg-cover bg-center"
+        className="flex-grow min-h-[98vh] relative overflow-auto bg-cover bg-center"
         style={{ backgroundImage: `url(${Background.src})` }}
       >
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-sky-50 to-gray-100" />
@@ -218,7 +218,7 @@ const allEmptyFields = [...userEmptyFields, ...responsableEmptyFields]
 
         {/* Datos */}
         <div className="pt-24 px-4 pb-40 max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">Datos del Estudiante</h1>
+          <h1 className="text-3xl mt-5 font-bold text-gray-900 text-center mb-8">Datos del Estudiante</h1>
 
           {/* Alertas */}
           {(allEmptyFields.length > 0 && !loading) && (
@@ -388,9 +388,7 @@ const allEmptyFields = [...userEmptyFields, ...responsableEmptyFields]
         )}
       </main>
 
-      <footer className="bg-sky-600 border-t w-full p-4 text-white">
-        <But_aside />
-      </footer>
+      <But_aside />
     </div>
   )
 }

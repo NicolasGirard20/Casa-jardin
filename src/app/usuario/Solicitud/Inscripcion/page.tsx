@@ -51,30 +51,30 @@ const Inscripcion: React.FC<{}> = () => {
         }
         return null;
     }
-         // Ruta al archivo PDF en la carpeta public
-         const pdfUrlMenores = '/inscripcion_pdf/cet INSCRIPCIONES 2023  uso de imagen y salidas cercasnas.pdf';
-         
-         const pdfUrlAdultos = '/inscripcion_pdf/Planilla inscripción adultos.pdf';
-       
-         // Función para manejar la descarga
-         const handleDownloadMenores = () => {
-           // Crear un enlace temporal
-           const link = document.createElement('a');
-           link.href = pdfUrlMenores;
-           link.download = "Planilla inscripción menores.pdf";
-           document.body.appendChild(link);
-           link.click();
-           document.body.removeChild(link);
-         };
-         const handleDownloadMayores = () => {
-            // Crear un enlace temporal
-            const link = document.createElement('a');
-            link.href = pdfUrlAdultos;
-            link.download = "Planilla inscripción mayores.pdf";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          };
+    // Ruta al archivo PDF en la carpeta public
+    const pdfUrlMenores = '/inscripcion_pdf/cet INSCRIPCIONES 2023  uso de imagen y salidas cercasnas.pdf';
+
+    const pdfUrlAdultos = '/inscripcion_pdf/Planilla inscripción adultos.pdf';
+
+    // Función para manejar la descarga
+    const handleDownloadMenores = () => {
+        // Crear un enlace temporal
+        const link = document.createElement('a');
+        link.href = pdfUrlMenores;
+        link.download = "Planilla inscripción menores.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+    const handleDownloadMayores = () => {
+        // Crear un enlace temporal
+        const link = document.createElement('a');
+        link.href = pdfUrlAdultos;
+        link.download = "Planilla inscripción mayores.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     return (
         <main>
@@ -97,56 +97,55 @@ const Inscripcion: React.FC<{}> = () => {
                     </button>
                 </div>
             </div>}
-            <div className='mt-4 flex justify-center border-b mx-auto px-8 py-6  max-w-2xl  w-80 h-60' >
-                {edad !== 0  ? (edad < 18 ? (
-                    <button className="flex flex-col items-center" onClick={() => {
-                        const vali = validateClick();
-                        if (vali) {
-                            setError(vali);
-                        } else {
-                            window.location.href = "/usuario/Solicitud/Menores";
+            <div className='min-h-[72vh]'>
+                <div className='mt-4 flex justify-center border-b mx-auto px-8 py-6  max-w-2xl  w-80 h-60' >
+                    {edad !== 0 ? (edad < 18 ? (
+                        <button className="flex flex-col items-center" onClick={() => {
+                            const vali = validateClick();
+                            if (vali) {
+                                setError(vali);
+                            } else {
+                                window.location.href = "/usuario/Solicitud/Menores";
+                            }
                         }
-                    }
-                    }>
-                        <Image src={menores} alt="menores" width={300} height={180} />
-                        <span className='mt-2'>Inscripción para menores <br /> Uso de imagen y salidas cercanas</span>
-                    </button>
-                ) : (
-                    <button className="flex flex-col items-center" onClick={() => {
-                        const vali = validateClick();
-                        if (vali) {
-                            setError(vali);
-                        } else {
-                            window.location.href = "/usuario/Solicitud/Mayores";
+                        }>
+                            <Image src={menores} alt="menores" width={300} height={180} />
+                            <span className='mt-2'>Inscripción para menores <br /> Uso de imagen y salidas cercanas</span>
+                        </button>
+                    ) : (
+                        <button className="flex flex-col items-center" onClick={() => {
+                            const vali = validateClick();
+                            if (vali) {
+                                setError(vali);
+                            } else {
+                                window.location.href = "/usuario/Solicitud/Mayores";
+                            }
                         }
-                    }
-                    }>
-                        <Image src={adultos} alt="adultos" width={280} height={100} />
-                        <span className='mt-2'>Inscripción para adultos</span>
-                    </button>
-                )): (
-                <div className="flex justify-center items-center" >
-                   <Loader  />
-                </div>)}
-            </div>
-            <div className="flex justify-center items-center mt-5">
-                <div className="text-center">
-                    <h2 className="  mb-4 max-w-lg px-3 font-bold text-sm">Si desea continuar con la inscripción de manera presencial, descargue los siguientes formularios</h2>
-                    <button className="  py-2 px-4 rounded hover:underline" onClick={handleDownloadMenores}>
-                        <Image className='ml-9' src={LogoPdf} alt='menores.pdf' width={80} height={60}/>
-                        Inscripción para menores
-                    </button>
-                    <button className="  py-2 px-4 rounded mt-2 hover:underline" onClick={handleDownloadMayores}>
-                        <Image className='ml-6' src={LogoPdf} alt='adultos.pdf' width={80} height={60}/>
-                        Inscripción para adultos
-                    </button>
+                        }>
+                            <Image src={adultos} alt="adultos" width={280} height={100} />
+                            <span className='mt-2'>Inscripción para adultos</span>
+                        </button>
+                    )) : (
+                        <div className="flex justify-center items-center" >
+                            <Loader />
+                        </div>)}
+                </div>
+                <div className="flex justify-center items-center mt-5">
+                    <div className="text-center">
+                        <h2 className="  mb-4 max-w-lg px-3 font-bold text-sm">Si desea continuar con la inscripción de manera presencial, descargue los siguientes formularios</h2>
+                        <button className="  py-2 px-4 rounded hover:underline" onClick={handleDownloadMenores}>
+                            <Image className='ml-9' src={LogoPdf} alt='menores.pdf' width={80} height={60} />
+                            Inscripción para menores
+                        </button>
+                        <button className="  py-2 px-4 rounded mt-2 hover:underline" onClick={handleDownloadMayores}>
+                            <Image className='ml-6' src={LogoPdf} alt='adultos.pdf' width={80} height={60} />
+                            Inscripción para adultos
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div
-                className="bg-sky-600 fixed bottom-0 py-2 border-t w-full z-30"
-            >
-                <But_aside />
-            </div>
+
+            <But_aside />
         </main>
     )
 }

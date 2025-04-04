@@ -42,7 +42,7 @@ const Principal: React.FC = () => {
       <Navigate />
 
       {/* Contenido principal */}
-      <div className="flex flex-col flex-grow bg-white/50 p-6">
+      <div className="flex flex-col min-h-[88vh] flex-grow bg-white/50 p-6">
         {/* Mensaje de bienvenida */}
         <div className="mt-16 text-center mb-6">
           <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold">
@@ -82,11 +82,7 @@ const Principal: React.FC = () => {
       </div>
 
       {/* Botón fijo en la parte inferior */}
-      <div
-        className="bottom-0 py-2 border-t w-full z-30 bg-sky-600"
-      >
-        <But_aside />
-      </div>
+      <But_aside />
     </main>
   )
 }  

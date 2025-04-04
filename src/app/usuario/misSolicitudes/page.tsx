@@ -78,15 +78,13 @@ const misSolicitudes: React.FC = () => {
     return (
       <main className="min-h-screen flex flex-col bg-cover bg-center" style={{ backgroundImage: `url(${Background.src})` }}>
         <Navigate />
-        <div className="flex-grow flex items-center justify-center bg-white/50">
-          <div className="flex flex-col items-center gap-4">
+        <div className="flex-grow flex min-h-[88vh] items-center justify-center bg-white/50">
+          <div className="flex flex-col items-center gap-4 ">
             <Loader />
             <h1 className="text-gray-700">Cargando solicitudes</h1>
           </div>
         </div>
-        <div className="w-full bg-sky-600 py-2">
-          <But_aside />
-        </div>
+        <But_aside />
       </main>
     );
   }
@@ -174,9 +172,7 @@ const misSolicitudes: React.FC = () => {
         </div>
       </div>
 
-      <div className="w-full bg-sky-600 py-2">
-        <But_aside />
-      </div>
+   <But_aside />
     </main>
   );
 };
