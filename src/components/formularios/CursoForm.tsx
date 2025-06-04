@@ -11,10 +11,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Calendar, FileText, ImageIcon, Loader } from "lucide-react"
 import { updateCurso, createCurso } from "../../services/cursos"
-import { handleUploadCursoImage } from "@/helpers/repoImages"
+import { handleUploadCursoImage, mapearImagenes } from "@/helpers/repoImages"
 import { FileInput } from "@/components/ui/fileInput"
 import { formDate } from "@/helpers/fechas"
-
+import { getImages_talleresAdmin } from "@/services/repoImage"
 // Schema de validación para cursos
 const cursoSchema = z
   .object({
@@ -79,26 +79,32 @@ const cursoSchema = z
   });
 
 export type CursoSchema = z.infer<typeof cursoSchema>
-
+// Props del componente CursoForm
 interface CursoFormProps {
   selectedCursoId: number | null
   cursos: any[]
   setSelectedCursoId: React.Dispatch<React.SetStateAction<number | null>>
   fetchCursos: () => Promise<void>
+  // Función para indicar que las imágenes han sido cargadas
+  // y que el componente padre debe actualizar su estado
+  fetchImages: () => Promise<void>
   setImagesLoaded: React.Dispatch<React.SetStateAction<boolean>>
 }
-
+// Componente de formulario para crear o editar un curso
 const CursoForm: React.FC<CursoFormProps> = ({
   selectedCursoId,
   cursos,
   setSelectedCursoId,
   fetchCursos,
   setImagesLoaded,
+  fetchImages, // <-- Add this line
 }) => {
   const [imagePreview, setImagePreview] = useState<string>("")
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [generalError, setGeneralError] = useState<string | null>(null)
+  const [imagesLoaded, setImagesLoaded2] = useState<boolean>(false)
+  // useEffect para cargar imágenes al montar el componente
 
   const selectedCurso =
     selectedCursoId !== null && selectedCursoId !== -1 ? cursos.find((curso) => curso.id === selectedCursoId) : null
@@ -118,6 +124,8 @@ const CursoForm: React.FC<CursoFormProps> = ({
     },
   })
 
+  
+  
   const {
     register,
     handleSubmit,
@@ -185,6 +193,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
       return false
     }
     setImagesLoaded(false)
+
     return true
   }
 
@@ -218,10 +227,27 @@ const CursoForm: React.FC<CursoFormProps> = ({
         const imageUploaded = await handleUploadAndFetchImages(selectedFile, data.imagen)
         if (!imageUploaded) return
       }
-
+    
       // Resetear estados y recargar cursos
-      await fetchCursos()
       resetState()
+      fetchCursos()  
+      // Recargar imágenes del taller
+    
+        fetchImages()
+      
+
+    
+   
+   
+      setImagesLoaded(false) // Marcar que las imágenes se han cargado para que el componente padre pueda reaccionar
+      // Aquí podrías llamar a una función para recargar las imágenes del taller
+  
+
+
+
+
+      setSelectedCursoId(null)
+
     } catch (error) {
       console.error("Error al guardar el curso:", error)
       setGeneralError("Error al guardar el curso. Inténtelo de nuevo.")
@@ -240,9 +266,15 @@ const CursoForm: React.FC<CursoFormProps> = ({
     setSelectedCursoId(null)
     setImagesLoaded(false)
     reset()
+   
+    
+    
     setSelectedFile(null)
     setGeneralError(null)
     setUploadError(null)
+
+    
+  
   }
 
   const handleCancel = async () => {
@@ -254,222 +286,175 @@ const CursoForm: React.FC<CursoFormProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
       <FormProvider {...methods}>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="bg-white rounded-lg shadow-lg w-full max-w-2xl relative flex flex-col gap-6 h-auto overflow-y-auto max-h-[90vh]"
-        >
-          <Card>
-            <CardHeader className="bg-blue-700 text-primary-foreground">
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="w-6 h-6" />
-                {selectedCursoId === -1 ? "Crear Taller" : "Editar Taller"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 pt-6">
-              {/* Debug section - remove after debugging */}
-              {/*               {Object.keys(errors).length > 0 && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm mb-4">
-                  <p>Errores de validación:</p>
-                  <ul className="list-disc pl-5">
-                    {Object.entries(errors).map(([field, error]) => (
-                      <li key={field}>
-                        {field}: {error.message}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )} */}
-              {generalError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
-                  {generalError}
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 gap-4">
-                <div>
-                  <Label htmlFor="nombre" className="flex items-center gap-2">
-                    <FileText className="w-4 h-4" />
-                    Nombre
-                  </Label>
-                  <Input
-                    id="nombre"
-                    type="text"
-                    placeholder="Nombre del taller"
-                    maxLength={75}
-                    {...register("nombre")}
-                    className="mt-1"
-                  />
-                  {errors.nombre && <p className="text-destructive text-sm mt-1">{errors.nombre.message}</p>}
-                </div>
-
-                <div>
-                  <Label htmlFor="descripcion" className="flex items-center gap-2">
-                    <FileText className="w-4 h-4" />
-                    Descripción
-                  </Label>
-                  <textarea
-                    id="descripcion"
-                    placeholder="Descripción del taller"
-                    maxLength={500}
-                    rows={5}
-                    {...register("descripcion")}
-                    className="w-full p-2 border rounded-md mt-1"
-                  />
-                  {errors.descripcion && <p className="text-destructive text-sm mt-1">{errors.descripcion.message}</p>}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="edadMinima" className="flex items-center gap-2">
-                      <FileText className="w-4 h-4" />
-                      Edad mínima
-                    </Label>
-                    <Input
-                      id="edadMinima"
-                      type="text"
-                      placeholder="Ingrese la edad mínima"
-                      
-                      {...register("edadMinima", { valueAsNumber: true })}
-                      className="mt-1"
-                    />
-                    {errors.edadMinima && <p className="text-destructive text-sm mt-1">{errors.edadMinima.message}</p>}
-                  </div>
-
-                  <div>
-                    <Label htmlFor="edadMaxima" className="flex items-center gap-2">
-                      <FileText className="w-4 h-4" />
-                      Edad máxima
-                    </Label>
-                    <Input
-                      id="edadMaxima"
-                      type="number"
-                      placeholder="Ingrese la edad máxima"
-                      min={1}
-                      max={99}
-                      
-                      {...register("edadMaxima", { valueAsNumber: true })}
-                      className="mt-1"
-                    />
-                    {errors.edadMaxima && <p className="text-destructive text-sm mt-1">{errors.edadMaxima.message}</p>}
-                  </div>
-                </div>
-                <div className="mb-4 flex gap-4">
-                  <div className="flex-1">
-                  <label htmlFor="fechaInicio" className="block text-sm font-medium mb-2">
-                    <Calendar className="w-4 h-4 inline-block mr-2" />
-                    Fecha de inicio del taller:
-                  </label>
-                  <input
-                    type="date"
-                    id="fechaInicio"
-                    name="fechaInicio"
-                    value={
-                    watch('fechaInicio') &&
-                    !isNaN(new Date(watch('fechaInicio')).getTime())
-                      ? new Date(watch('fechaInicio')).toISOString().split('T')[0]
-                      : ""
-                    }
-                    min={
-                    selectedCursoId !== -1
-                      ? new Date(selectedCurso?.fechaInicio || "").toISOString().split('T')[0]
-                      : new Date().toISOString().split('T')[0]
-                    }
-                    max={new Date(new Date().setFullYear(new Date().getFullYear() + 1))
-                    .toISOString()
-                    .split('T')[0]}
-                    onChange={(e) => setValue('fechaInicio', new Date(e.target.value).toISOString().split('T')[0])}
-                    className={`p-2 w-full border rounded text-sm ${errors.fechaInicio ? 'border-red-500' : 'border-gray-300'}`}
-                  />
-                  {errors.fechaInicio && (
-                    <p className="text-destructive text-sm mt-1">{errors.fechaInicio.message}</p>
-                  )}
-                  </div>
-                  <div className="flex-1">
-                    <label htmlFor="fechaFin" className="block text-sm font-medium mb-2">
-                    <Calendar className="w-4 h-4 inline-block mr-2" />
-                    Fecha de fin del taller:
-                    </label>
-                    <input
-                    type="date"
-                    id="fechaFin"
-                    name="fechaFin"
-                    value={
-                      watch('fechaFin') && 
-                      !isNaN(new Date(watch('fechaFin')).getTime())
-                      ? new Date(watch('fechaFin')).toISOString().split('T')[0]
-                      : ""
-                    }
-                    min={
-                      watch('fechaInicio') &&
-                      !isNaN(new Date(watch('fechaInicio')).getTime())
-                      ? new Date(new Date(watch('fechaInicio')).setDate(new Date(watch('fechaInicio')).getDate() + 7))
-                      .toISOString()
-                      .split('T')[0]
-                      : new Date(new Date().setDate(new Date().getDate() + 7))
-                      .toISOString()
-                      .split('T')[0]
-                    }
-                    max={
-                      watch('fechaInicio') &&
-                      !isNaN(new Date(watch('fechaInicio')).getTime())
-                      ? new Date(new Date(watch('fechaInicio')).setFullYear(new Date(watch('fechaInicio')).getFullYear() + 1))
-                      .toISOString()
-                      .split('T')[0]
-                      : new Date(new Date().setFullYear(new Date().getFullYear() + 1))
-                      .toISOString()
-                      .split('T')[0]
-                    }
-                    onChange={(e) => setValue('fechaFin', new Date(e.target.value).toISOString().split('T')[0])}
-                    className={`p-2 w-full border rounded text-sm ${errors.fechaFin ? 'border-red-500' : 'border-gray-300'}`}
-                    />
-
-                    {errors.fechaFin && <p className="text-destructive text-sm mt-1">{errors.fechaFin.message}</p>}
-                    
-                  </div>
-                </div>
-
-                <Label htmlFor="imagen" className="flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4" />
-                  Imagen
-                </Label>
-                <FileInput
-                  id="imagen"
-                  onImageChange={handleImageChange}
-                  previewUrl={imagePreview}
-                  className="mt-1"
-                  buttonText="Seleccionar imagen del taller"
-                />
-                {uploadError && <p className="text-destructive text-sm mt-1">{uploadError}</p>}
-                {selectedFile && (
-                  <p className="text-green-600 text-sm mt-1">Archivo seleccionado: {selectedFile.name}</p>
-                )}
-                {imagePreview && !selectedFile && (
-                  <img
-                    src={imagePreview || "/placeholder.svg"}
-                    alt="Imagen del taller"
-                    className="mt-4 w-full h-auto rounded-md"
-                  />
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-between px-6 pb-6">
-            <Button type="button" onClick={handleCancel} variant="destructive" disabled={isSubmitting}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={isSubmitting} className="bg-indigo-600 hover:bg-indigo-700 text-white">
-              {isSubmitting ? (
-                <>
-                  <Loader className="mr-2 h-4 w-4 animate-spin" />
-                  Guardando...
-                </>
-              ) : (
-                "Guardar"
-              )}
-            </Button>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="bg-white rounded-lg shadow-lg w-full max-w-[90rem] relative flex flex-col gap-6 h-auto overflow-y-auto max-h-[90vh]"
+      >
+        <Card>
+        <CardHeader className="bg-blue-700 text-primary-foreground">
+          <CardTitle className="flex items-center gap-2">
+          <FileText className="w-6 h-6" />
+          {selectedCursoId === -1 ? "Crear Taller" : "Editar Taller"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6 pt-6">
+          {generalError && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
+            {generalError}
           </div>
-        </form>
+          )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
+            <Label htmlFor="nombre">Nombre</Label>
+            <Input
+            id="nombre"
+            type="text"
+            placeholder="Nombre del taller"
+            maxLength={75}
+            {...register("nombre")}
+            className="mt-1"
+            />
+            {errors.nombre && <p className="text-destructive text-sm mt-1">{errors.nombre.message}</p>}
+            </div>
+            <div>
+            <Label htmlFor="descripcion">Descripción</Label>
+            <textarea
+            id="descripcion"
+            placeholder="Descripción del taller"
+            maxLength={500}
+            rows={6}
+            {...register("descripcion")}
+            className="w-full p-2 border rounded-md mt-1 min-w-[350px] md:min-w-[500px] lg:min-w-[700px]"
+            />
+            {errors.descripcion && <p className="text-destructive text-sm mt-1">{errors.descripcion.message}</p>}
+            </div>
+            
+             
+            <div className="md:col-span-2 lg:col-span-3 flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <Label htmlFor="edadMinima">Edad mínima</Label>
+              <Input
+              id="edadMinima"
+              type="number"
+              placeholder="Edad mínima"
+              {...register("edadMinima", { valueAsNumber: true })}
+              className="mt-1"
+              />
+              {errors.edadMinima && <p className="text-destructive text-sm mt-1">{errors.edadMinima.message}</p>}
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="edadMaxima">Edad máxima</Label>
+              <Input
+              id="edadMaxima"
+              type="number"
+              placeholder="Edad máxima"
+              min={1}
+              max={99}
+              {...register("edadMaxima", { valueAsNumber: true })}
+              className="mt-1"
+              />
+              {errors.edadMaxima && <p className="text-destructive text-sm mt-1">{errors.edadMaxima.message}</p>}
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="fechaInicio">Fecha de inicio</Label>
+              <Input
+              id="fechaInicio"
+              type="date"
+              {...register("fechaInicio")}
+              min={
+              selectedCursoId !== -1
+              ? selectedCurso?.fechaInicio
+                ? formDate(selectedCurso.fechaInicio)
+                : new Date().toISOString().split('T')[0]
+              : new Date().toISOString().split('T')[0]
+              }
+              max={new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+              .toISOString()
+              .split('T')[0]}
+              className={`mt-1 ${errors.fechaInicio ? 'border-red-500' : ''}`}
+              />
+              {errors.fechaInicio && (
+              <p className="text-destructive text-sm mt-1">{errors.fechaInicio.message}</p>
+              )}
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="fechaFin">Fecha de fin</Label>
+              <Input
+              id="fechaFin"
+              type="date"
+              {...register("fechaFin")}
+              min={
+              watch('fechaInicio') &&
+              !isNaN(new Date(watch('fechaInicio')).getTime())
+              ? new Date(new Date(watch('fechaInicio')).setDate(new Date(watch('fechaInicio')).getDate() + 7))
+                .toISOString()
+                .split('T')[0]
+              : new Date(new Date().setDate(new Date().getDate() + 7))
+                .toISOString()
+                .split('T')[0]
+              }
+              max={
+              watch('fechaInicio') &&
+              !isNaN(new Date(watch('fechaInicio')).getTime())
+              ? new Date(new Date(watch('fechaInicio')).setFullYear(new Date(watch('fechaInicio')).getFullYear() + 1))
+                .toISOString()
+                .split('T')[0]
+              : new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+                .toISOString()
+                .split('T')[0]
+              }
+              className={`mt-1 ${errors.fechaFin ? 'border-red-500' : ''}`}
+              />
+              {errors.fechaFin && <p className="text-destructive text-sm mt-1">{errors.fechaFin.message}</p>}
+            </div>
+            </div>
+
+        </div>
+        <div className="mt-6 w-full max-w-[350px] md:max-w-[500px] lg:max-w-[700px]">
+            <Label htmlFor="imagen" className="flex items-center gap-2">
+            <ImageIcon className="w-4 h-4" />
+            Imagen
+          </Label>
+          <FileInput
+            id="imagen"
+            onImageChange={handleImageChange}
+            previewUrl={imagePreview}
+            className="mt-1"
+            buttonText="Seleccionar imagen del taller"
+          />
+          {uploadError && <p className="text-destructive text-sm mt-1">{uploadError}</p>}
+          {selectedFile && (
+            <p className="text-green-600 text-sm mt-1">Archivo seleccionado: {selectedFile.name}</p>
+          )}
+          {imagePreview && !selectedFile && (
+            <img
+              src={imagePreview || "/placeholder.svg"}
+              alt="Imagen del taller"
+              className="mt-4 w-full h-auto rounded-md"
+            />
+          )}
+           
+         </div>
+      
+        </CardContent>
+        </Card>
+        <div className="flex justify-between px-6 pb-6">
+        <Button type="button" onClick={handleCancel} variant="destructive" disabled={isSubmitting}>
+          Cancelar
+        </Button>
+        <Button type="submit" disabled={isSubmitting} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+          {isSubmitting ? (
+          <>
+            <Loader className="mr-2 h-4 w-4 animate-spin" />
+            Guardando...
+          </>
+          ) : (
+          "Guardar"
+          )}
+        </Button>
+        </div>
+      </form>
       </FormProvider>
     </div>
   )
