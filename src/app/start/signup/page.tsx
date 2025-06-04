@@ -6,9 +6,13 @@ import { createAlumno, emailExists } from "../../../services/Alumno";
 import { validateApellido, validateEmail, validateFechaNacimiento, validateNombre, validatePasswordComplexity } from '@/helpers/validaciones';
 import Loader from '@/components/Loaders/loadingSave/page';
 import Consentimiento from './Consentimiento';
-import { XCircle } from "lucide-react";
+
+
 
 import SignupEmail from '@/components/start/SignupEmail';
+import { CheckCircle, Circle } from 'lucide-react';
+import PasswordInput from '@/components/passwordInput/passwordForm';
+import PasswordForm from '@/components/passwordInput/passwordForm';
 /*emailPage props: {email: string;
   setCorrecto: React.Dispatch<React.SetStateAction<boolean>>;
   correcto: boolean;
@@ -28,11 +32,10 @@ function Signup() {
     const edadMaxima = new Date(Hoy.getFullYear() - 100, Hoy.getMonth(), Hoy.getDate());
 
     const [alertaFinal, setAlertaFinal] = useState<boolean>(false);
-    const [errors, setErrors] = useState<{ nombre?: string; apellido?: string; email?: string; password?: string; fechaNacimiento?: string}>({});
+    const [errors, setErrors] = useState<{ nombre?: string; apellido?: string; email?: string; password?: string; fechaNacimiento?: string }>({});
     const [isSaving, setIsSaving] = useState(false);
     const [showEmailVerification, setShowEmailVerification] = useState(false);
     const [isEmailVerified, setIsEmailVerified] = useState(false);
-    const [passwordVisible, setPasswordVisible] = useState(false);
 
     // en para los errores de registro se muestra un mensaje de error por 5 segundos
     // 
@@ -79,7 +82,6 @@ function Signup() {
     //region validateForm
     const validateForm = async () => {
         const newErrors: { nombre?: string; apellido?: string; email?: string; password?: string; fechaNacimiento?: string; } = {};
-  
 
 
         const estado = await emailExists(email)
@@ -277,45 +279,10 @@ function Signup() {
                                 />
                                 {errors && <p className="absolute max-w-56 text-red-500 text-sm mt-1">{errors.email}</p>}
                             </div>
-                            <div className='mb-7 relative'>
-                            <label
-                                    className="font-semibold text-sm text-gray-600 pb-1 block"
-                                    htmlFor="email"
-                                >
-                                    Contraseña
-                                </label>
-                                <input
-                                    type={passwordVisible ? "text" : "password"}
-                                    id="password"
-                                    className={` rounded-lg px-3 py-2 mt-1 ${errors.password ? "border-red-600" : "border-gray-200"}  text-sm w-full border `}
-                                    placeholder="Ingrese su contraseña"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                     className="absolute inset-y-5 end-0 h-5 w-5 m-4 text-gray-400 cursor-pointer"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    onClick={() => { setPasswordVisible(!passwordVisible); console.log(passwordVisible); }}
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                    />
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                    />
-                                </svg>
+                            <div className='mb-7 '>
+                                <PasswordForm errors={errors} password={password} setPassword={setPassword} placeholderPassw='Ingrese su contraseña' />
                             </div>
+
                             <div className='mb-7'>
                                 <label
                                     className="font-semibold text-sm text-gray-600 pb-1 block"

@@ -52,7 +52,7 @@ const Carrusel = () => {
                 ))}
             </div>
             {/* Slider indicators */}
-            <div className="absolute bottom-5 z-50 flex -translate-x-1/2 space-x-3 left-1/2">
+            <div className="absolute bottom-5  flex -translate-x-1/2 space-x-3 left-1/2">
                 {images.map((_, index) => (
                     <button
                         key={index}
@@ -97,7 +97,7 @@ const Carrusel = () => {
                 </button>
             </div>
 
-            <div className="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-2">
+            <div className="absolute top-0  z-30 flex items-center justify-center h-full px-2">
                 <button
                     type="button"
                     className="h-10 px-4 cursor-pointer group focus:outline-none"

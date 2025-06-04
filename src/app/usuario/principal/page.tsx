@@ -32,17 +32,17 @@ const Principal: React.FC = () => {
   return (
     <main
       className="flex flex-col min-h-screen bg-cover bg-center"
-      style={{
+      /* style={{
         backgroundImage: `url(${Background.src})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-      }}
+      }} */
     >
       {/* Navegación */}
       <Navigate />
 
       {/* Contenido principal */}
-      <div className="flex flex-col min-h-[88vh] flex-grow bg-white/50 p-6">
+      <div className="flex flex-col min-h-[88vh] flex-grow bg-gray-50 p-6">
         {/* Mensaje de bienvenida */}
         <div className="mt-16 text-center mb-6">
           <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold">

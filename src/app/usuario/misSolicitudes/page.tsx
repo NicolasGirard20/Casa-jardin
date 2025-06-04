@@ -13,6 +13,7 @@ import SolicitudMayoresCard from "@/components/Admin/solicitudes/SolicitudMayore
 import SolicitudMenoresCard from "@/components/Admin/solicitudes/SolicitudMenoresCard";
 import { XCircle, ArrowLeft } from "lucide-react";
 import FeedbackCard from "@/components/alumno/solicitudes/feedBackCard";
+import Image from "next/image";
 
 const misSolicitudes: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -76,12 +77,12 @@ const misSolicitudes: React.FC = () => {
 
   if (loading) {
     return (
-      <main className="min-h-screen flex flex-col bg-cover bg-center" style={{ backgroundImage: `url(${Background.src})` }}>
+      <main className="min-h-screen flex flex-col bg-cover bg-center" /* style={{ backgroundImage: `url(${Background.src})` }} */>
         <Navigate />
         <div className="flex-grow flex min-h-[88vh] items-center justify-center bg-white/50">
           <div className="flex flex-col items-center gap-4 ">
             <Loader />
-            <h1 className="text-gray-700">Cargando solicitudes</h1>
+            <h1 className="text-gray-700">Cargando solicitudes...</h1>
           </div>
         </div>
         <But_aside />
@@ -90,10 +91,17 @@ const misSolicitudes: React.FC = () => {
   }
 
   return (
-    <main className="min-h-screen flex flex-col bg-cover bg-center" style={{ backgroundImage: `url(${Background.src})` }}>
+    <main className="min-h-screen flex flex-col bg-cover bg-center" /* style={{ backgroundImage: `url(${Background.src})` }} */>
       <Navigate />
-
-      <div className="flex-grow flex bg-white/50 p-4">
+ {/*            <Image
+              src={Background}
+              alt="Background"
+              layout="fill"
+              objectFit="cover"
+              quality={80}
+              priority={true}
+            /> */}
+      <div className="flex-grow flex bg-gray-50 p-4">
         <div className="container mx-auto flex flex-col">
           <h1 className="text-2xl font-semibold text-gray-800 mb-6 mt-14 text-center">
             Tus Solicitudes

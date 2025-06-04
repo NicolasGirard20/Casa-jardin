@@ -1,6 +1,5 @@
 "use server"
 
-import { API } from "@/helpers/Api";
 import { PrismaClient } from "@prisma/client";
 
 
@@ -44,7 +43,7 @@ export async function updateDireccionById(direccionId: number, data: {
   });
 }
 
-export async function getDireccionByCalleNumero(calle: string, numero: number) {
+export async function getDireccionByCalleNumero(calle: string, numero: number, localidadId: number) {
   return await prisma.direccion.findFirst({
     where: {
       calle: {
@@ -52,6 +51,7 @@ export async function getDireccionByCalleNumero(calle: string, numero: number) {
         mode: 'insensitive', // This ensures case-insensitive comparison
       },
       numero: numero,
+      localidadId: localidadId
     },
   });
 }
@@ -66,7 +66,9 @@ export async function addDireccion(data: {
     numero: data.numero,
     localidadId: data.localidadId
   }
-  const direccionExistente = await getDireccionByCalleNumero(dataTrim.calle, dataTrim.numero);
+  //console.log("agrego direccion", dataTrim)
+  const direccionExistente = await getDireccionByCalleNumero(dataTrim.calle, dataTrim.numero, dataTrim.localidadId);
+  //console.log("direccion encontrada", direccionExistente) 
   if (direccionExistente) {
     console.log("DIRECCION EXISTENTE")
     return direccionExistente;

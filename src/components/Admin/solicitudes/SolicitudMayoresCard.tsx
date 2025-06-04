@@ -78,10 +78,11 @@ const SolicitudMayoresCard: React.FC<SolicitudCardProps> = ({ data }) => {
     }
 };
 
+//region return
 return (
-    <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+    <div className="max-w-4xl mx-auto  p-4 sm:p-6 space-y-6">
       {loaded ? (
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-white rounded-lg  shadow-lg overflow-hidden">
           <div className="bg-blue-600 p-4 text-white">
             <h2 className="text-2xl font-bold flex items-center gap-2">
               <NotebookText className="w-5 h-5" />

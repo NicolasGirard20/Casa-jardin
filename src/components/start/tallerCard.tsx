@@ -124,7 +124,7 @@ export default function TallerCard({ taller, profesionales }: TallerCardProps) {
       </div>
 
       <TallerModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-y-auto max-h-[80vh]">
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">{taller.nombre}</h2>
             <p className="text-muted-foreground">{taller.descripcion}</p>

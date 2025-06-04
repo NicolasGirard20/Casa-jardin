@@ -102,10 +102,7 @@ const Reglamentacion: React.FC<Datos> = ({ setDatosReglamentacion }) => {
                     <div className='flex justify-center items-center mt-8 flex-col border-t p-2'>
                         <label htmlFor="firma">Firma de Padre/Madre/Tutor</label>
                         <input type="text" name="firma" id="firma" className="border rounded w-96" placeholder='Ingrese su firma' onChange={(e) => setDatosReglamentacion(prev => ({ ...prev, firma: e.target.value }))} />
-                        <div className='flex'>
-                            <span>Al hacer clic en enviar usted esta aceptando el&nbsp;</span>
-                            <button className="text-red-500 underline" onClick={() => setAlertaFinal(true)}>Consentimiento</button>
-                        </div>
+            
                     </div>
                 </div>
             </div>

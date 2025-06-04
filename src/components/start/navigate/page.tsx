@@ -66,7 +66,7 @@ export default function Navigate() {
       {/* Mobile Navigation */}
       {menuOpen && (
         <div
-          className="lg:hidden fixed top-16 left-0 w-full bg-sky-600 text-white flex flex-col items-center space-y-4 py-4 max-h-[70vh] overflow-y-auto z-50 shadow-lg"
+          className="fixed  lg:hidden top-16 left-0 w-full bg-sky-600 text-white flex flex-col items-center space-y-4 py-4 max-h-[70vh] overflow-y-auto z-[9999] shadow-lg"
         >
           <NavLink href="/start/Inicio">Inicio</NavLink>
           <div className="border-t w-full"></div>

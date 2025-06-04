@@ -89,7 +89,7 @@ const Talleres = () => {
     };
     return (
         <>
-            <main className="relative min-h-screen pb-5 text-gray-600 body-font">
+            <main className="relative min-h-[110vh] sm:min-h-screen md:min-h-screen xl:min-h-screen  text-gray-600 body-font">
                 <Navigate />
                 <div className="fixed inset-0 opacity-70 z-[-1] h-full w-full">
                     <Image src={Background}
@@ -111,7 +111,7 @@ const Talleres = () => {
                     {cursos.length === 0 && (
                         <div className="flex justify-center items-center  w-full"><Loader /></div>
                     )}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 my-4">
+                    <div className="grid grid-cols-1 min-h-[40vh] sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 my-4">
 
                         {cursos.length !== 0 && cursos.map((curso) => (
                             <TallerCard key={curso.id} taller={curso} profesionales={profesionalesDict[curso.id]} />
@@ -120,7 +120,7 @@ const Talleres = () => {
                     </div>
                 </div>
                 <div
-                    className="mt-12 absolute bottom-0  border-t w-full opacity-90 bg-sky-600"
+                    className=" bottom-0  border-t w-full opacity-90 bg-sky-600"
                 >
                     <But_aside />
                 </div>

@@ -34,10 +34,8 @@ interface Datos {
 }
 
 const DatosAlumno: React.FC<Datos> = ({ setDatosAlumno, datosAlumno, setError }) => {
-    const [cursos, setCursos] = useState<any>(["No se pudo cargar los cursos"]);
-    const [direccionAlumno, setDireccionAlumno] = useState<any>("No se pudo cargar la dirección");
     const alumno = datosAlumno;
-    const direccionAlumnoStr = `${direccionAlumno.calle || ''} ${direccionAlumno.numero || ''}, ${direccionAlumno.localidad || 'Unknown'}, ${direccionAlumno.provincia || 'Unknown'}, ${direccionAlumno.pais || 'Unknown'}`;	
+    const direccionAlumnoStr = `${datosAlumno.calle || ''} ${datosAlumno.numero || ''}, ${datosAlumno.localidad || 'Unknown'}, ${datosAlumno.provincia || 'Unknown'}, ${datosAlumno.pais || 'Unknown'}`;	
 
 
   
@@ -71,7 +69,7 @@ const DatosAlumno: React.FC<Datos> = ({ setDatosAlumno, datosAlumno, setError })
                   <p className="font-medium"><span className="font-semibold">DNI:</span> {alumno.dni}</p>
                   <p className="font-medium"><span className="font-semibold">Email:</span> {alumno.correoElectronico}</p>
                   <p className="font-medium"><span className="font-semibold">Fecha de Nacimiento:</span> {new Date(alumno.fechaNacimiento).toLocaleDateString()}</p>
-                  <p className="font-medium"><span className="font-semibold">Dirección:</span> {direccionAlumno}</p>
+                  <p className="font-medium"><span className="font-semibold">Dirección:</span> {direccionAlumnoStr}</p>
                 </div>
               </div>
             </div>

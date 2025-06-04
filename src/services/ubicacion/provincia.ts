@@ -1,5 +1,5 @@
 "use server"
-import { API } from "@/helpers/Api";
+
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
 import { getRolById } from "../rol";
@@ -20,13 +20,14 @@ export async function getProvinciasById(ProvinciasId: number) {
     },
   });
 }
-export async function getProvinciasByName(ProvinciasName: string) {
+export async function getProvinciasByName(ProvinciasName: string, nacionalidadId: number) {
   return await prisma.provincia.findFirst({
     where: {
       nombre: {
         equals: ProvinciasName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleUpperCase(),
         mode: 'insensitive',
-      }
+      },
+      nacionalidadId: Number(nacionalidadId),
     },
   });
 }
@@ -39,7 +40,7 @@ export async function addProvincias(data: {
     nombre: data.nombre.trim(),
     nacionalidadId: data.nacionalidadId,
   }
-  const provinciaExistente = await getProvinciasByName(dataTrim.nombre);
+  const provinciaExistente = await getProvinciasByName(dataTrim.nombre, dataTrim.nacionalidadId);
   if(provinciaExistente){
     console.log("PROVINCIA EXISTENTE")
     return provinciaExistente;

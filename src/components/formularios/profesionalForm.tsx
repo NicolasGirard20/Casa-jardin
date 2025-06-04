@@ -134,12 +134,12 @@ const ProfesionalForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div>
                       <Label htmlFor="nombre">Nombre</Label>
-                      <Input id="nombre" type="text" {...register("nombre")} className="mt-1" />
+                      <Input id="nombre" placeholder="Nombre del Profesional" type="text" {...register("nombre")} className="mt-1" />
                       {errors.nombre && <p className="text-destructive text-sm mt-1">{errors.nombre.message}</p>}
                     </div>
                     <div>
                       <Label htmlFor="apellido">Apellido</Label>
-                      <Input id="apellido" type="text" {...register("apellido")} className="mt-1" />
+                      <Input id="apellido" placeholder="Apellido del Profesional" type="text" {...register("apellido")} className="mt-1" />
                       {errors.apellido && <p className="text-destructive text-sm mt-1">{errors.apellido.message}</p>}
                     </div>
                     <div>

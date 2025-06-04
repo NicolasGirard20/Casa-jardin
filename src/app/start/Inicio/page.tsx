@@ -45,17 +45,17 @@ const RotatingImages: React.FC = () => {
   return (
     <div className="w-full h-96 flex items-center justify-center overflow-hidden">
       {downloadurls.length > 0 && (
-      <div className="relative rounded-lg w-full lg:w-4/5 h-full">
-        <Image
-        src={downloadurls[currentImageIndex]}
-        alt="Rotating Banner"
-        layout="fill"
-        objectFit="cover"
-        quality={80}
-        priority={true}
-        className="z-0"
-        />
-      </div>
+        <div className="relative rounded-lg w-full lg:w-4/5 h-full">
+          <Image
+            src={downloadurls[currentImageIndex]}
+            alt="Rotating Banner"
+            layout="fill"
+            objectFit="cover"
+            quality={80}
+            priority={true}
+            className="z-0"
+          />
+        </div>
       )}
     </div>
   );
@@ -120,38 +120,38 @@ const Inicio = () => {
       </div>
 
       {/* Banner de imágenes */}
-      <div className="relative  z-30 mt-18 md:mt-20 lg:mt-20"> {/* mt-16 para dar espacio al Navigate */}
+      <div className="relative  z-30 mt-18  lg:mt-20"> {/* mt-16 para dar espacio al Navigate */}
         <RotatingImages />
       </div>
 
       {/* Contenido principal */}
       <div className="flex flex-col items-center justify-center mt-10 ">
-        <section className="py-42 w-full lg:w-2/3 md:w-2/3 text-pretty font-sans text-lg leading-relaxed ">
-          <div className="container">
-            <div className="grid items-center gap-8 2xl:grid-cols-2 shadow-lg bg-slate-50 rounded-lg p-2">
+        <section className="py-42  w-full lg:w-2/3 md:w-2/3 text-pretty font-sans text-lg leading-relaxed ">
+          <div className="container mx-auto ">
+            <div className="grid items-center w-full  gap-8 2xl:grid-cols-2 shadow-lg bg-slate-50 rounded-lg p-2">
               <div className="flex flex-col p-2 items-center text-center 2xl:items-start 2xl:text-left">
-              <div
-                className="mt-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground">
-                Qué somos?<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                className="lucide lucide-arrow-down-right ml-2 size-4">
-                <path d="m7 7 10 10"></path>
-                <path d="M17 7v10H7"></path>
-                </svg>
-              </div>
-              <h1 className="my-2 mb-4 p-2 text-pretty text-4xl font-bold lg:text-6xl">Bienvenidos a Casa Jardin</h1>
-              <p className="mb-8 max-w-xl text-zinc-600 lg:text-xl py-2 px-6">
-                ¡Bienvenidos a Casa Jardin, un espacio para Aprender, Crear y Crecer!
-                <br />
-                <br />
-                En nuestra academia, creemos que el aprendizaje no tiene límites de edad.
-                Por eso, hemos diseñado un lugar donde personas de todas las generaciones,
-                desde los más pequeños hasta adultos, pueden desarrollar nuevas habilidades,
-                descubrir sus talentos y explorar su creatividad.
-              </p>
+                <div
+                  className="mt-2 inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground">
+                  Qué somos?<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    className="lucide lucide-arrow-down-right ml-2 size-4">
+                    <path d="m7 7 10 10"></path>
+                    <path d="M17 7v10H7"></path>
+                  </svg>
+                </div>
+                <h1 className="my-2 mb-4 p-2 text-pretty text-4xl font-bold lg:text-6xl">Bienvenidos a Casa Jardin</h1>
+                <p className="mb-8 max-w-xl text-zinc-600 lg:text-xl py-2 px-6">
+                  ¡Bienvenidos a Casa Jardin, un espacio para Aprender, Crear y Crecer!
+                  <br />
+                  <br />
+                  En nuestra academia, creemos que el aprendizaje no tiene límites de edad.
+                  Por eso, hemos diseñado un lugar donde personas de todas las generaciones,
+                  desde los más pequeños hasta adultos, pueden desarrollar nuevas habilidades,
+                  descubrir sus talentos y explorar su creatividad.
+                </p>
               </div>
               <div className="flex justify-center">
-              <Image className="max-h-96 object-cover rounded-md" src={childStartImage} alt="childStart" width={500} height={400} />
+                <Image className="max-h-96 object-cover rounded-md" src={childStartImage} alt="childStart" width={500} height={400} />
               </div>
             </div>
           </div>

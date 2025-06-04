@@ -10,7 +10,7 @@ import { getImagesUser } from "@/services/repoImage"
 import withAuth from "../../../components/Admin/adminAuth" //para subir imagenes:
 import { handleDeleteProfesionalImage, mapearImagenes } from "@/helpers/repoImages"
 import Background from "../../../../public/Images/Background.jpeg"
-import Loader from "@/components/Loaders/loader/loader"
+import Loader from "@/components/Loaders/loadingTalleres/page";
 import { Briefcase, Mail, Pencil, Phone, Plus, Search, Trash2, BookOpen } from "lucide-react"
 //para el nuevo formulario
 import type { ProfesionalSchema } from "@/components/formularios/profesionalAdminForm"
@@ -283,11 +283,9 @@ const Profesionales = () => {
                 <div className="col-span-3 text-center">ACCIÓN</div>
             </div>
             {loading || loadingImages ? (
-              <div className="py-12 px-6 text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
-                  <Loader />
-                </div>
-              </div>
+              <div className="flex justify-center items-center py-12">
+              <Loader />
+            </div>
             ) : profesionales.length === 0 ? (
               <div className="py-12 px-6 text-center">
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
@@ -384,6 +382,7 @@ const Profesionales = () => {
             setChanged={setChanged}
             nueva={false}
             downloadUrl={selectedProfesional.id ? imageUrls[selectedProfesional.id] : ""}
+            
           />
         </div>
       )}
@@ -395,6 +394,7 @@ const Profesionales = () => {
             setChanged={setChanged}
             nueva={true}
             downloadUrl=""
+            setProfesionalesListaCompleta = {setProfesionalesListaCompleta}
           />
         </div>
       )}

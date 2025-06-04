@@ -32,7 +32,7 @@ type Usuario = {
 };
 
 type Direccion = {
-    pais: string;
+    pais: "Argentina"
     provincia: string;
     localidad: string;
     calle: string;
@@ -99,16 +99,26 @@ const Cuenta: React.FC = () => {
             setMayoriaEdad(false);
             const r = await getResponsableByAlumnoId(user.id);
             console.log("responsable", responsable);
-            if(r && r.direccionId){
-                const direccion = await getDireccionSimple(r.direccionId);
-                setResponsable({...r, direccion: direccion});
-            }
-            else{setResponsable(r);}
+            if (r && r.direccionId) {
+              const direccion = await getDireccionSimple(r.direccionId);
+              setResponsable({
+                  ...r,
+                  direccion: {
+                      pais: "Argentina",
+                      provincia: direccion?.provincia || "",
+                      localidad: direccion?.localidad || "",
+                      calle: direccion?.calle || "",
+                      numero: direccion?.numero || 0,
+                  },
+              });
+          } else {
+              setResponsable(r);
+          }
         }
         //cargar direccion en user
         if(user.direccionId){
             const direccion = await getDireccionSimple(user.direccionId);
-            setUser({...user, direccion: direccion});
+            setUser({...user, direccion: {...direccion, pais: "Argentina"}});
         }
         console.log("---------> edad", edad)
         console.log("mayoria edad:", mayoriaEdad);
@@ -149,9 +159,19 @@ const Cuenta: React.FC = () => {
             if(!r) return
             if(r.direccionId){
                 const direccion = await getDireccionSimple(r.direccionId);
-                setResponsable({...r, direccion: direccion});
+                setResponsable({
+                  ...r,
+                  direccion: {
+                      pais: "Argentina",
+                      provincia: direccion?.provincia || "",
+                      localidad: direccion?.localidad || "",
+                      calle: direccion?.calle || "",
+                      numero: direccion?.numero || 0,
+                  },
+              });
             }
             else{setResponsable(r);}
+
         //
         setCambiosResponsable(false);
         setLoading(false);
@@ -208,8 +228,8 @@ const allEmptyFields = [...userEmptyFields, ...responsableEmptyFields]
   return (
     <div className="flex flex-col min-h-screen">
       <main
-        className="flex-grow min-h-[98vh] relative overflow-auto bg-cover bg-center"
-        style={{ backgroundImage: `url(${Background.src})` }}
+        className="flex-grow min-h-[98vh] relative bg-gray-50 overflow-auto bg-cover bg-center"
+        /* style={{ backgroundImage: `url(${Background.src})` }} */
       >
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-sky-50 to-gray-100" />
         <div className="fixed justify-between w-full z-10">
@@ -257,7 +277,7 @@ const allEmptyFields = [...userEmptyFields, ...responsableEmptyFields]
           ) : (
             <div className={`grid gap-8 ${mayoriaEdad ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
               {/* Datos del alumno */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden h-fit">
+              <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden h-fit">
                 <div className="px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 flex justify-between items-center">
                   <h2 className="text-xl font-semibold text-white flex items-center">
                     <Smile className="w-6 h-6 inline-block mr-2" />
@@ -273,7 +293,7 @@ const allEmptyFields = [...userEmptyFields, ...responsableEmptyFields]
                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-1">
                         <label className="text-sm font-medium text-gray-500">Nombre</label>
-                        <p className="text-gray-900">{user?.nombre ? user.nombre : "-"}</p>
+                        <p className="text-gray-900 ">{user?.nombre ? user.nombre : "-"}</p>
                       </div>
                       <div className="space-y-1">
                         <label className="text-sm font-medium text-gray-500">Apellido</label>
@@ -281,7 +301,7 @@ const allEmptyFields = [...userEmptyFields, ...responsableEmptyFields]
                       </div>
                       <div className="space-y-1">
                         <label className="text-sm font-medium text-gray-500">Email</label>
-                        <p className="text-gray-900">{user?.email ? user.email : "-"}</p>
+                        <p className="text-gray-900  ">{user?.email ? user.email : "-"}</p>
                       </div>
                       <div className="space-y-1">
                         <label className="text-sm font-medium text-gray-500">Fecha de Nacimiento</label>

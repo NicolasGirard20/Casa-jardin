@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Navigate from "../../../components/Admin/navigate/page";
-import { getCursosCout, deleteCurso } from "../../../services/cursos";
-import { getAlumnosByIdCurso } from "../../../services/alumno_curso";
+import { getCursosCout, deleteCurso, Curso } from "../../../services/cursos";
+import { createAlumno_Curso, getAlumnosByIdCurso } from "../../../services/alumno_curso";
 import Background from "../../../../public/Images/Background.jpeg";
 import NoImage from "../../../../public/Images/default-no-image.png";
 import { getImages_talleresAdmin } from "@/services/repoImage";
@@ -12,8 +12,12 @@ import { autorizarAdmin } from "@/helpers/cookies";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/Loaders/loadingTalleres/page";
 import { mapearImagenes } from "@/helpers/repoImages";
-import {  Calendar, FileText,   Pencil,   Plus,   Search,   Trash2,   Users } from "lucide-react";
+import { Calendar, FileText, GraduationCap, Pencil, Plus, Search, Trash2, UserRound, Users, UsersRound, X } from "lucide-react";
 import CursoForm from "./../../../components/formularios/CursoForm";
+import { Alumno, getAlumnos } from "@/services/Alumno";
+import UserSelector from "@/components/Admin/userSelector";
+import { getProfesionalesByCursoId } from "@/services/profesional_curso";
+import Talleres from "@/components/talleres/page";
 
 const Cursos: React.FC = () => {
   // Estado para almacenar la lista de cursos
@@ -30,48 +34,75 @@ const Cursos: React.FC = () => {
       edadMaxima: number;
       imagen: string | null;
       imageUrl?: string;
-      cantidadParticipantes: number;
+      cantidadAlumnos: number;
+      cantidadProfesionales: number;
     }[]
   >([]);
-  
+
   // Estado para almacenar el ID del curso seleccionado
   const [selectedCursoId, setSelectedCursoId] = useState<number | null>(null);
-  
-  // Seleccionar curso para mostrar los alumnos que tiene inscriptos
-  const [selectedCursoIdAlumnos, setSelectedCursoIdAlumnos] = useState<number | null>(null);
-  
+
+  // Estado para almacenar el  cursos seleccionados
+  const [cursoselected, setCursoSelected] = useState<Curso | null>(null);
+
+
   // Estado para almacenar mensajes de error
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  
+
   // Estado para almacenar las imagenes
   const [images, setImages] = useState<any[]>([]);
   const [downloadurls, setDownloadurls] = useState<any[]>([]);
-  
+
   // Estado para almacenar el término de búsqueda
   const [searchTerm, setSearchTerm] = useState<string>("");
-  
+
   // Estado para confirmación de eliminación
   const [cursoAEliminar, setCursoAEliminar] = useState<{
     id: number;
     nombre: string;
   } | null>(null);
-  
+
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  
+
   // Boolean para saber si las imagenes ya se cargaron
   const [imagesLoaded, setImagesLoaded] = useState<boolean>(false);
-  
+
   // Boolean para saber si estan cargando los cursos
   const [loading, setLoading] = useState<boolean>(true);
-  
+
+  // Boolean para saber si estan cargando los cursos
+  const [loading2, setLoading2] = useState<boolean>(true);
+
   // Estado para almacenar la lista de alumnos
   const [alumnos, setAlumnos] = useState<any[]>([]);
-  
+
+  // Estado para almacenar la lista de alumnos
+  const [profesionales, setProfesionales] = useState<any[]>([]);
+
   // Estado para almacenar los cursos filtrados
   const [filteredCursos, setFilteredCursos] = useState(cursos);
-  
+
+  //Estado para abrir el modal de agregar alumnos
+  const [openModalAlumnos, setOpenModalAlumnos] = useState(false);
+
+  //Estado para abrir el modal de agregar profesionales
+  const [openModalProfesionales, setOpenModalProfesionales] = useState(false);
+
+  // Estado para almacenar la cantidad de alumnos y profesionales por taller (matriz)
+  const [participantesPorTaller, setParticipantesPorTaller] = useState<
+    { cursoId: number; alumnos: number; profesionales: number }[]
+  >([]);
+
+  // Método para obtener la cantidad de alumnos o profesionales por id de taller
+  const getCantidadPorTaller = (
+    cursoId: number,
+    tipo: "alumnos" | "profesionales"
+  ): number => {
+    const entry = participantesPorTaller.find((p) => p.cursoId === cursoId);
+    return entry ? entry[tipo] : 0;
+  };
   const router = useRouter();
-  
+
   // Autorización de admin
   useEffect(() => {
     const authorize = async () => {
@@ -79,19 +110,19 @@ const Cursos: React.FC = () => {
     };
     authorize();
   }, [router]);
-  
+
   // Cargar cursos al iniciar
   useEffect(() => {
-    fetchCursos();
-  }, []);
-  
+    if (cursos.length === 0) fetchCursos();
+  }, [cursos]);
+
   // Cargar imágenes después de cargar cursos
   useEffect(() => {
     if (cursos.length > 0 && !imagesLoaded) {
       fetchImages();
     }
   }, [cursos, imagesLoaded]);
-  
+
   // Limpiar mensaje de error después de un tiempo
   useEffect(() => {
     if (errorMessage != null) {
@@ -101,7 +132,8 @@ const Cursos: React.FC = () => {
       return () => clearTimeout(timer);
     }
   }, [errorMessage]);
-  
+
+
   // Filtrar cursos cuando cambia el término de búsqueda
   useEffect(() => {
     setFilteredCursos(
@@ -111,25 +143,37 @@ const Cursos: React.FC = () => {
       )
     );
   }, [searchTerm, cursos]);
-  
+
+
+
+
   // Función para obtener la lista de cursos
   async function fetchCursos() {
     try {
       let curs = await getCursosCout();
       curs.sort((a, b) => a.nombre.localeCompare(b.nombre));
-      setCursos(curs.map(curso => ({ 
-        ...curso, 
-        visible: true, 
-        selected: false, 
-        cantidadParticipantes: curso.cantidadAlumnos 
+      setCursos(curs.map(curso => ({
+        ...curso,
+        visible: true,
+        selected: false,
+        cantidadProfesionales: curso.cantidadProfesionales,
+        cantidadAlumnos: curso.cantidadAlumnos,
+
+
       })));
+      const participantes = curs.map((curso: any) => ({
+        cursoId: curso.id,
+        alumnos: curso.cantidadAlumnos || 0,
+        profesionales: curso.cantidadProfesionales || 0,
+      }));
+      setParticipantesPorTaller(participantes);
     } catch (error) {
       console.error("Error al cargar los cursos:", error);
     } finally {
       setLoading(false);
     }
   }
-  
+
   // Método para obtener las imagenes
   const fetchImages = async () => {
     const result = await getImages_talleresAdmin();
@@ -141,9 +185,9 @@ const Cursos: React.FC = () => {
       setDownloadurls(result.downloadurls);
 
       // Mapear las imágenes con los cursos
-      const updatedCursos = mapearImagenes(cursos, { 
-        images: result.images, 
-        downloadurls: result.downloadurls 
+      const updatedCursos = mapearImagenes(cursos, {
+        images: result.images,
+        downloadurls: result.downloadurls
       });
 
       // Ordenar los cursos alfabéticamente por nombre
@@ -156,7 +200,7 @@ const Cursos: React.FC = () => {
       setImagesLoaded(true);
     }
   };
-  
+
   // Función para eliminar un curso
   async function handleEliminarCurso(id: number) {
     setIsDeleting(true);
@@ -180,25 +224,39 @@ const Cursos: React.FC = () => {
       setIsDeleting(false);
     }
   }
-  
+
   // Función para obtener los alumnos inscriptos en un curso
   async function fetchAlumnosByIdCurso(id: number) {
     try {
-      setLoading(true);
+      setLoading2(true);
       const alumnos = await getAlumnosByIdCurso(id);
       setAlumnos(alumnos);
     }
     catch (error) {
       console.error("No se pudo obtener los alumnos inscriptos en el curso", error);
     } finally {
-      setLoading(false);
+      setLoading2(false);
+    }
+  }
+  // Función para obtener los profesionales inscriptos en un curso
+  async function fetcProfesionalesByIdCurso(id: number) {
+    try {
+      setLoading2(true);
+      const prof = await getProfesionalesByCursoId(id);
+      setProfesionales(prof);
+    }
+    catch (error) {
+      console.error("No se pudo obtener los profesionales inscriptos en el curso", error);
+    } finally {
+      setLoading2(false);
     }
   }
 
+  //region return
   return (
     <main
       className="relative bg-cover bg-center min-h-screen"
-      
+
     >
       <Navigate />
 
@@ -283,18 +341,7 @@ const Cursos: React.FC = () => {
 
             {loading ? (
               <div className="flex justify-center items-center py-12">
-              <Loader />
-              </div>
-            ) : filteredCursos.length === 0 ? (
-              // Mensaje de lista vacía
-              <div className="py-12 px-6 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
-                <Calendar className="w-6 h-6 text-gray-400" />
-              </div>
-              <h3 className="text-sm font-medium text-gray-900 mb-1">No hay talleres</h3>
-              <p className="text-sm text-gray-500">
-                Comienza creando un taller
-              </p>
+                <Loader />
               </div>
             ) : filteredCursos.length === 0 ? (
               // Mensaje de lista vacía
@@ -347,21 +394,35 @@ const Cursos: React.FC = () => {
                   {/* Participantes */}
                   <div className="sm:col-span-2 flex items-center justify-center gap-1.5 mb-4 sm:mb-0">
                     <button
+                      title="Alumnos inscriptos"
                       onClick={() => {
                         fetchAlumnosByIdCurso(talleres.id);
-                        setSelectedCursoIdAlumnos(talleres.id);
+                        setCursoSelected(talleres);
+                        setOpenModalAlumnos(true);
                       }}
                       className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-800"
                     >
-                      <Users className="w-4 h-4 text-gray-400" />
-                      <span>{talleres.cantidadParticipantes || 0}</span>
+                      <GraduationCap className="w-5 h-5 text-gray-400 hover:text-blue-600" />
+                      <span>{getCantidadPorTaller(talleres.id, "alumnos") || 0}</span>
+                    </button>
+                    <button
+                      title="Profesionales inscriptos"
+                      onClick={() => {
+                        fetcProfesionalesByIdCurso(talleres.id);
+                        setCursoSelected(talleres);
+                        setOpenModalProfesionales(true);
+                      }}
+                      className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-800"
+                    >
+                      <UserRound className="w-5 h-5 text-gray-400 hover:text-blue-600" />
+                      <span>{getCantidadPorTaller(talleres.id, "profesionales") || 0}</span>
                     </button>
                   </div>
 
                   {/* Acciones */}
                   <div className="sm:col-span-1 flex justify-center gap-2">
                     <button
-                      onClick={() => setSelectedCursoId(talleres.id)}
+                      onClick={() => { setSelectedCursoId(talleres.id) }}
                       className="text-indigo-600 hover:text-indigo-900 p-1 hover:bg-indigo-50 rounded"
                       title="Editar taller"
                     >
@@ -382,72 +443,55 @@ const Cursos: React.FC = () => {
         </div>
       </div>
 
-     
-      {/* Modal para mostrar los alumnos del curso seleccionado */}
-      {selectedCursoIdAlumnos !== null && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl relative max-h-[80vh] overflow-y-auto">
-            <div className="bg-blue-700 p-6 flex justify-between items-center">
-              <h2 className="text-lg md:text-xl font-semibold text-white">
-                Alumnos del Curso: {cursos.find(curso => curso.id === selectedCursoIdAlumnos)?.nombre}
-              </h2>
-            </div>
-            <div className="mb-4 p-6 overflow-x-auto">
-              {loading ? (
-                <div className="flex justify-center items-center py-4">
-                  <Loader />
-                </div>
-              ) : (
-                <table className="w-full border-collapse bg-white text-sm md:text-base">
-                  <thead className="bg-gray-200">
-                    <tr>
-                      <th className="py-2 px-3 border-b border-gray-300 text-left">Código</th>
-                      <th className="py-2 px-3 border-b border-gray-300 text-left">Nombre</th>
-                      <th className="py-2 px-3 border-b border-gray-300 text-left">Apellido</th>
-                      <th className="py-2 px-3 border-b border-gray-300 text-left">Email</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {alumnos.length === 0 ? (
-                      <tr>
-                        <td colSpan={4} className="py-4 px-3 text-center text-gray-600">
-                          No hay alumnos registrados en este curso.
-                        </td>
-                      </tr>
-                    ) : (
-                      alumnos.map((alumno) => (
-                        <tr key={alumno.id} className="odd:bg-gray-100 hover:bg-gray-50">
-                          <td className="py-2 px-3 border-b border-gray-300">{alumno.id}</td>
-                          <td className="py-2 px-3 border-b border-gray-300">{alumno.nombre}</td>
-                          <td className="py-2 px-3 border-b border-gray-300">{alumno.apellido}</td>
-                          <td className="py-2 px-3 border-b border-gray-300">{alumno.email}</td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              )}
-            </div>
-            <div className="flex justify-end p-6">
-              <button
-                onClick={() => setSelectedCursoIdAlumnos(null)}
-                className="bg-gray-600 py-2 px-6 text-white rounded-lg text-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
+      {/* Modal de alumnos a agregar */}
+      {(openModalAlumnos || openModalProfesionales) && cursoselected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <UserSelector
+            curso={{
+              id: cursoselected.id,
+              nombre: `${cursoselected.nombre}`,
+              personas: [] // Provide an empty array or the appropriate data
+            }}
+            setParticipantesPorTaller = {setParticipantesPorTaller}
+            esAlumno={openModalAlumnos ? true : false}
+            setEditar={(isOpen) => {
+              if (openModalAlumnos) {
+                setOpenModalAlumnos(isOpen);
+              } else {
+                setOpenModalProfesionales(isOpen);
+              }
+              if (!isOpen) {
+                fetchCursos(); // Update the list of courses when the modal is closed
+                // traer las imegenes
+                fetchImages();
+              }
+            }}
+            setCursoSelected={setCursoSelected}
+            cursoselected={cursoselected ? { ...cursoselected, personas: [] } : null}
+            personas={openModalAlumnos ? alumnos : profesionales}
+            setPersonas={openModalAlumnos ? setAlumnos : setProfesionales}
+          />
         </div>
       )}
 
       {/* Formulario de edición/creación de curso */}
       {selectedCursoId !== null && (
-        <CursoForm 
+        <CursoForm
           selectedCursoId={selectedCursoId}
           cursos={cursos}
           setSelectedCursoId={setSelectedCursoId}
           fetchCursos={fetchCursos}
-          setImagesLoaded={setImagesLoaded}
+          setImagesLoaded={fetchImages}
+        />
+      )}
+
+      {selectedCursoId !== null && (
+        <CursoForm
+          selectedCursoId={selectedCursoId}
+          cursos={cursos}
+          setSelectedCursoId={setSelectedCursoId}
+          fetchCursos={fetchCursos}
+          setImagesLoaded={fetchImages}
         />
       )}
     </main>

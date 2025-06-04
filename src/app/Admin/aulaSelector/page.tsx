@@ -8,9 +8,8 @@ import Image from "next/image";
 import withAuth from "../../../components/Admin/adminAuth";
 import Background from "../../../../public/Images/Background.jpeg";
 import { Horario } from "../cronograma/horario";
-
-import Loadere from '@/components/Loaders/loader/loader';
-import { Building2, Clock, Pencil, Plus, Search, Trash2,NotebookPen, Loader } from "lucide-react";
+import Loadere from "@/components/Loaders/loadingTalleres/page";
+import { Building2, Clock, Pencil, Plus, Search, Trash2,NotebookPen,  Loader2, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 

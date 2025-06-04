@@ -13,6 +13,7 @@ import { DireccionAdminForm } from "./direccionAdminForm"
 
 
 
+
 export const responsableSchema = z.object({
   id: z.number().optional(),
   nombre: z
@@ -55,12 +56,12 @@ export const ResponsableAdminForm: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                     <Label htmlFor="nombre">Nombre</Label>
-                    <Input id="nombre" type="text" {...register("responsable.nombre")} className="mt-1" />
+                    <Input id="nombre" placeholder="Nombre del Responsable" type="text" {...register("responsable.nombre")} className="mt-1" />
                     {errors.responsable?.nombre && <p className="text-destructive text-sm mt-1">{errors.responsable.nombre.message}</p>}
                 </div>
                 <div>
                     <Label htmlFor="apellido">Apellido</Label>
-                    <Input id="apellido" type="text" {...register("responsable.apellido")} className="mt-1" />
+                    <Input id="apellido" placeholder="Apellido del Responsable" type="text" {...register("responsable.apellido")} className="mt-1" />
                     {errors.responsable?.apellido && (
                         <p className="text-destructive text-sm mt-1">{errors.responsable.apellido.message}</p>
                     )}
@@ -75,7 +76,7 @@ export const ResponsableAdminForm: React.FC = () => {
                         })}
                         type="text"
                         maxLength={9}
-                        placeholder="DNI (sin puntos)"
+                        placeholder="DNI (sin puntos) del profesional"
                         className="mt-1"
                         style={{ WebkitAppearance: "none", MozAppearance: "textfield" }}
                     />
@@ -83,12 +84,12 @@ export const ResponsableAdminForm: React.FC = () => {
                 </div>
                 <div>
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" {...register("responsable.email")} className="mt-1" />
+                    <Input id="email" placeholder="Correo electrónico del Responsable" type="email" {...register("responsable.email")} className="mt-1" />
                     {errors.responsable?.email && <p className="text-destructive text-sm mt-1">{errors.responsable.email.message}</p>}
                 </div>
                 <div>
                     <Label htmlFor="telefono">Teléfono</Label>
-                    <Input id="telefono" type="text" {...register("responsable.telefono")} className="mt-1" />
+                    <Input id="telefono" placeholder="Teléfono del Responsable" type="text" {...register("responsable.telefono")} className="mt-1" />
                     {errors.responsable?.telefono && (
                         <p className="text-destructive text-sm mt-1">{errors.responsable.telefono.message}</p>
                     )}
@@ -96,7 +97,7 @@ export const ResponsableAdminForm: React.FC = () => {
                 <div>
                 </div>
             </div>
-            <DireccionAdminForm fieldPath="responsable.direccion" />
+            <DireccionAdminForm fieldPath="responsable.direccion"  />
         </div>
         
     )

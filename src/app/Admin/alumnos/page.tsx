@@ -1,19 +1,19 @@
 "use client";
 // #region Imports
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navigate from "../../../components/Admin/navigate/page";
 import { deleteAlumno, getAlumnos } from "../../../services/Alumno";
 import Background from "../../../../public/Images/Background.jpeg"
 import withAuth from "../../../components/Admin/adminAuth";
 //ver que hago con esto....
 import { deleteResponsableByAlumnoId } from "@/services/responsable";
-import { Mail, Pencil, Phone, Plus, Search, Trash2, Users, BookOpen} from "lucide-react";
+import Loader from "@/components/Loaders/loadingTalleres/page";
+import { Mail, Pencil, Phone, Plus, Search, Trash2, Users, BookOpen } from "lucide-react";
 //formulario para agregar o actualizar alumnos
 import AlumnoAdminForm from "@/components/formularios/alumnoAdminForm";
 //para inscribir el alumno en cursos
 import { calcularEdad } from "@/helpers/fechas";
 import CursoSelector from "@/components/Admin/cursoSelector";
-import { set } from "zod";
 
 // #endregion
 
@@ -39,7 +39,7 @@ type Usuario = {
 };
 
 type Direccion = {
-    pais: string;
+    pais: "Argentina";
     provincia: string;
     localidad: string;
     calle: string;
@@ -51,7 +51,7 @@ const Alumnos: React.FC = () => {
     const [alumnos, setAlumnos] = useState<any[]>([]);
     const [alumnosMostrados, setAlumnosMostrados] = useState<any[]>([]);
     const [alumnoAbuscar, setAlumnoAbuscar] = useState<string>("");
-    
+
     // Estado para almacenar mensajes de error
     const [errorMessage, setErrorMessage] = useState<string>("");
 
@@ -63,11 +63,14 @@ const Alumnos: React.FC = () => {
     const [AlumnoAEliminar, setAlumnoAEliminar] = useState<any>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     //para saber si es un formulario desde 0
-    const [nueva, setNueva] = useState<boolean>(false); 
+    const [nueva, setNueva] = useState<boolean>(false);
+
+    //Estado para pantalla de carga del principio
+    const [loading, setLoading] = useState<boolean>(true);
 
     //para editar los cursos del alumno
     const [editarCursos, setEditarCursos] = useState<boolean>(false);
- 
+
     // #endregion
 
     // #region UseEffects
@@ -90,32 +93,36 @@ const Alumnos: React.FC = () => {
             setCambios(false);
         }
     }
-    , [cambios]);
+        , [cambios]);
 
     // #endregion
 
     // #region Métodos
     async function fetchAlumnos() {
         try {
+
             const data = await getAlumnos();
             console.log(data);
             setAlumnos(data);
             setAlumnosMostrados(data);
+
         } catch (error) {
             console.error("Imposible obetener Alumnos", error);
+        } finally {
+            setLoading(false);
         }
     }
 
     // Método para obtener las imagenes
-   
+
     //region solo considera repetidos
-    
+
     async function handleEliminarAlumno(id: any) {
         setIsDeleting(true);
         console.log(id);
         //elimino el responsable si el alumno es menor
         if (mayor === false) {
-        
+
             const responsable = await deleteResponsableByAlumnoId(id);
             console.log("responsable borrado", responsable);
         }
@@ -125,7 +132,7 @@ const Alumnos: React.FC = () => {
         setAlumnoAEliminar(null);
         setIsDeleting(false);
     }
-    
+
     // #endregion
     //para la busqueda de alumnos en la tabla principal
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,44 +152,40 @@ const Alumnos: React.FC = () => {
     return (
         <main
             className="relative bg-cover bg-center"
-            style={{
-            backgroundImage: `url(${Background})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            }}
+
         >
             <Navigate />
 
             {AlumnoAEliminar && (
-            <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
-                {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+                <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
+                        {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
 
-                <h2 className="text-lg mb-4">Confirmar Eliminación</h2>
-                <p>
-                    ¿Estás seguro de que deseas eliminar a:{" "}
-                    <strong>{AlumnoAEliminar.nombre}</strong>?
-                </p>
-                <div className="flex justify-end space-x-4 mt-4">
-                    <button
-                    onClick={() => {
-                        handleEliminarAlumno(AlumnoAEliminar.id);
-                    }}
-                    disabled={isDeleting}
-                    className="bg-red-700 py-2 px-5 text-white rounded hover:bg-red-800"
-                    >
-                    {isDeleting ? "Eliminando..." : "Confirmar Eliminación"}
-                    </button>
-                    <button
-                    onClick={() => setAlumnoAEliminar(null)}
-                    disabled={isDeleting}
-                    className="bg-gray-700 py-2 px-5 text-white rounded hover:bg-gray-800"
-                    >
-                    Cancelar
-                    </button>
+                        <h2 className="text-lg mb-4">Confirmar Eliminación</h2>
+                        <p>
+                            ¿Estás seguro de que deseas eliminar a:{" "}
+                            <strong>{AlumnoAEliminar.nombre}</strong>?
+                        </p>
+                        <div className="flex justify-end space-x-4 mt-4">
+                            <button
+                                onClick={() => {
+                                    handleEliminarAlumno(AlumnoAEliminar.id);
+                                }}
+                                disabled={isDeleting}
+                                className="bg-red-700 py-2 px-5 text-white rounded hover:bg-red-800"
+                            >
+                                {isDeleting ? "Eliminando..." : "Confirmar Eliminación"}
+                            </button>
+                            <button
+                                onClick={() => setAlumnoAEliminar(null)}
+                                disabled={isDeleting}
+                                className="bg-gray-700 py-2 px-5 text-white rounded hover:bg-gray-800"
+                            >
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                </div>
-            </div>
             )}
             {/* Contenido Principal */}
             <div className="relative z-10">
@@ -198,14 +201,14 @@ const Alumnos: React.FC = () => {
                         {/* Botones */}
                         <div className="flex flex-col sm:flex-row items-center gap-4">
                             <button
-                                onClick={() =>{setEditar(true); setAlumnoSelected(null); setMayor(false); setNueva(true)}}
+                                onClick={() => { setEditar(true); setAlumnoSelected(null); setMayor(false); setNueva(true) }}
                                 className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm w-full sm:w-auto"
                             >
                                 <Plus className="w-5 h-5" />
                                 <span>Nuevo alumno menor</span>
                             </button>
                             <button
-                                onClick={() =>{setEditar(true); setAlumnoSelected(null); setMayor(true); setNueva(true)}}
+                                onClick={() => { setEditar(true); setAlumnoSelected(null); setMayor(true); setNueva(true) }}
                                 className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm w-full sm:w-auto"
                             >
                                 <Plus className="w-5 h-5" />
@@ -238,90 +241,99 @@ const Alumnos: React.FC = () => {
                             <div className="col-span-1 text-center">ACCIÓN</div>
                         </div>
 
-                        {alumnos.length === 0 ? (
-                            <div className="py-12 px-6 text-center">
-                                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
-                                    <Users className="w-6 h-6 text-gray-400" />
-                                </div>
-                                <h3 className="text-sm font-medium text-gray-900 mb-1">No hay alumnos registrados</h3>
-                                <p className="text-sm text-gray-500">
-                                    Comienza agregando un alumno
-                                </p>
+                        {loading ? (
+                            <div className="flex justify-center items-center py-12">
+                                <Loader />
                             </div>
                         ) : (
-                            alumnos.sort((a, b) => a.id - b.id).map((alumno) => (
-                                <div
-                                    key={alumno.id}
-                                    className="grid grid-cols-1 sm:grid-cols-12 items-center py-4 px-6 border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                                >
-                                    <div className="col-span-1 sm:col-span-2">
-                                        <span className="text-sm font-medium text-gray-900">{alumno.id}</span>
+                            alumnos.length === 0 ? (
+                                <div className="py-12 px-6 text-center">
+                                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
+                                        <Users className="w-6 h-6 text-gray-400" />
                                     </div>
-                                    <div className="col-span-1 sm:col-span-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                                        <div>
-                                            <h3 className="font-medium text-gray-900">{alumno.nombre} {alumno.apellido}</h3>
-                                            <p className="text-sm text-gray-500">DNI: {alumno.dni}</p>
+                                    <h3 className="text-sm font-medium text-gray-900 mb-1">No hay alumnos registrados</h3>
+                                    <p className="text-sm text-gray-500">
+                                        Comienza agregando un alumno
+                                    </p>
+                                </div>
+                            ) : (
+                                alumnos.sort((a, b) => a.id - b.id).map((alumno) => (
+                                    <div
+                                        key={alumno.id}
+                                        className="grid grid-cols-1 sm:grid-cols-12 items-center py-4 px-6 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                                    >
+                                        <div className="col-span-1 sm:col-span-2">
+                                            <span className="text-sm font-medium text-gray-900">{alumno.id}</span>
                                         </div>
-                                    </div>
-                                    <div className="col-span-1 sm:col-span-3">
-                                        <div className="flex flex-col gap-1">
-                                            <span className="inline-flex items-center gap-1.5 text-sm text-gray-600">
-                                                <Mail className="w-4 h-4 text-gray-400" />
-                                                {alumno.email}
-                                            </span>
-                                            {alumno.telefono && (
+                                        <div className="col-span-1 sm:col-span-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                                            <div>
+                                                <h3 className="font-medium text-gray-900">{alumno.nombre} {alumno.apellido}</h3>
+                                                <p className="text-sm text-gray-500">DNI: {alumno.dni}</p>
+                                            </div>
+                                        </div>
+                                        <div className="col-span-1 sm:col-span-3">
+                                            <div className="flex flex-col gap-1">
                                                 <span className="inline-flex items-center gap-1.5 text-sm text-gray-600">
-                                                    <Phone className="w-4 h-4 text-gray-400" />
-                                                    +54 {alumno.telefono}
+                                                    <Mail className="w-4 h-4 text-gray-400" />
+                                                    {alumno.email}
+                                                </span>
+                                                {alumno.telefono && (
+                                                    <span className="inline-flex items-center gap-1.5 text-sm text-gray-600">
+                                                        <Phone className="w-4 h-4 text-gray-400" />
+                                                        +54 {alumno.telefono}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="hidden sm:block col-span-2">
+                                            {new Date().getFullYear() - new Date(alumno.fechaNacimiento).getFullYear() >= 18 ? (
+                                                <span className="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-blue-50 text-blue-700 rounded-full">
+                                                    <Users className="w-4 h-4" />
+                                                    Mayor
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-amber-50 text-amber-700 rounded-full">
+                                                    <Users className="w-4 h-4" />
+                                                    Menor
                                                 </span>
                                             )}
                                         </div>
-                                    </div>
-                                    <div className="hidden sm:block col-span-2">
-                                        {new Date().getFullYear() - new Date(alumno.fechaNacimiento).getFullYear() >= 18 ? (
-                                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-blue-50 text-blue-700 rounded-full">
-                                                <Users className="w-4 h-4" />
-                                                Mayor
-                                            </span>
-                                        ) : (
-                                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-sm font-medium bg-amber-50 text-amber-700 rounded-full">
-                                                <Users className="w-4 h-4" />
-                                                Menor
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className="col-span-1 flex justify-center gap-2">
-                                        <button
-                                            onClick={() => {
-                                                // Calcular si el alumno es mayor de edad
-                                                const isAdultValue = isAdult(alumno.fechaNacimiento);
+                                        <div className="col-span-1 flex justify-center gap-2">
+                                            <button
+                                                title="Editar alumno"
+                                                onClick={() => {
+                                                    // Calcular si el alumno es mayor de edad
+                                                    const isAdultValue = isAdult(alumno.fechaNacimiento);
 
-                                                // Establecer el alumno seleccionado para edición
-                                                setAlumnoSelected(alumno);
-                                                setMayor(isAdultValue);
-                                                setEditar(true);
-                                                setNueva(false);
-                                            }}
-                                            className="text-indigo-600 hover:text-indigo-900 p-1 hover:bg-indigo-50 rounded"
-                                        >
-                                            <Pencil className="w-5 h-5" />
-                                        </button>
-                                        <button
-                                            onClick={() => {setAlumnoSelected(alumno); setEditarCursos(true); }}
-                                            className="text-green-600 hover:text-green-900 p-1 hover:bg-green-50 rounded"
-                                        >
-                                            <BookOpen className="w-5 h-5" />
-                                        </button>
-                                        <button
-                                            onClick={() => setAlumnoAEliminar(alumno)}
-                                            className="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded"
-                                        >
-                                            <Trash2 className="w-5 h-5" />
-                                        </button>
-                                       
+                                                    // Establecer el alumno seleccionado para edición
+                                                    setAlumnoSelected(alumno);
+                                                    setMayor(isAdultValue);
+                                                    setEditar(true);
+                                                    setNueva(false);
+                                                }}
+                                                className="text-indigo-600 hover:text-indigo-900 p-1 hover:bg-indigo-50 rounded"
+                                            >
+                                                <Pencil className="w-5 h-5" />
+                                            </button>
+                                            <button
+                                                title="Editar cursos"
+                                                onClick={() => { setAlumnoSelected(alumno); setEditarCursos(true); }}
+                                                className="text-green-600 hover:text-green-900 p-1 hover:bg-green-50 rounded"
+                                            >
+                                                <BookOpen className="w-5 h-5" />
+                                            </button>
+                                            <button
+                                                title="Eliminar"
+                                                onClick={() => setAlumnoAEliminar(alumno)}
+                                                className="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
+
+                                        </div>
                                     </div>
-                                </div>
-                            ))
+                                ))
+                            )
                         )}
                     </div>
                 </div>
@@ -329,24 +341,24 @@ const Alumnos: React.FC = () => {
 
             {/* Modal de Edición */}
             {editar && (
-            <div className="z-50">
-                <AlumnoAdminForm alumno={alumnoSelected} setEditar={setEditar} setChanged={setCambios} mayor={mayor} nueva={nueva}/>
-            </div>
+                <div className="z-50">
+                    <AlumnoAdminForm alumno={alumnoSelected} setEditar={setEditar} setChanged={setCambios} mayor={mayor} nueva={nueva} />
+                </div>
             )}
 
             {/*editar cursos del alumno*/}
             {editarCursos && alumnoSelected && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <CursoSelector 
-                    persona={{
-                        id: alumnoSelected.id, 
-                        nombre: `${alumnoSelected.nombre} ${alumnoSelected.apellido}`, 
-                        email: alumnoSelected.email,
-                        cursos: []
-                    }} 
-                    esAlumno={true} 
-                    edad={calcularEdad(alumnoSelected.fechaNacimiento)} 
-                    setEditar={setEditarCursos}
+                    <CursoSelector
+                        persona={{
+                            id: alumnoSelected.id,
+                            nombre: `${alumnoSelected.nombre} ${alumnoSelected.apellido}`,
+                            email: alumnoSelected.email,
+                            cursos: []
+                        }}
+                        esAlumno={true}
+                        edad={calcularEdad(alumnoSelected.fechaNacimiento)}
+                        setEditar={setEditarCursos}
                     />
                 </div>
             )}

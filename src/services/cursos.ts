@@ -83,91 +83,54 @@ export async function getCursoById(id: number) {
     })
 }
 
-//Eliminar Curso
+
+///Eliminar Curso
 // Se elimina un curso por su id, se verifica si el curso tiene un cronograma asignado
 // si no tiene un cronograma asignado se elimina el curso, si tiene un cronograma asignado busca ese id de cronograma en la tabla de cronogramaDiaHora  
 // si encuentra un cronogramaDiaHora con ese id de cronograma asignado al curso, no se puede eliminar el curso
 // si no encuentra un cronogramaDiaHora con ese id de cronograma asignado al curso, se elimina el cronograma asignado al curso y luego se elimina el curso
 export async function deleteCurso(id: number): Promise<{ success: boolean, message: string }> {
-
     try {
-        // Verificar si el curso tiene un cronograma asignado
-        const cronograma = await prisma.cronograma.findFirst({
+        // Verificar si el curso tiene relaciones que impidan su eliminación
+        const [cronograma, profesorCurso, alumnoCurso, solicitud] = await Promise.all([
+            prisma.cronograma.findFirst({ where: { cursoId: id } }),
+            prisma.profesional_Curso.findFirst({ where: { cursoId: id } }),
+            prisma.alumno_Curso.findFirst({ where: { cursoId: id } }),
+            prisma.cursoSolicitud.findFirst({ where: { cursoId: id } }),
+        ]);
 
-            where: {
-                cursoId: id
-            }
-        })
-        // busco que que el curso no tenga un profesor asignado para poder eliminarlo si tiene un profesor asignado no se puede eliminar
-        // muestra un mensaje de error
-        const profesor_curso = await prisma.profesional_Curso.findFirst({
-            where: {
-                cursoId: id
-            }
-        })
-        if (profesor_curso) {
-            return { success: false, message: "El Curso seleccionado tiene un profesor asignado y no puede ser eliminado." };    
+        if (profesorCurso) {
+            return { success: false, message: "El Curso tiene un profesor asignado y no puede ser eliminado." };
         }
-        // si el curso tiene un alumno asignado no se puede eliminar y muestra un mensaje de error
-        const alumno_curso = await prisma.alumno_Curso.findFirst({
-            where: {
-                cursoId: id
-            }
-        })
-        if (alumno_curso) {
-            return { success: false, message: "El Curso seleccionado tiene un alumno asignado y no puede ser eliminado." };    
+
+        if (alumnoCurso) {
+            return { success: false, message: "El Curso tiene un alumno asignado y no puede ser eliminado." };
         }
-       
-        if (cronograma) {
-            // Verificar si el cronograma tiene un cronogramaDiaHora asignado
-            const cronogramaDiaHora = await prisma.cronogramaDiaHora.findFirst({
-                where: {
-                    cronogramaId: cronograma.id
-                }
-            })
-            if (cronogramaDiaHora) {
-                return { success: false, message: "El Curso seleccionado está asignado a un horario y no puede ser eliminado." };
-            } else {
-                // Eliminar el cronograma asignado al curso
-                await prisma.cronograma.delete({
-                    where: {
-                        id: cronograma.id
-                    }
-                })
-            }
-        }
-        if (profesor_curso) {
-            return { success: false, message: "El Curso seleccionado tiene un profesor asignado y no puede ser eliminado." };
-        }
-        if (alumno_curso) {
-            return { success: false, message: "El Curso seleccionado tiene un alumno asignado y no puede ser eliminado." };
-        }
-        // SI EL curso tiene una solicitud de inscripcion no se puede eliminar
-        const solicitud = await prisma.cursoSolicitud.findFirst({
-            where: {
-                cursoId: id
-            }
-        })
+
         if (solicitud) {
-            return { success: false, message: "El Curso seleccionado tiene una solicitud de inscripción y no puede ser eliminado." };
+            return { success: false, message: "El Curso tiene una solicitud de inscripción y no puede ser eliminado." };
         }
-        
+
+        // Si el curso tiene un cronograma asignado, eliminar sus relaciones
+        if (cronograma) {
+            try {
+                await prisma.cronogramaDiaHora.deleteMany({ where: { cronogramaId: cronograma.id } });
+                await prisma.cronograma.delete({ where: { id: cronograma.id } });
+            } catch (error) {
+                console.error("Error al eliminar el cronograma:", error);
+                return { success: false, message: "Error al eliminar el cronograma. Vuelve a intentarlo más tarde!" };
+            }
+        }
 
         // Eliminar el curso
-        await prisma.curso.delete({
-            where: {
-                id
-            }
-        })
-        // Si todo fue exitoso, devolver success con true
+        await prisma.curso.delete({ where: { id } });
+
         return { success: true, message: "Curso eliminado con éxito." };
-
     } catch (error) {
-
+        console.error("Error al eliminar el curso:", error);
         return { success: false, message: "Error al eliminar el curso. Vuelve a intentarlo más tarde!" };
     }
 }
-
 
 
 
@@ -299,11 +262,15 @@ export async function getCursosCout() {
         // Consultar cursos junto con la cantidad de alumnos inscritos
         const cursos = await prisma.curso.findMany({
             include: {
-                _count: {
-                    select: { alum_cur: true } // Relación que cuenta los alumnos inscritos
+            _count: {
+                select: { 
+                alum_cur: true, // Relación que cuenta los alumnos inscritos
+                prof_cur: true  // Relación que cuenta los profesores inscritos
                 }
             }
+            }
         });
+
 
         // Mapear los resultados para estructurar la respuesta
         return cursos.map(curso => ({
@@ -315,6 +282,7 @@ export async function getCursosCout() {
             fechaInicio: curso.fechaInicio,
             fechaFin: curso.fechaFin,
             imagen: curso.imagen,
+            cantidadProfesionales: curso._count.prof_cur, // Usar camelCase para claves
             cantidadAlumnos: curso._count.alum_cur // Usar camelCase para claves
         }));
     } catch (error) {

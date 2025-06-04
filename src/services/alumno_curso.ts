@@ -13,6 +13,7 @@ export async function createAlumno_Curso(data: {
     cursoId: number;
     alumnoId: number;
 }) {
+  console.log("dataAAAAAAAAAAAAAAA", data);
   const al_cur = await getalumnos_cursoByIdAlumnoIdCur(data.alumnoId, data.cursoId);
   if (al_cur) {
     return "El alumno ya se encuentra inscripto en el curso";

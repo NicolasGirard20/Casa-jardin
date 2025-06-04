@@ -1,6 +1,5 @@
 "use server"
-import axios from "axios";
-import { API } from "@/helpers/Api";
+
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -30,6 +29,7 @@ export async function addLocalidad(data: {
       nombre: data.nombre.trim(),
       provinciaId: data.provinciaId,
     }
+    console.log("agrego localidad", dataTrim)
     const localidades = await getLocalidadByName(dataTrim.nombre);
     if(localidades) {
       console.log("LOCALIDAD EXISTENTE")

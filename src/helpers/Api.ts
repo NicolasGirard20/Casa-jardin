@@ -1,1 +1,0 @@
-export const API =  "https://apis.datos.gob.ar/georef/api/"

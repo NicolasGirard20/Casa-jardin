@@ -81,11 +81,15 @@ const AulasProfecional: React.FC = () => {
 
             {/* Loader */}
             {aulas.length === 0 ? (
-                <div className="flex justify-center items-center mt-8">
+                <div className=" justify-center items-center mt-8">
+                    <div  className=" w-full flex flex-col items-center justify-center ">
                     <Loader />
+                    <p className="text-gray-700">Cargando aulas...</p>
+                    </div>
+                    
                 </div>
             ) : (
-                <div className="max-w-7xl mx-auto px-4 mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
+                <div className={`max-w-7xl mx-auto px-4 mt-8  ${selectedAulaId ? 'hidden' : 'grid'} grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12`}>
                     {filteredAulas.map((aula) => (
                         <div
                             key={aula.id}
@@ -111,7 +115,7 @@ const AulasProfecional: React.FC = () => {
 
             {/* Modal */}
             {selectedAulaId && selectedProfesionalId !== null && (
-                <div className="fixed inset-0 bg-white shadow-lg overflow-auto z-10">
+                <div className="fixed inset-0 bg-white overflow-y-auto shadow-lg h-screen z-10">
                     <HorarioProfesional idAula={selectedAulaId} idProfesional={selectedProfesionalId} />
                 </div>
             )}
