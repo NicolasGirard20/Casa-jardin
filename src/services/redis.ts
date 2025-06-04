@@ -58,3 +58,16 @@ export async function obtenerCodigoConfirmacion(email: string): Promise<string |
   }
 
 }
+
+//para el cron
+export async function guardarAux(titulo: string, codigo: string) {
+  await initializeRedis();
+  const key = `${titulo}`;
+try {
+  // Guarda el código en Redis con una expiración de 48 horas (172800 segundos)
+  await client.setEx(key, 172800, codigo);
+  console.log(`AUX guardado en Redis: ${key} = ${codigo}`);
+} catch (err) {
+  console.error('Error al guardar el AUX en Redis:', err);
+}
+}

@@ -1,0 +1,9 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "crons": [
+      {
+        "path": "/api/redis-aux?secret=a755b4bd264b428e9d51e094f04c815f28fd98ec88ec3a3c8ab20641e8ba5c2b",
+        "schedule": "00 18 * * *"
+      }
+    ]
+}
