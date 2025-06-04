@@ -149,8 +149,10 @@ const Cursos: React.FC = () => {
 
   // Función para obtener la lista de cursos
   async function fetchCursos() {
+    
     try {
       let curs = await getCursosCout();
+
       curs.sort((a, b) => a.nombre.localeCompare(b.nombre));
       setCursos(curs.map(curso => ({
         ...curso,
@@ -161,12 +163,14 @@ const Cursos: React.FC = () => {
 
 
       })));
+     
       const participantes = curs.map((curso: any) => ({
         cursoId: curso.id,
         alumnos: curso.cantidadAlumnos || 0,
         profesionales: curso.cantidadProfesionales || 0,
       }));
       setParticipantesPorTaller(participantes);
+
     } catch (error) {
       console.error("Error al cargar los cursos:", error);
     } finally {
@@ -481,17 +485,8 @@ const Cursos: React.FC = () => {
           cursos={cursos}
           setSelectedCursoId={setSelectedCursoId}
           fetchCursos={fetchCursos}
-          setImagesLoaded={fetchImages}
-        />
-      )}
-
-      {selectedCursoId !== null && (
-        <CursoForm
-          selectedCursoId={selectedCursoId}
-          cursos={cursos}
-          setSelectedCursoId={setSelectedCursoId}
-          fetchCursos={fetchCursos}
-          setImagesLoaded={fetchImages}
+          fetchImages={fetchImages}
+          setImagesLoaded={setImagesLoaded}
         />
       )}
     </main>
