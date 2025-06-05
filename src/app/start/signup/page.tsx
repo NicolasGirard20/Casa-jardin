@@ -314,7 +314,7 @@ function Signup() {
                                     id="fechaNac"
                                     value={!fechaNacimiento ? "" : !isNaN(fechaNacimiento.getTime()) ? fechaNacimiento.toISOString().split('T')[0] : ""}
                                     min={new Date(new Date().setFullYear(new Date().getFullYear() - 100)).toISOString().split('T')[0]} // Set min to 100 years ago
-                                    max={new Date(new Date().setFullYear(new Date().getFullYear() - 3)).toISOString().split('T')[0]} // Set max to 3 years ago
+                                    max={new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().split('T')[0]} // Set max to 1 years ago
                                     onChange={(e) => setFechaNacimiento(new Date(e.target.value))}
                                 />
                                 {errors && <p className="absolute max-w-56 text-red-500 text-sm mt-1">{errors.fechaNacimiento ? errors.fechaNacimiento.toString() : ""}</p>}
