@@ -1,6 +1,6 @@
 "use client"
 
-import { z } from "zod"
+import { object, z } from "zod"
 import { useForm, FormProvider } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type React from "react"
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileText, ImageIcon, Loader } from "lucide-react"
+import type { Curso } from "../../services/cursos"
 import { updateCurso, createCurso } from "../../services/cursos"
 import { handleDeleteCursoImage, handleUploadCursoImage } from "@/helpers/repoImages"
 import { FileInput } from "@/components/ui/fileInput"
@@ -172,43 +173,13 @@ const CursoForm: React.FC<CursoFormProps> = ({
     }
   }
 
-  const handleUploadAndFetchImages = async (file: File | null, imageName: string) => {
-    if (file) {
-      console.log("imagen a subir", file)
-      //para ponerle el nombre al archivo en el repo
-      const filename = file.name
-      const lastDotIndex = filename.lastIndexOf(".")
-      const fileExtension = lastDotIndex !== -1 ? filename.substring(lastDotIndex + 1) : ""
-      //el id del curso.extension
-      const filenameResult = `${selectedCursoId}.${fileExtension}`
-      console.log("filename ----", filenameResult)
-      //borro la imagen anterior si existe
-      if (selectedCurso && selectedCurso.imagen) {
-        console.log("Borrando imagen anterior:", selectedCurso.imagen)
-        await handleDeleteCursoImage(selectedCurso.imagen)
-      }
-      imageName = filenameResult
-    }
-    const result = await handleUploadCursoImage(file, imageName)
-
-    if (result.error) {
-      setUploadError(result.error)
-      return false
-    }
-    // Si la subida fue exitosa, actualizo el estado del formulario
-    setValue("imagen", imageName)
-    console.log("getValuessssssss", getValues("imagen"))
-    setImagesLoaded(false)
-
-    return true
-  }
-
+  // Función para manejar el envío del formulario
   const onSubmit = async (data: CursoSchema) => {
     try {
       if (selectedCursoId === -1) {
         // Es un curso nuevo
         console.log("nuevo curso")
-        const imagenUrl = selectedFile ? await handleImageUpload(selectedFile, data) : data.imagen
+        
         const cur = await createCurso({
           nombre: data.nombre,
           descripcion: data.descripcion,
@@ -216,8 +187,19 @@ const CursoForm: React.FC<CursoFormProps> = ({
           fechaFin: new Date(data.fechaFin),
           edadMinima: Number(data.edadMinima),
           edadMaxima: Number(data.edadMaxima),
-          imagen: imagenUrl || null,
+          imagen: null,
         })
+        if (typeof cur === "string") {
+          return
+        } 
+        data.id = cur.id // Asignar el ID del curso recién creado a data
+        const imagenUrl = selectedFile ? await handleImageUpload(selectedFile, data) : data.imagen
+        console.log("imagen subida: ", imagenUrl)
+        await updateCurso(cur.id, {
+          ...cur,
+          imagen: imagenUrl,
+        })
+       
         console.log("curso creado", cur)
       } else if (selectedCursoId !== null) {
         // Actualizando un curso existente
@@ -251,6 +233,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
   }
 
   const handleImageUpload = async (file: File, data: CursoSchema) => {
+    console.log(data)
     console.log("imagen a subir", file)
     //para ponerle el nombre al archivo en el repo
     const filename = file.name
@@ -260,10 +243,10 @@ const CursoForm: React.FC<CursoFormProps> = ({
     const filenameResult = `${data.id}.${fileExtension}`
     console.log("filename ----", filenameResult)
     //borro la imagen anterior si existe
-    console.log("data imagen", data.imagen)
+    console.log("selectedCursoImagen", selectedCurso?.imagen)
     if (data.imagen) {
-      console.log("borrando imagen antigua: " + data.imagen)
-      await handleDeleteCursoImage(data.imagen)
+      console.log("borrando imagen antigua: " + selectedCurso?.imagen)
+      await handleDeleteCursoImage(selectedCurso?.imagen)
     }
     await handleUploadCursoImage(file, filenameResult)
     return filenameResult

@@ -11,7 +11,7 @@ import withAuth from "../../../components/Admin/adminAuth";
 import { autorizarAdmin } from "@/helpers/cookies";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/Loaders/loadingTalleres/page";
-import { mapearImagenes } from "@/helpers/repoImages";
+import { handleDeleteCursoImage, mapearImagenes } from "@/helpers/repoImages";
 import { Calendar, FileText, GraduationCap, Pencil, Plus, Search, Trash2, UserRound, Users, UsersRound, X } from "lucide-react";
 import CursoForm from "./../../../components/formularios/CursoForm";
 import { Alumno, getAlumnos } from "@/services/Alumno";
@@ -209,6 +209,8 @@ const Cursos: React.FC = () => {
   async function handleEliminarCurso(id: number) {
     setIsDeleting(true);
     try {
+      // Verificar si el curso tiene una imagen asociada y eliminarla
+      await handleDeleteCursoImage(cursos.find(curso => curso.id === id)?.imagen || "");
       const result = await deleteCurso(id);
 
       if (result.success === true) {

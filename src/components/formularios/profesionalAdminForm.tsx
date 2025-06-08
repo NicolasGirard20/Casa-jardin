@@ -76,13 +76,6 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
     if (ProfesionalProps.nueva) {
       console.log("nuevo profesional")
 
-
-
-      //guardo la nueva imagen en el repo
-
-      console.log("imagen modificada")
-      const nuevoUrl = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : data.imagen
-
       //guardo el profesional con imagen
       const pro = await createProfesional({
         nombre: data.nombre,
@@ -91,10 +84,22 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
         email: data.email,
         telefono: data.telefono,
         password: data.password,
-        //uso el nuevo url de la imagen seleccionada
-        imagen: nuevoUrl ? nuevoUrl : null
+        imagen: null
       })
-      console.log(pro)
+      if (typeof pro === "string") {
+          return
+      }
+      //si hay imagen, la subo
+      console.log("imagen modificada")
+      data.id = pro.id; //asigno el id del profesional creado para poder subir la imagen
+      const nuevoUrl = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : data.imagen
+      console.log("imagen subida: ", nuevoUrl)
+      //actualizo el profesional con la imagen
+      await updateProfesional(
+        pro.id, {
+        ...pro,
+        imagen: nuevoUrl
+      })
 
       //actualizo la lista de profesionales
       ProfesionalProps.setProfesionalesListaCompleta?.((prev) => [...prev, pro])
