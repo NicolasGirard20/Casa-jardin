@@ -7,9 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Apple, Loader } from 'lucide-react';
-//por si el profesional no tiene una imagen cargada
-import NoImage from "../../../../public/Images/default-no-image.png";
-import { handleUploadProfesionalImage } from '@/helpers/repoImages';
+import { handleDeleteProfesionalImage, handleUploadProfesionalImage } from '@/helpers/repoImages';
 import { createProfesional, updateProfesional } from '@/services/profesional';
 import { FileInput } from '../ui/fileInput';
 import PasswordAdmin from '../passwordInput/passwordAdmin';
@@ -108,8 +106,9 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
       //actualizo el profesional ya existente
       console.log("actualizo profesional")
       console.log(imagenArchivo)
+      //si hay cambios en la imagen
       const url = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : data.imagen
-      console.log("imagen modificada", url)
+      console.log("imagen modificada: ", url)
 
       //actualizo el profesional
       if (data.password.length === 0) {
@@ -167,8 +166,14 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
     const lastDotIndex = filename.lastIndexOf(".");
     const fileExtension = lastDotIndex !== -1 ? filename.substring(lastDotIndex + 1) : "";
 
-    const filenameResult = `${data.email}_${data.nombre}_${data.apellido}.${fileExtension}`
+    const filenameResult = `${data.id}.${fileExtension}`
     console.log("filename ----", filenameResult)
+    //borro la imagen anterior si existe
+    if(ProfesionalProps.profesional?.imagen) {
+      console.log("borrando imagen antigua: " + ProfesionalProps.profesional.imagen);
+      await handleDeleteProfesionalImage(ProfesionalProps.profesional.imagen);
+
+    }
     await handleUploadProfesionalImage(
       file,
       filenameResult

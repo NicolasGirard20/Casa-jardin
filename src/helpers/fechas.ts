@@ -33,7 +33,7 @@ export const formDate = (dateString: string) => {
     const day = String(date.getDate()).padStart(2, '0');
     console.log(`input: ${dateString} | output: ${year}-${month}-${day}`)
     return `${year}-${month}-${day}`;
-  }
+}
 
 //obtener edad de un alumno en base a su fecha de nacimiento
 export function calcularEdad(fechaNacimiento: any) {
