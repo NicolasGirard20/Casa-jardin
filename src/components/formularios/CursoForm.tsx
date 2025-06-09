@@ -115,31 +115,8 @@ const CursoForm: React.FC<CursoFormProps> = ({
       id: selectedCurso?.id,
       nombre: selectedCurso?.nombre || "",
       descripcion: selectedCurso?.descripcion || "",
-      fechaInicio: selectedCurso?.fechaInicio
-        ?  // Usar una función para formatear la fecha
-        (() => {
-          const date = new Date(selectedCurso?.fechaInicio);
-          if (isNaN(date.getTime())) return "";
-          const year = date.getUTCFullYear();
-          const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-          // Asegurarse de que el día esté en formato de dos dígitos y que sea horario UTC
-          // (esto es importante si la fecha se guarda en UTC)
-          const day = String(date.getUTCDate()).padStart(2, "0");
-          return `${year}-${month}-${day}`;
-        })()
-        : "",
-      fechaFin: selectedCurso?.fechaFin ?
-        (() => {
-          const date = new Date(selectedCurso?.fechaFin);
-          if (isNaN(date.getTime())) return "";
-          const year = date.getUTCFullYear();
-          const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-          // Asegurarse de que el día esté en formato de dos dígitos y que sea horario UTC
-          // (esto es importante si la fecha se guarda en UTC)
-          const day = String(date.getUTCDate()).padStart(2, "0");
-          return `${year}-${month}-${day}`;
-        })()
-        : "",
+      fechaInicio: selectedCurso?.fechaInicio ? formDate(selectedCurso?.fechaInicio) : "",
+      fechaFin: selectedCurso?.fechaFin ? formDate(selectedCurso?.fechaFin) : "",
       edadMinima: selectedCurso?.edadMinima || undefined,
       edadMaxima: selectedCurso?.edadMaxima || undefined,
       imagen: selectedCurso?.imagen || null,

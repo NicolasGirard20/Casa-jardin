@@ -10,7 +10,7 @@ import Loader from '@/components/Loaders/loader/loader';
 //helper de direccion
 import { getDireccionSimple } from '@/helpers/direccion';
 //helper para calcular edad
-import { calcularEdad } from '@/helpers/fechas';
+import { calcularEdad, formDate } from '@/helpers/fechas';
 //para formulario de alumno
 import AlumnoForm from '@/components/formularios/alumnoForm';
 //para formulario del responable
@@ -91,6 +91,8 @@ const Cuenta: React.FC = () => {
         if (!user) return;
         console.log("flag user", user);
         const edad = calcularEdad(user.fechaNacimiento);
+        //para que ya quede formateado
+        user.fechaNacimiento = formDate(user.fechaNacimiento);
         console.log("flag edad", edad);
         if (edad >= 18) setMayoriaEdad(true);
         //si es menor traigo los datos de su responsable
@@ -142,6 +144,8 @@ const Cuenta: React.FC = () => {
         setLoading(true);
         if(!user) return
         const u = await fetchUserData();
+        //formatear la fecha de nacimiento
+        u.fechaNacimiento = formDate(u.fechaNacimiento);
         setUser(u);
         if(u.direccionId){
             const direccion = await getDireccionSimple(u.direccionId);
@@ -305,7 +309,7 @@ const allEmptyFields = [...userEmptyFields, ...responsableEmptyFields]
                       </div>
                       <div className="space-y-1">
                         <label className="text-sm font-medium text-gray-500">Fecha de Nacimiento</label>
-                        <p className="text-gray-900">{user?.fechaNacimiento?.split('T')[0] ? user.fechaNacimiento.split('T')[0] : "-"}</p>
+                        <p className="text-gray-900">{user?.fechaNacimiento ? user.fechaNacimiento : ""}</p>
                       </div>
                       <div className="space-y-1">
                         <label className="text-sm font-medium text-gray-500">DNI</label>
