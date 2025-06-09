@@ -1,6 +1,6 @@
 "use client"
 
-import { object, z } from "zod"
+import { object, set, z } from "zod"
 import { useForm, FormProvider } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type React from "react"
@@ -88,6 +88,7 @@ interface CursoFormProps {
   fetchCursos: () => Promise<void>
   fetchImages: () => Promise<void>
   setImagesLoaded: React.Dispatch<React.SetStateAction<boolean>>
+  setCursos: React.Dispatch<React.SetStateAction<any[]>>
 }
 // Componente de formulario para crear o editar un curso
 const CursoForm: React.FC<CursoFormProps> = ({
@@ -97,6 +98,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
   fetchCursos,
   setImagesLoaded,
   fetchImages,
+  setCursos,
 }) => {
   const [imagePreview, setImagePreview] = useState<string>("")
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -113,8 +115,31 @@ const CursoForm: React.FC<CursoFormProps> = ({
       id: selectedCurso?.id,
       nombre: selectedCurso?.nombre || "",
       descripcion: selectedCurso?.descripcion || "",
-      fechaInicio: selectedCurso?.fechaInicio ? formDate(selectedCurso?.fechaInicio) : "",
-      fechaFin: selectedCurso?.fechaFin ? formDate(selectedCurso?.fechaFin) : "",
+      fechaInicio: selectedCurso?.fechaInicio
+        ?  // Usar una función para formatear la fecha
+        (() => {
+          const date = new Date(selectedCurso?.fechaInicio);
+          if (isNaN(date.getTime())) return "";
+          const year = date.getUTCFullYear();
+          const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+          // Asegurarse de que el día esté en formato de dos dígitos y que sea horario UTC
+          // (esto es importante si la fecha se guarda en UTC)
+          const day = String(date.getUTCDate()).padStart(2, "0");
+          return `${year}-${month}-${day}`;
+        })()
+        : "",
+      fechaFin: selectedCurso?.fechaFin ?
+        (() => {
+          const date = new Date(selectedCurso?.fechaFin);
+          if (isNaN(date.getTime())) return "";
+          const year = date.getUTCFullYear();
+          const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+          // Asegurarse de que el día esté en formato de dos dígitos y que sea horario UTC
+          // (esto es importante si la fecha se guarda en UTC)
+          const day = String(date.getUTCDate()).padStart(2, "0");
+          return `${year}-${month}-${day}`;
+        })()
+        : "",
       edadMinima: selectedCurso?.edadMinima || undefined,
       edadMaxima: selectedCurso?.edadMaxima || undefined,
       imagen: selectedCurso?.imagen || null,
@@ -128,21 +153,46 @@ const CursoForm: React.FC<CursoFormProps> = ({
     formState: { errors, isSubmitting },
     reset,
     setValue,
-    getValues,
+
     watch,
   } = methods
 
   useEffect(() => {
     const loadCursoData = async () => {
+
       if (selectedCursoId !== null && selectedCursoId !== -1) {
         const curso = cursos.find((c) => c.id === selectedCursoId)
+        console.log("cursoSeleccionado", curso)
         if (curso) {
           reset({
             id: curso.id,
             nombre: curso.nombre,
             descripcion: curso.descripcion,
-            fechaInicio: curso.fechaInicio ? formDate(curso.fechaInicio) : "",
-            fechaFin: curso.fechaFin ? formDate(curso.fechaFin) : "",
+            fechaInicio: curso.fechaInicio
+              ?  // Usar una función para formatear la fecha
+              (() => {
+                const date = new Date(selectedCurso?.fechaInicio);
+                if (isNaN(date.getTime())) return "";
+                const year = date.getUTCFullYear();
+                const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+                // Asegurarse de que el día esté en formato de dos dígitos y que sea horario UTC
+                // (esto es importante si la fecha se guarda en UTC)
+                const day = String(date.getUTCDate()).padStart(2, "0");
+                return `${year}-${month}-${day}`;
+              })()
+              : "",
+
+            fechaFin: curso.fechaFin ? (() => {
+              const date = new Date(selectedCurso?.fechaFin);
+              if (isNaN(date.getTime())) return "";
+              const year = date.getUTCFullYear();
+              const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+              // Asegurarse de que el día esté en formato de dos dígitos y que sea horario UTC
+              // (esto es importante si la fecha se guarda en UTC)
+              const day = String(date.getUTCDate()).padStart(2, "0");
+              return `${year}-${month}-${day}`;
+            })()
+              : "",
             edadMinima: curso.edadMinima,
             edadMaxima: curso.edadMaxima,
             imagen: curso.imagen,
@@ -158,7 +208,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
     }
 
     loadCursoData()
-  }, [selectedCursoId, cursos, reset])
+  }, [selectedCursoId, cursos, reset,])
 
   const handleImageChange = (file: File | null) => {
     if (file) {
@@ -176,10 +226,11 @@ const CursoForm: React.FC<CursoFormProps> = ({
   // Función para manejar el envío del formulario
   const onSubmit = async (data: CursoSchema) => {
     try {
+
       if (selectedCursoId === -1) {
         // Es un curso nuevo
         console.log("nuevo curso")
-        
+
         const cur = await createCurso({
           nombre: data.nombre,
           descripcion: data.descripcion,
@@ -191,7 +242,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
         })
         if (typeof cur === "string") {
           return
-        } 
+        }
         data.id = cur.id // Asignar el ID del curso recién creado a data
         const imagenUrl = selectedFile ? await handleImageUpload(selectedFile, data) : data.imagen
         console.log("imagen subida: ", imagenUrl)
@@ -199,14 +250,20 @@ const CursoForm: React.FC<CursoFormProps> = ({
           ...cur,
           imagen: imagenUrl,
         })
-       
+
         console.log("curso creado", cur)
+        const cursosUpd = [...cursos, { ...cur, imagen: imagenUrl }] // Crear un nuevo array con el curso recién creado
+        console.log("cursos actualizados", cursosUpd[cursosUpd.length - 1])
+        setCursos(cursosUpd) // Actualizar el estado de cursos con el nuevo curso     
+        // Resetear estados después de que los datos se han actualizado
+
+
       } else if (selectedCursoId !== null) {
         // Actualizando un curso existente
         console.log("actualizando curso")
         const imagenUrl = selectedFile ? await handleImageUpload(selectedFile, data) : data.imagen
         console.log("imagen modificada: ", imagenUrl)
-        await updateCurso(selectedCursoId, {
+        const updateCurs = await updateCurso(selectedCursoId, {
           nombre: data.nombre,
           descripcion: data.descripcion,
           fechaInicio: new Date(data.fechaInicio),
@@ -214,16 +271,19 @@ const CursoForm: React.FC<CursoFormProps> = ({
           edadMinima: Number(data.edadMinima),
           edadMaxima: Number(data.edadMaxima),
           imagen: imagenUrl,
+
         })
-        console.log("curso actualizado")
+        const cursosUpd = cursos.map((curso) =>
+          curso.id === selectedCursoId ? { ...curso, ...updateCurs } : curso
+        )
+
+        console.log("curso actualizados DE LOS CURSOS", cursosUpd.find((curso) => curso.id === selectedCursoId))
+        setCursos(cursosUpd) // Actualizar el estado de cursos con el curso actualizado
+
+        /*       console.log("curso actualizado", updateCurs ) */
       }
 
-      // Importante: Primero actualizar los datos y luego resetear el estado
-      await fetchCursos() // Esperar a que se complete la actualización de cursos
-      await fetchImages() // Esperar a que se complete la actualización de imágenes
 
-      // Resetear estados después de que los datos se han actualizado
-      resetState()
       setImagesLoaded(false)
       setSelectedCursoId(null)
     } catch (error) {
@@ -314,10 +374,11 @@ const CursoForm: React.FC<CursoFormProps> = ({
                   <textarea
                     id="descripcion"
                     placeholder="Descripción del taller"
+
                     maxLength={500}
-                    rows={6}
+                    rows={4}
                     {...register("descripcion")}
-                    className="w-full p-2 border rounded-md mt-1 min-w-[350px] md:min-w-[500px] lg:min-w-[700px]"
+                    className="w-full p-2 border rounded-md mt-1 min-w-[300px] md:min-w-[400px] lg:min-w-[700px]"
                   />
                   {errors.descripcion && <p className="text-destructive text-sm mt-1">{errors.descripcion.message}</p>}
                 </div>
@@ -376,21 +437,21 @@ const CursoForm: React.FC<CursoFormProps> = ({
                       min={
                         watch("fechaInicio") && !isNaN(new Date(watch("fechaInicio")).getTime())
                           ? new Date(
-                              new Date(watch("fechaInicio")).setDate(new Date(watch("fechaInicio")).getDate() + 7),
-                            )
-                              .toISOString()
-                              .split("T")[0]
+                            new Date(watch("fechaInicio")).setDate(new Date(watch("fechaInicio")).getDate() + 7),
+                          )
+                            .toISOString()
+                            .split("T")[0]
                           : new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split("T")[0]
                       }
                       max={
                         watch("fechaInicio") && !isNaN(new Date(watch("fechaInicio")).getTime())
                           ? new Date(
-                              new Date(watch("fechaInicio")).setFullYear(
-                                new Date(watch("fechaInicio")).getFullYear() + 1,
-                              ),
-                            )
-                              .toISOString()
-                              .split("T")[0]
+                            new Date(watch("fechaInicio")).setFullYear(
+                              new Date(watch("fechaInicio")).getFullYear() + 1,
+                            ),
+                          )
+                            .toISOString()
+                            .split("T")[0]
                           : new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split("T")[0]
                       }
                       className={`mt-1 ${errors.fechaFin ? "border-red-500" : ""}`}

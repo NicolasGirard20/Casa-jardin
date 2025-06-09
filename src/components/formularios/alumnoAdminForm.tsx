@@ -156,13 +156,25 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
   const methods = useForm<AlumnoSchema>({
     resolver: zodResolver(alumnoSchema(FormProps.mayor, FormProps.nueva)),
     defaultValues: {
-
       id: FormProps.alumno?.id,
       nombre: FormProps.alumno?.nombre,
       apellido: FormProps.alumno?.apellido,
       email: FormProps.alumno?.email,
       password: "",
-      fechaNacimiento: FormProps.alumno?.fechaNacimiento ? formDate(FormProps.alumno.fechaNacimiento) : "",
+      // Convertir Date a string 'YYYY-MM-DD' según la zona horaria local
+      fechaNacimiento: FormProps.alumno?.fechaNacimiento
+        ?  // Usar una función para formatear la fecha
+        (() => {
+          const date = new Date(FormProps.alumno.fechaNacimiento);
+          if (isNaN(date.getTime())) return "";
+          const year = date.getUTCFullYear();
+          const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+          // Asegurarse de que el día esté en formato de dos dígitos y que sea horario UTC
+          // (esto es importante si la fecha se guarda en UTC)
+          const day = String(date.getUTCDate()).padStart(2, "0");
+          return `${year}-${month}-${day}`;
+        })()
+        : "",
       direccionId: FormProps.alumno?.direccionId,
       dni: FormProps.alumno?.dni || undefined,
       telefono: FormProps.alumno?.telefono || "",
@@ -174,7 +186,6 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
         numero: undefined,
       },
       responsable: FormProps.alumno?.responsable,
-
     },
   })
 
@@ -338,19 +349,19 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
                   </div>
                   <div>
                     <Label htmlFor="fechaNacimiento">Fecha de Nacimiento</Label>
-                    <Input 
-                      id="fechaNacimiento" 
-                      type="date" 
-                      {...register("fechaNacimiento")}  
-                      className="mt-1" 
-                      max={FormProps.mayor ? 
-                         new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0] 
+                    <Input
+                      id="fechaNacimiento"
+                      type="date"
+                      {...register("fechaNacimiento")}
+                      className="mt-1"
+                      max={FormProps.mayor ?
+                        new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]
                         :
-                         new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().split("T")[0]} 
-                      min={FormProps.mayor ? 
+                        new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().split("T")[0]}
+                      min={FormProps.mayor ?
                         new Date(new Date().setFullYear(new Date().getFullYear() - 100)).toISOString().split("T")[0]
-                         :
-                        new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0] }
+                        :
+                        new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
                     />
                     {errors.fechaNacimiento && <p className="text-destructive text-sm mt-1">{errors.fechaNacimiento.message}</p>}
                   </div>

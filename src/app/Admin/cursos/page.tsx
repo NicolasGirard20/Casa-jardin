@@ -136,6 +136,7 @@ const Cursos: React.FC = () => {
 
   // Filtrar cursos cuando cambia el término de búsqueda
   useEffect(() => {
+
     setFilteredCursos(
       cursos.filter(curso =>
         curso.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -485,6 +486,7 @@ const Cursos: React.FC = () => {
         <CursoForm
           selectedCursoId={selectedCursoId}
           cursos={cursos}
+          setCursos={setCursos}
           setSelectedCursoId={setSelectedCursoId}
           fetchCursos={fetchCursos}
           fetchImages={fetchImages}

@@ -26,7 +26,18 @@ interface TallerCardProps {
 export default function TallerCard({ taller, profesionales }: TallerCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTallerHorarios, setSelectedTallerHorarios] = useState<{ [key: string]: string[]}>();
-  const fechaFin = new Date(taller.fechaFin).toLocaleDateString();
+  const fechaFin =  (() => {
+          const date = new Date(taller?.fechaFin);
+          if (isNaN(date.getTime())) return "";
+          const year = date.getUTCFullYear();
+          const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+          // Asegurarse de que el día esté en formato de dos dígitos y que sea horario UTC
+          // (esto es importante si la fecha se guarda en UTC)
+          const day = String(date.getUTCDate()).padStart(2, "0");
+          return `${year}-${month}-${day}`;
+        })()
+ 
+
 
   useEffect(() => {
     if (isModalOpen && taller.id) {

@@ -78,7 +78,20 @@ const AlumnoForm: React.FC<AlumnoProps> = (AlumnoProps) => {
       nombre: AlumnoProps.alumno?.nombre,
       apellido: AlumnoProps.alumno?.apellido,
       email: AlumnoProps.alumno?.email,
-      fechaNacimiento: AlumnoProps.alumno?.fechaNacimiento,
+      fechaNacimiento: AlumnoProps.alumno?.fechaNacimiento
+        ?  // Usar una función para formatear la fecha
+        (() => {
+          const date = new Date(AlumnoProps.alumno.fechaNacimiento);
+          if (isNaN(date.getTime())) return "";
+          const year = date.getUTCFullYear();
+          const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+          // Asegurarse de que el día esté en formato de dos dígitos y que sea horario UTC
+          // (esto es importante si la fecha se guarda en UTC)
+          const day = String(date.getUTCDate()).padStart(2, "0");
+          return `${year}-${month}-${day}`;
+        })()
+        : "",
+      
       direccionId: AlumnoProps.alumno?.direccionId,
 
       //campos modificables
