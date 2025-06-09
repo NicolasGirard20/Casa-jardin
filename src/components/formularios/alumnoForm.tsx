@@ -78,19 +78,7 @@ const AlumnoForm: React.FC<AlumnoProps> = (AlumnoProps) => {
       nombre: AlumnoProps.alumno?.nombre,
       apellido: AlumnoProps.alumno?.apellido,
       email: AlumnoProps.alumno?.email,
-      fechaNacimiento: AlumnoProps.alumno?.fechaNacimiento
-        ?  // Usar una función para formatear la fecha
-        (() => {
-          const date = new Date(AlumnoProps.alumno.fechaNacimiento);
-          if (isNaN(date.getTime())) return "";
-          const year = date.getUTCFullYear();
-          const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-          // Asegurarse de que el día esté en formato de dos dígitos y que sea horario UTC
-          // (esto es importante si la fecha se guarda en UTC)
-          const day = String(date.getUTCDate()).padStart(2, "0");
-          return `${year}-${month}-${day}`;
-        })()
-        : "",
+      fechaNacimiento: AlumnoProps.alumno?.fechaNacimiento ? AlumnoProps.alumno.fechaNacimiento : "",
       
       direccionId: AlumnoProps.alumno?.direccionId,
 
@@ -180,23 +168,23 @@ const AlumnoForm: React.FC<AlumnoProps> = (AlumnoProps) => {
                 Información del Usuario (No editable)
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-4 pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                <div className="col-span-1 md:col-span-1 lg:col-span-1">
                   <Label className="text-sm font-medium text-muted-foreground">Nombre</Label>
                   <p className="text-lg font-medium overflow-auto">{AlumnoProps.alumno?.nombre}</p>
                 </div>
-                <div>
+                <div className="col-span-1 md:col-span-1 lg:col-span-1">
                   <Label className="text-sm font-medium text-muted-foreground">Apellido</Label>
                   <p className="text-lg font-medium overflow-auto">{AlumnoProps.alumno?.apellido}</p>
                 </div>
-                <div>
+                <div className="col-span-1 md:col-span-2 lg:col-span-3">
                   <Label className="text-sm font-medium text-muted-foreground">Email</Label>
-                  <p className="text-lg font-medium overflow-auto   ">{AlumnoProps.alumno?.email}</p>
+                  <p className="text-lg font-medium overflow-auto">{AlumnoProps.alumno?.email}</p>
                 </div>
-                <div>
+                <div className="col-span-1 md:col-span-2 lg:col-span-2">
                   <Label className="text-sm font-medium text-muted-foreground">Fecha de Nacimiento</Label>
-                  <p className="text-lg font-medium">{fecha(AlumnoProps.alumno?.fechaNacimiento)}</p>
+                  <p className="text-lg font-medium">{AlumnoProps.alumno?.fechaNacimiento}</p>
                 </div>
               </div>
             </CardContent>

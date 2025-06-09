@@ -28,11 +28,23 @@ export function stringToDateTime(dateString: string): Date {
 // "Sat Jul 15 2023 21:00:00 GMT-0300 (hora estándar de Argentina) "
 export const formDate = (dateString: string) => {
     const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
     console.log(`input: ${dateString} | output: ${year}-${month}-${day}`)
-    return `${year}-${month}-${day}`;
+    //return `${year}-${month}-${day}`;
+    return `${year}-${month}-${day}`; 
+}
+
+//sirve para mostrar la fecha en el formato dd-mm-yyyy (si no es un input es mejor esta versión)
+export const displayDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    console.log(`input: ${dateString} | output: ${year}-${month}-${day}`)
+    //return `${year}-${month}-${day}`;
+    return `${day}-${month}-${year}`; 
 }
 
 //obtener edad de un alumno en base a su fecha de nacimiento
