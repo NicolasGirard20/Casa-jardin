@@ -7,9 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Apple, Loader } from 'lucide-react';
-//por si el profesional no tiene una imagen cargada
-import NoImage from "../../../../public/Images/default-no-image.png";
-import { handleUploadProfesionalImage } from '@/helpers/repoImages';
+import { handleDeleteProfesionalImage, handleUploadProfesionalImage } from '@/helpers/repoImages';
 import { createProfesional, updateProfesional } from '@/services/profesional';
 import { FileInput } from '../ui/fileInput';
 import PasswordAdmin from '../passwordInput/passwordAdmin';
@@ -78,13 +76,6 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
     if (ProfesionalProps.nueva) {
       console.log("nuevo profesional")
 
-
-
-      //guardo la nueva imagen en el repo
-
-      console.log("imagen modificada")
-      const nuevoUrl = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : data.imagen
-
       //guardo el profesional con imagen
       const pro = await createProfesional({
         nombre: data.nombre,
@@ -93,10 +84,22 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
         email: data.email,
         telefono: data.telefono,
         password: data.password,
-        //uso el nuevo url de la imagen seleccionada
-        imagen: nuevoUrl ? nuevoUrl : null
+        imagen: null
       })
-      console.log(pro)
+      if (typeof pro === "string") {
+          return
+      }
+      //si hay imagen, la subo
+      console.log("imagen modificada")
+      data.id = pro.id; //asigno el id del profesional creado para poder subir la imagen
+      const nuevoUrl = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : data.imagen
+      console.log("imagen subida: ", nuevoUrl)
+      //actualizo el profesional con la imagen
+      await updateProfesional(
+        pro.id, {
+        ...pro,
+        imagen: nuevoUrl
+      })
 
       //actualizo la lista de profesionales
       ProfesionalProps.setProfesionalesListaCompleta?.((prev) => [...prev, pro])
@@ -108,8 +111,9 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
       //actualizo el profesional ya existente
       console.log("actualizo profesional")
       console.log(imagenArchivo)
+      //si hay cambios en la imagen
       const url = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : data.imagen
-      console.log("imagen modificada", url)
+      console.log("imagen modificada: ", url)
 
       //actualizo el profesional
       if (data.password.length === 0) {
@@ -167,8 +171,14 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
     const lastDotIndex = filename.lastIndexOf(".");
     const fileExtension = lastDotIndex !== -1 ? filename.substring(lastDotIndex + 1) : "";
 
-    const filenameResult = `${data.email}_${data.nombre}_${data.apellido}.${fileExtension}`
+    const filenameResult = `${data.id}.${fileExtension}`
     console.log("filename ----", filenameResult)
+    //borro la imagen anterior si existe
+    if(ProfesionalProps.profesional?.imagen) {
+      console.log("borrando imagen antigua: " + ProfesionalProps.profesional.imagen);
+      await handleDeleteProfesionalImage(ProfesionalProps.profesional.imagen);
+
+    }
     await handleUploadProfesionalImage(
       file,
       filenameResult
