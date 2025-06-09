@@ -9,7 +9,7 @@ import { getImagesUser } from "@/services/repoImage"
 import { mapearImagenes } from "@/helpers/repoImages"
 import { Apple } from "lucide-react"
 import Loader from "@/components/Loaders/loader/loader"
-import NoImage from "../../../../public/Images/default-no-image.png"
+import NoImage from "../../../../public/Images/default-no-image.png" // Imagen por defecto si no hay imagen del profesional
 import ProfesionalForm from "@/components/formularios/profesionalForm"
 
 type Profesional = {
@@ -54,7 +54,6 @@ const Cuenta: React.FC = () => {
     }
   }, [changed])
 
-
   const fetchImage = async (u: any) => {
     if (u?.imagen) {
       try {
@@ -86,6 +85,11 @@ const Cuenta: React.FC = () => {
       if (userData?.imagen) {
         const imageUrl = await fetchImage(userData)
         setDownloadUrl(imageUrl)
+        setImageError(false)
+      } else {
+        // Si no hay imagen, resetear el estado
+        setDownloadUrl(null)
+        setImageError(false)
       }
     } catch (error) {
       console.error("Error fetching user data:", error)
@@ -109,7 +113,6 @@ const Cuenta: React.FC = () => {
           <p className="text-black font-medium">Cargando datos del profesional...</p>
         </div>
       ) : (
-        
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
             <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 flex items-center justify-between">
@@ -119,7 +122,7 @@ const Cuenta: React.FC = () => {
               </div>
               <button
                 onClick={() => setEditar(true)}
-                 className="inline-flex items-center px-4 py-2 rounded-lg bg-white/10 text-white font-medium hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-1 focus:ring-offset-green-600"
+                className="inline-flex items-center px-4 py-2 rounded-lg bg-white/10 text-white font-medium hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-1 focus:ring-offset-green-600"
               >
                 Editar Mis Datos
               </button>
@@ -139,7 +142,7 @@ const Cuenta: React.FC = () => {
                   />
                 ) : (
                   <Image
-                    src={NoImage}
+                    src={NoImage || "/placeholder.svg"}
                     alt="Imagen de perfil por defecto"
                     fill
                     className="object-cover"
@@ -189,15 +192,15 @@ const Cuenta: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <ProfesionalForm
             profesional={
-                user && {
-                    id: user.id,
-                    nombre: user.nombre,
-                    apellido: user.apellido,
-                    telefono: user.telefono,
-                    email: user.email,
-                    especialidad: String(user.especialidad),
-                    imagen: user.imagen,
-                }
+              user && {
+                id: user.id,
+                nombre: user.nombre,
+                apellido: user.apellido,
+                telefono: user.telefono,
+                email: user.email,
+                especialidad: String(user.especialidad),
+                imagen: user.imagen,
+              }
             }
             setEditar={setEditar}
             setChanged={setChanged}
@@ -210,4 +213,3 @@ const Cuenta: React.FC = () => {
 }
 
 export default Cuenta
-
