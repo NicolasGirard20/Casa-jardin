@@ -52,7 +52,7 @@ export default function Navigate() {
       <div className="hidden md:flex ml-auto space-x-4 py-2 text-white">
 
         <NavLink href="/profesional/cronogramap/listar">Calendario</NavLink>
-        <NavLink href="/profesional/Cuenta">Mi Perfil</NavLink>
+        <NavLink href="/profesional/Cuenta">Mi Cuenta</NavLink>
         <NavLink onClick={logout}>Salir</NavLink>
       </div>
       <div className="md:hidden flex items-center">
@@ -78,7 +78,7 @@ export default function Navigate() {
           className="md:hidden fixed top-16 left-0 w-full bg-sky-600 text-white flex flex-col items-center space-y-4 py-4 max-h-[70vh] overflow-y-auto z-50 shadow-lg"
         >
           <div className="border-t w-full"></div>
-          <NavLink href="/profesional/Cuenta">Mi Perfil</NavLink>
+          <NavLink href="/profesional/Cuenta">Mi Cuenta</NavLink>
           <div className="border-t w-full"></div>
           <NavLink href="/profesional/cronogramap/listar">Calendario</NavLink>
           <div className="border-t w-full"></div>
