@@ -382,8 +382,8 @@ const Cursos: React.FC = () => {
                       <div className="flex items-center gap-2 text-sm text-gray-500">
                         <Calendar className="w-4 h-4" />
                         <span>
-                          {talleres.fechaInicio &&
-                            new Date(new Date(talleres.fechaInicio).setDate(new Date(talleres.fechaInicio).getDate() + 1)).toLocaleDateString('es-ES', {
+                          {talleres.fechaFin &&
+                            new Date(new Date(talleres.fechaFin).setDate(new Date(talleres.fechaFin).getDate() + 1)).toLocaleDateString('es-ES', {
                               day: 'numeric',
                               month: 'short',
                               year: 'numeric',
