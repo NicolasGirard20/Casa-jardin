@@ -33,6 +33,17 @@ export const formDate = (dateString: string) => {
     const day = String(date.getUTCDate()).padStart(2, '0');
     console.log(`input: ${dateString} | output: ${year}-${month}-${day}`)
     //return `${year}-${month}-${day}`;
+    return `${year}-${month}-${day}`; 
+}
+
+//sirve para mostrar la fecha en el formato dd-mm-yyyy (si no es un input es mejor esta versión)
+export const displayDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    console.log(`input: ${dateString} | output: ${year}-${month}-${day}`)
+    //return `${year}-${month}-${day}`;
     return `${day}-${month}-${year}`; 
 }
 

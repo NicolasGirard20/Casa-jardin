@@ -10,7 +10,7 @@ import Loader from '@/components/Loaders/loader/loader';
 //helper de direccion
 import { getDireccionSimple } from '@/helpers/direccion';
 //helper para calcular edad
-import { calcularEdad, formDate } from '@/helpers/fechas';
+import { calcularEdad, displayDate } from '@/helpers/fechas';
 //para formulario de alumno
 import AlumnoForm from '@/components/formularios/alumnoForm';
 //para formulario del responable
@@ -92,7 +92,7 @@ const Cuenta: React.FC = () => {
         console.log("flag user", user);
         const edad = calcularEdad(user.fechaNacimiento);
         //para que ya quede formateado
-        user.fechaNacimiento = formDate(user.fechaNacimiento);
+        user.fechaNacimiento = displayDate(user.fechaNacimiento);
         console.log("flag edad", edad);
         if (edad >= 18) setMayoriaEdad(true);
         //si es menor traigo los datos de su responsable
@@ -145,7 +145,7 @@ const Cuenta: React.FC = () => {
         if(!user) return
         const u = await fetchUserData();
         //formatear la fecha de nacimiento
-        u.fechaNacimiento = formDate(u.fechaNacimiento);
+        u.fechaNacimiento = displayDate(u.fechaNacimiento);
         setUser(u);
         if(u.direccionId){
             const direccion = await getDireccionSimple(u.direccionId);

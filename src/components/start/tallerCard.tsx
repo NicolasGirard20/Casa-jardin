@@ -7,7 +7,7 @@ import { TallerModal } from './tallerModal';
 import { getCursoHorarios } from '@/services/cursos';
 import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
-import { formDate } from '@/helpers/fechas';
+import { displayDate } from '@/helpers/fechas';
 
 interface Taller {
   id: number;
@@ -27,7 +27,7 @@ interface TallerCardProps {
 export default function TallerCard({ taller, profesionales }: TallerCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTallerHorarios, setSelectedTallerHorarios] = useState<{ [key: string]: string[]}>();
-  const fechaFin =  taller?.fechaFin ? formDate(taller.fechaFin) : "Fecha no disponible";
+  const fechaFin =  taller?.fechaFin ? displayDate(taller.fechaFin) : "Fecha no disponible";
  
 
 
