@@ -16,7 +16,7 @@ export default function PasswordAdmin(passwordProps: PasswordInputProps) {
     const [password, setPassword] = useState<string>("");
     const { placeholderPassw, methods} = passwordProps;
 
-    const { register, formState: { errors } } = methods;
+    const { register, formState: { errors } } = useFormContext();
 
     const requisitos = [
         {

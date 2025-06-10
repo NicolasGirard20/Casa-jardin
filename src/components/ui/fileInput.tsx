@@ -32,13 +32,16 @@ export function FileInput({
       onImageChange?.(file);
     }
   };
-
+  console.log("previewUrl", previewUrl);
   const handleClearImage = () => {
+    
     setPreview(null);
     if (inputRef.current) {
       inputRef.current.value = "";
     }
+        console.log("Image cleared");
     onImageChange?.(null);
+
   };
 
   const triggerFileInput = () => {
@@ -46,7 +49,7 @@ export function FileInput({
   };
 
   return (
-    <div className={cn("space-y-2", className)}>
+    <div className={cn("space-y-2", className)} onClick={()=>{console.log("preview", preview)}}>
       <div className="flex items-center gap-2">
         <Button 
           type="button" 
@@ -57,7 +60,7 @@ export function FileInput({
           <Upload className="h-4 w-4" />
           {buttonText}
         </Button>
-        {preview && (
+        {preview !== "../../../../public/Images/default-no-image.png" && (
           <Button 
             type="button" 
             variant="ghost" 

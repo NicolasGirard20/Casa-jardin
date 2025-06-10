@@ -223,7 +223,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
           return
         }
         data.id = cur.id // Asignar el ID del curso recién creado a data
-        const imagenUrl = selectedFile ? await handleImageUpload(selectedFile, data) : data.imagen
+        const imagenUrl = selectedFile ? await handleImageUpload(selectedFile, data) : selectedFile
         console.log("imagen subida: ", imagenUrl)
         await updateCurso(cur.id, {
           ...cur,
@@ -240,7 +240,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
       } else if (selectedCursoId !== null) {
         // Actualizando un curso existente
         console.log("actualizando curso")
-        const imagenUrl = selectedFile ? await handleImageUpload(selectedFile, data) : data.imagen
+        const imagenUrl = selectedFile ? await handleImageUpload(selectedFile, data) : selectedFile
         console.log("imagen modificada: ", imagenUrl)
         const updateCurs = await updateCurso(selectedCursoId, {
           nombre: data.nombre,

@@ -92,7 +92,7 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
       //si hay imagen, la subo
       console.log("imagen modificada")
       data.id = pro.id; //asigno el id del profesional creado para poder subir la imagen
-      const nuevoUrl = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : data.imagen
+      const nuevoUrl = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : imagenArchivo
       console.log("imagen subida: ", nuevoUrl)
       //actualizo el profesional con la imagen
       await updateProfesional(
@@ -112,7 +112,7 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
       console.log("actualizo profesional")
       console.log(imagenArchivo)
       //si hay cambios en la imagen
-      const url = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : data.imagen
+      const url = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : imagenArchivo
       console.log("imagen modificada: ", url)
 
       //actualizo el profesional

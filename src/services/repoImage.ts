@@ -47,26 +47,29 @@ export const getImagesUser = async () => {
     }
 };
  // Función para obtener el SHA del archivo (sirve para caso de imagenes con el mismo nombre)
- const getFileSha = async (url: string) => {
-    console.log("Fetching SHA from URL:", url); // <-- Agrega esto
+// Función para obtener el SHA del archivo (sirve para caso de imagenes con el mismo nombre)
+const getFileSha = async (filePath: string) => {
+    // Construir la URL de la API de GitHub para el contenido del archivo
+    const apiUrl = `${process.env.GITHUB_API_ADMIN_URL}${filePath}`;
+    console.log("Fetching SHA from API URL:", apiUrl);
     try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
-          'Content-Type': 'application/json'
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch file SHA');
         }
-      });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch file SHA');
-      }
-
-      const data = await response.json();
-      return data.sha;
+        const data = await response.json();
+        return data.sha;
     } catch (error) {
-      console.error('Error fetching file SHA:', error);
-      return null;
+        console.error('Error fetching file SHA:', error);
+        return null;
     }
 };
 
@@ -196,7 +199,7 @@ export const deleteImageCursos = async (fileName: string) => {
 
     try {
       // Obtener el SHA del archivo
-      const sha = await getFileSha(url);
+      const sha = await getFileSha(`${folderPath}${fileName}`);
       if (!sha) {
         return { error: 'Failed to get file SHA' };
       }

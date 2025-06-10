@@ -225,14 +225,6 @@ const Cursos: React.FC = () => {
       // aca se verifica si tiene imagen para borrarla
       const result = await deleteCurso(id, cursos);
 
-      //borrar imagen del repo
-      if (imageUrls[id]) {
-        const deleteResult = await handleDeleteCursoImage(imageUrls[id]);
-        if (deleteResult.error) {
-          setErrorMessage(deleteResult.error);
-          return;
-        }
-      }
       if (result.success === true) {
         setErrorMessage(null);
         // Actualizar la lista de cursos, excluyendo el curso eliminado

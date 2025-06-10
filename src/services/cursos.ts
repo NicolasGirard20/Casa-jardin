@@ -16,7 +16,7 @@ export type Curso = {
     fechaInicio: Date
     fechaFin: Date
     imagen: string | null
-  }
+}
 //Crear Crusos
 export async function createCurso(data: {
     nombre: string
@@ -28,7 +28,7 @@ export async function createCurso(data: {
     imagen: string | null
 }) {
     // antes de crear un curso se verifica si el curso ya existe en la base de datos con el nombre que se quiere crear y año
-    const curso = await getCursoByNombre(data) 
+    const curso = await getCursoByNombre(data)
     // si el curso ya existe se devuelve un error
     if (curso) {
         return "El talller ya existe con esos datos"
@@ -50,25 +50,25 @@ export async function createCurso(data: {
 
 //
 // Obtener un curso por nombre 
-export async function getCursoByNombre(data: { 
-    nombre: string, 
-    fechaFin: Date, 
-    fechaInicio: Date, 
-    edadMaxima: number, 
-    edadMinima: number 
-  }) {
-      return prisma.curso.findFirst({
-          where: {
-              nombre: data.nombre,
-              fechaFin: data.fechaFin,
-              fechaInicio: data.fechaInicio,
-              edadMaxima: Number(data.edadMaxima),
-              edadMinima: Number(data.edadMinima)
-          }
-      });
-  }
-  
- 
+export async function getCursoByNombre(data: {
+    nombre: string,
+    fechaFin: Date,
+    fechaInicio: Date,
+    edadMaxima: number,
+    edadMinima: number
+}) {
+    return prisma.curso.findFirst({
+        where: {
+            nombre: data.nombre,
+            fechaFin: data.fechaFin,
+            fechaInicio: data.fechaInicio,
+            edadMaxima: Number(data.edadMaxima),
+            edadMinima: Number(data.edadMinima)
+        }
+    });
+}
+
+
 //Listar Crusos
 export async function getCursos() {
     return prisma.curso.findMany()
@@ -90,16 +90,16 @@ export async function getCursoById(id: number) {
 // si no tiene un cronograma asignado se elimina el curso, si tiene un cronograma asignado busca ese id de cronograma en la tabla de cronogramaDiaHora  
 // si encuentra un cronogramaDiaHora con ese id de cronograma asignado al curso, no se puede eliminar el curso
 // si no encuentra un cronogramaDiaHora con ese id de cronograma asignado al curso, se elimina el cronograma asignado al curso y luego se elimina el curso
-export async function deleteCurso(id: number, cursos:any): Promise<{ success: boolean, message: string }> {
+export async function deleteCurso(id: number, cursos: any): Promise<{ success: boolean, message: string }> {
     try {
-        
+
         // Verificar si el curso tiene relaciones que impidan su eliminación
         const [cronograma, profesorCurso, alumnoCurso, solicitud, solicitudesLeidas] = await Promise.all([
             prisma.cronograma.findFirst({ where: { cursoId: id } }),
             prisma.profesional_Curso.findFirst({ where: { cursoId: id } }),
             prisma.alumno_Curso.findFirst({ where: { cursoId: id } }),
-            prisma.cursoSolicitud.findFirst({ 
-                where: { 
+            prisma.cursoSolicitud.findFirst({
+                where: {
                     cursoId: id,
                     solicitud: { leida: false } // Verifica si hay solicitudes no leídas
                 },
@@ -109,9 +109,9 @@ export async function deleteCurso(id: number, cursos:any): Promise<{ success: bo
             }),
             // Obtener las solicitudes leídas relacionadas con el curso antes de eliminar cursoSolicitud
             await prisma.cursoSolicitud.findMany({
-            where: { cursoId: id },
-            select: { solicitudId: true }
-        })
+                where: { cursoId: id },
+                select: { solicitudId: true }
+            })
 
         ]);
 
@@ -137,8 +137,11 @@ export async function deleteCurso(id: number, cursos:any): Promise<{ success: bo
                 return { success: false, message: "Error al eliminar el cronograma. Vuelve a intentarlo más tarde!" };
             }
         }
-      // Verificar si el curso tiene una imagen asociada y eliminarla
-            await handleDeleteCursoImage(cursos.find((curso: any) => curso.id === id)?.imagen || "");
+        // Verificar si el curso tiene una imagen asociada y eliminarla
+       // console.log(cursos.find((curso: any) => curso.id === id).imagen)
+        const imagenCurso = cursos.find((curso: any) => curso.id === id).imagen;
+        if (imagenCurso ) await handleDeleteCursoImage(imagenCurso);
+
         // Eliminar los modelos de cursoSolicitud relacionados con solicitudes leídas 
         await prisma.cursoSolicitud.deleteMany({ where: { cursoId: id } });
 
@@ -169,7 +172,7 @@ export async function updateCurso(id: number, data: {
     edadMinima: number
     edadMaxima: number
     imagen: string | null
-  
+
 }) {
     return prisma.curso.update({
         where: {
@@ -223,7 +226,7 @@ export async function getCantCursosActivos() {
 }
 // obtener los cursos que actualmente estan activos
 
-export async function getCursosActivos(){
+export async function getCursosActivos() {
     const cursos = await getCursos();
     const fechaHoy = new Date();
     return cursos.filter(curso => curso.fechaInicio <= fechaHoy && curso.fechaFin >= fechaHoy);
@@ -249,7 +252,7 @@ export async function getCursosInscriptos(userId: number) {
         .filter((curso) => curso.fechaInicio <= fechaHoy && curso.fechaFin >= fechaHoy);
 }
 
-export async function getCursosDisponiblesAlumno(edad: number, alumnoId: number){
+export async function getCursosDisponiblesAlumno(edad: number, alumnoId: number) {
     const fechaHoy = new Date()
     return await prisma.curso.findMany({
         where: {
@@ -287,12 +290,12 @@ export async function getCursosCout() {
         // Consultar cursos junto con la cantidad de alumnos inscritos
         const cursos = await prisma.curso.findMany({
             include: {
-            _count: {
-                select: { 
-                alum_cur: true, // Relación que cuenta los alumnos inscritos
-                prof_cur: true  // Relación que cuenta los profesores inscritos
+                _count: {
+                    select: {
+                        alum_cur: true, // Relación que cuenta los alumnos inscritos
+                        prof_cur: true  // Relación que cuenta los profesores inscritos
+                    }
                 }
-            }
             }
         });
 
@@ -321,19 +324,19 @@ export async function getCursoHorarios(cursoId: number) {
     const horariosCurso = await prisma.curso.findUnique({
         where: { id: cursoId }, // Reemplaza `cursoId` con el ID del curso
         include: {
-        cronograma: {
-            include: {
-            diasHoras: {
+            cronograma: {
                 include: {
-                dia: true, // Incluye el nombre del día
-                hora: true, // Incluye los detalles de las horas
+                    diasHoras: {
+                        include: {
+                            dia: true, // Incluye el nombre del día
+                            hora: true, // Incluye los detalles de las horas
+                        },
+                    },
                 },
             },
-            },
-        },
         },
     });
-    
+
     // Agrupar por día
     /*
         ejemplo de lo que devuelve: 
@@ -343,16 +346,16 @@ export async function getCursoHorarios(cursoId: number) {
     */
     const horariosAgrupados = horariosCurso?.cronograma.flatMap((cronograma) =>
         cronograma.diasHoras.map((diaHora) => ({
-        dia: diaHora.dia.nombre,
-        hora: diaHora.hora.hora_inicio,
+            dia: diaHora.dia.nombre,
+            hora: diaHora.hora.hora_inicio,
         }))
-    ).reduce((acc: {[key: string]: string[]}, curr) => {
-        const { dia, hora} = curr;
+    ).reduce((acc: { [key: string]: string[] }, curr) => {
+        const { dia, hora } = curr;
         acc[dia] = acc[dia] || [];
         acc[dia].push(hora);
         return acc;
     }, {});
-    
+
     console.log(horariosAgrupados);
 
     return horariosAgrupados;
