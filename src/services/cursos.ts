@@ -4,6 +4,7 @@ import { getUserFromCookie } from "@/helpers/jwt"
 import { PrismaClient } from "@prisma/client"
 import { getAllProfesionales_cursos } from "./profesional_curso"
 import { getAllAlumnos_cursos } from "./alumno_curso"
+import { handleDeleteCursoImage } from "@/helpers/repoImages"
 
 const prisma = new PrismaClient()
 export type Curso = {
@@ -89,14 +90,29 @@ export async function getCursoById(id: number) {
 // si no tiene un cronograma asignado se elimina el curso, si tiene un cronograma asignado busca ese id de cronograma en la tabla de cronogramaDiaHora  
 // si encuentra un cronogramaDiaHora con ese id de cronograma asignado al curso, no se puede eliminar el curso
 // si no encuentra un cronogramaDiaHora con ese id de cronograma asignado al curso, se elimina el cronograma asignado al curso y luego se elimina el curso
-export async function deleteCurso(id: number): Promise<{ success: boolean, message: string }> {
+export async function deleteCurso(id: number, cursos:any): Promise<{ success: boolean, message: string }> {
     try {
+        
         // Verificar si el curso tiene relaciones que impidan su eliminación
-        const [cronograma, profesorCurso, alumnoCurso, solicitud] = await Promise.all([
+        const [cronograma, profesorCurso, alumnoCurso, solicitud, solicitudesLeidas] = await Promise.all([
             prisma.cronograma.findFirst({ where: { cursoId: id } }),
             prisma.profesional_Curso.findFirst({ where: { cursoId: id } }),
             prisma.alumno_Curso.findFirst({ where: { cursoId: id } }),
-            prisma.cursoSolicitud.findFirst({ where: { cursoId: id } }),
+            prisma.cursoSolicitud.findFirst({ 
+                where: { 
+                    cursoId: id,
+                    solicitud: { leida: false } // Verifica si hay solicitudes no leídas
+                },
+                include: {
+                    solicitud: true
+                }
+            }),
+            // Obtener las solicitudes leídas relacionadas con el curso antes de eliminar cursoSolicitud
+            await prisma.cursoSolicitud.findMany({
+            where: { cursoId: id },
+            select: { solicitudId: true }
+        })
+
         ]);
 
         if (profesorCurso) {
@@ -108,7 +124,7 @@ export async function deleteCurso(id: number): Promise<{ success: boolean, messa
         }
 
         if (solicitud) {
-            return { success: false, message: "El Curso tiene una solicitud de inscripción y no puede ser eliminado." };
+            return { success: false, message: "El Curso tiene una solicitud de inscripción no leída y no puede ser eliminado." };
         }
 
         // Si el curso tiene un cronograma asignado, eliminar sus relaciones
@@ -120,6 +136,15 @@ export async function deleteCurso(id: number): Promise<{ success: boolean, messa
                 console.error("Error al eliminar el cronograma:", error);
                 return { success: false, message: "Error al eliminar el cronograma. Vuelve a intentarlo más tarde!" };
             }
+        }
+      // Verificar si el curso tiene una imagen asociada y eliminarla
+            await handleDeleteCursoImage(cursos.find((curso: any) => curso.id === id)?.imagen || "");
+        // Eliminar los modelos de cursoSolicitud relacionados con solicitudes leídas 
+        await prisma.cursoSolicitud.deleteMany({ where: { cursoId: id } });
+
+        // Eliminar las solicitudes leídas relacionadas con el curso
+        for (const solicitud of solicitudesLeidas) {
+            await prisma.solicitud.delete({ where: { id: solicitud.solicitudId } });
         }
 
         // Eliminar el curso

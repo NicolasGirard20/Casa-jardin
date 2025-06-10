@@ -13,7 +13,7 @@ import { FileText, ImageIcon, Loader } from "lucide-react"
 import type { Curso } from "../../services/cursos"
 import { updateCurso, createCurso } from "../../services/cursos"
 import { handleDeleteCursoImage, handleUploadCursoImage } from "@/helpers/repoImages"
-import { FileInput } from "@/components/ui/fileInput"
+import { FileInput } from '../ui/fileInput';
 import { formDate } from "@/helpers/fechas"
 // Schema de validación para cursos
 const cursoSchema = z
@@ -89,6 +89,7 @@ interface CursoFormProps {
   fetchImages: () => Promise<void>
   setImagesLoaded: React.Dispatch<React.SetStateAction<boolean>>
   setCursos: React.Dispatch<React.SetStateAction<any[]>>
+  downloadUrl: string
 }
 // Componente de formulario para crear o editar un curso
 const CursoForm: React.FC<CursoFormProps> = ({
@@ -99,8 +100,9 @@ const CursoForm: React.FC<CursoFormProps> = ({
   setImagesLoaded,
   fetchImages,
   setCursos,
+  downloadUrl,
 }) => {
-  const [imagePreview, setImagePreview] = useState<string>("")
+  const [imagePreview, setImagePreview] = useState<string>( downloadUrl || "../../../../public/Images/default-no-image.png",)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [generalError, setGeneralError] = useState<string | null>(null)
@@ -195,7 +197,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
       setValue("imagen", fileName)
       setUploadError(null)
     } else {
-      setImagePreview(selectedCurso?.imageUrl || "")
+      setImagePreview(downloadUrl || "../../../../public/Images/default-no-image.png")
       setSelectedFile(null)
     }
   }
@@ -453,13 +455,13 @@ const CursoForm: React.FC<CursoFormProps> = ({
                 {selectedFile && (
                   <p className="text-green-600 text-sm mt-1">Archivo seleccionado: {selectedFile.name}</p>
                 )}
-                {imagePreview && !selectedFile && (
+  {/*               {imagePreview && !selectedFile && (
                   <img
                     src={imagePreview || "/placeholder.svg"}
                     alt="Imagen del taller"
                     className="mt-4 w-full h-auto rounded-md"
                   />
-                )}
+                )} */}
               </div>
             </CardContent>
           </Card>

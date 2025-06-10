@@ -74,7 +74,7 @@ export default function Navigate() {
           <div className="border-t w-full"></div>
           <NavLink href="/start/Talleres">Talleres</NavLink>
           <div className="border-t w-full"></div>
-          <NavLink href="/start/signup">Ingresar</NavLink>
+          <NavLink href="/start/login">Ingresar</NavLink>
         </div>
       )}
     </nav>

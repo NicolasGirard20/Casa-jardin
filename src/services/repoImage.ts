@@ -48,6 +48,7 @@ export const getImagesUser = async () => {
 };
  // Función para obtener el SHA del archivo (sirve para caso de imagenes con el mismo nombre)
  const getFileSha = async (url: string) => {
+    console.log("Fetching SHA from URL:", url); // <-- Agrega esto
     try {
       const response = await fetch(url, {
         method: 'GET',
@@ -219,6 +220,7 @@ export const deleteImageCursos = async (fileName: string) => {
       return { error: 'Failed to delete image' };
     }
 };
+
 
 export const getImages_ProfesionalesAdmin = async () => {
     // Define the URL for the admin API endpoint

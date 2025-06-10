@@ -51,6 +51,7 @@ const Cursos: React.FC = () => {
 
   // Estado para almacenar las imagenes
   const [images, setImages] = useState<any[]>([]);
+    const [imageUrls, setImageUrls] = useState<any>({})
   const [downloadurls, setDownloadurls] = useState<any[]>([]);
 
   // Estado para almacenar el término de búsqueda
@@ -150,7 +151,7 @@ const Cursos: React.FC = () => {
 
   // Función para obtener la lista de cursos
   async function fetchCursos() {
-    
+
     try {
       let curs = await getCursosCout();
 
@@ -164,7 +165,7 @@ const Cursos: React.FC = () => {
 
 
       })));
-     
+
       const participantes = curs.map((curso: any) => ({
         cursoId: curso.id,
         alumnos: curso.cantidadAlumnos || 0,
@@ -195,14 +196,25 @@ const Cursos: React.FC = () => {
         downloadurls: result.downloadurls
       });
 
-      // Ordenar los cursos alfabéticamente por nombre
-      updatedCursos.sort((a, b) => a.nombre.localeCompare(b.nombre));
-
+      // Actualizar las URLs de las imágenes en los cursos
+      const newImageUrls: any = {}
+      updatedCursos.forEach((curso) => {
+        if (curso.imagen) {
+          newImageUrls[curso.id] = curso.imageUrl
+        } 
+      }
+      );
+      setImageUrls(newImageUrls);
       // Actualiza el estado de los cursos
       setCursos(updatedCursos);
 
       // Marcar las imágenes como cargadas
       setImagesLoaded(true);
+
+      updatedCursos.forEach((curso) => {
+        if(curso.imageUrl){
+          console.log(`Curso ID: ${curso.id}, Image URL: ${curso.imageUrl}`);
+        }});
     }
   };
 
@@ -210,10 +222,17 @@ const Cursos: React.FC = () => {
   async function handleEliminarCurso(id: number) {
     setIsDeleting(true);
     try {
-      // Verificar si el curso tiene una imagen asociada y eliminarla
-      await handleDeleteCursoImage(cursos.find(curso => curso.id === id)?.imagen || "");
-      const result = await deleteCurso(id);
+      // aca se verifica si tiene imagen para borrarla
+      const result = await deleteCurso(id, cursos);
 
+      //borrar imagen del repo
+      if (imageUrls[id]) {
+        const deleteResult = await handleDeleteCursoImage(imageUrls[id]);
+        if (deleteResult.error) {
+          setErrorMessage(deleteResult.error);
+          return;
+        }
+      }
       if (result.success === true) {
         setErrorMessage(null);
         // Actualizar la lista de cursos, excluyendo el curso eliminado
@@ -362,7 +381,9 @@ const Cursos: React.FC = () => {
                 </p>
               </div>
             ) : (
-              filteredCursos.map((talleres) => (
+              filteredCursos
+              .sort((a, b) => a.id - b.id)
+              .map((talleres) => (
                 // Tarjetas responsivas
                 <div
                   key={talleres.id}
@@ -372,8 +393,11 @@ const Cursos: React.FC = () => {
                   <div className="flex items-center gap-4 sm:col-span-5 mb-4 sm:mb-0">
                     <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                       <img
-                        src={talleres.imageUrl || NoImage.src}
-                        alt={talleres.nombre}
+                          src={imageUrls[talleres.id] || NoImage.src}
+                          onError={(e) => {
+                            e.currentTarget.src = NoImage.src
+                          }}
+                          alt={talleres.nombre}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -459,7 +483,7 @@ const Cursos: React.FC = () => {
               nombre: `${cursoselected.nombre}`,
               personas: [] // Provide an empty array or the appropriate data
             }}
-            setParticipantesPorTaller = {setParticipantesPorTaller}
+            setParticipantesPorTaller={setParticipantesPorTaller}
             esAlumno={openModalAlumnos ? true : false}
             setEditar={(isOpen) => {
               if (openModalAlumnos) {
@@ -491,6 +515,8 @@ const Cursos: React.FC = () => {
           fetchCursos={fetchCursos}
           fetchImages={fetchImages}
           setImagesLoaded={setImagesLoaded}
+          downloadUrl={ imageUrls[selectedCursoId] }
+          //downloadUrl={selectedProfesional.id ? imageUrls[selectedProfesional.id] : ""}
         />
       )}
     </main>

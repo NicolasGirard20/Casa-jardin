@@ -136,6 +136,8 @@ const Profesionales = () => {
 
         // Actualiza el estado con el diccionario de imageUrls y los profesionales actualizados
         setImageUrls(newImageUrls)
+
+        // Actualizar el estado de profesionales con los profesionales actualizados
         setProfesionales(updatedProfesionales)
 
         // Marcar las imágenes como cargadas
