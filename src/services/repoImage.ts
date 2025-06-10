@@ -46,14 +46,13 @@ export const getImagesUser = async () => {
         return { error: 'Failed to fetch data' };
     }
 };
- // Función para obtener el SHA del archivo (sirve para caso de imagenes con el mismo nombre)
+
 // Función para obtener el SHA del archivo (sirve para caso de imagenes con el mismo nombre)
 const getFileSha = async (filePath: string) => {
     // Construir la URL de la API de GitHub para el contenido del archivo
-    const apiUrl = `${process.env.GITHUB_API_ADMIN_URL}${filePath}`;
-    console.log("Fetching SHA from API URL:", apiUrl);
+    console.log("Fetching SHA from API URL:", filePath);
     try {
-        const response = await fetch(apiUrl, {
+        const response = await fetch(filePath, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
@@ -199,7 +198,7 @@ export const deleteImageCursos = async (fileName: string) => {
 
     try {
       // Obtener el SHA del archivo
-      const sha = await getFileSha(`${folderPath}${fileName}`);
+      const sha = await getFileSha(url);
       if (!sha) {
         return { error: 'Failed to get file SHA' };
       }
