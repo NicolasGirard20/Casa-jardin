@@ -9,12 +9,12 @@ import withAuth from "../../../components/Admin/adminAuth";
 import { getCantCursosActivos, getCursos } from "@/services/cursos";
 import { getSolicitudes } from "@/services/Solicitud/Solicitud";
 import { getCantAlumnosInscriptos } from "@/services/alumno_curso";
-import { getCantProfesionalesActivos } from "@/services/profesional_curso";
 //para front
 import { DashboardCard } from "@/components/varios/DashboardCard";
 import { ZoomIn, Blocks, Laptop, ListEnd, ChevronRight, Clipboard, Book, GraduationCap, Users, Brush, CheckSquare, Calendar, Apple, PanelBottomOpen } from 'lucide-react';
 import PasswordComponent from "@/components/Password/page";
 import { autorizarUser, fetchUserData } from "@/helpers/cookies";
+import { getProfesionales } from "@/services/profesional";
 
 const Inicio: React.FC = () => {
   const router = useRouter();
@@ -44,8 +44,10 @@ const Inicio: React.FC = () => {
         setCantAlumnos(alumnos.length); */
     const alumnos = await getCantAlumnosInscriptos();
     setCantAlumnos(alumnos);
-    const profesores = await getCantProfesionalesActivos();
-    setCantProfesores(profesores);
+    const profesores = await getProfesionales();
+    console.log("Profesores activos:", profesores);
+
+    setCantProfesores(profesores.length);
     //console.log(talleres, solicitudes, alumnos, profesores);
     setLoading(true);
   }
@@ -92,21 +94,21 @@ const Inicio: React.FC = () => {
             />
             <DashboardCard
               title="Alumnos"
-              description={`${cantAlumnos} alumnos inscriptos`}
+              description={`${cantAlumnos} ${cantAlumnos > 1 ? "alumnos inscriptos": "alumno inscripto"}`}
               icon={Users}
               onClick={() => handleNavigation('/alumnos')}
               gradient="bg-gradient-to-br from-purple-500 to-pink-600"
             />
             <DashboardCard
               title="Profesionales"
-              description={`${cantProfesores} profesionales registrados`}
+              description={`${cantProfesores} ${cantProfesores > 1 ? "profesionales registrados": "profesional registrado"}`}
               icon={Apple}
               onClick={() => handleNavigation('/profesionales')}
               gradient="bg-gradient-to-br from-yellow-500 to-orange-600"
             />
             <DashboardCard
               title="Solicitudes"
-              description={`${cantSolicitudes} solicitudes pendientes`}
+              description={`${cantSolicitudes} ${cantSolicitudes > 1 ? "solicitudes pendientes": "solicitud pendiente"}`}
               icon={CheckSquare}
               onClick={() => handleNavigation('/Solicitudes')}
               gradient="bg-gradient-to-br from-red-500 to-rose-600"
@@ -140,7 +142,7 @@ const Inicio: React.FC = () => {
               <h3 className="text-lg font-bold mb-2 w-full text-center ">Datos del administrador</h3>
 
               <div className="space-y-3 mb-10">
-                <label className="block text-md font-medium text-gray-500">Correo: {admin?.email }</label>
+                <label className="block text-md font-medium text-gray-500">Correo: {admin?.email}</label>
                 <button onClick={() => setOpenChangePass(true)} className="underline text-sm">Desea cambiar su contraseña?</button>
               </div>
             </div>

@@ -62,7 +62,7 @@ const principal: React.FC = () => {
           <div className="flex flex-col flex-grow bg-white/50 p-6">
             <div className="mt-16 text-center mb-6">
               <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold">
-                Bienvenido de regreso, {usuario?.nombre} {usuario?.apellido}
+                Bienvenido de regreso, {usuario?.nombre} {usuario?.apellido}! 👋
               </h1>
     
               {/* Contenedor de talleres */}

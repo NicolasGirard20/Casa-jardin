@@ -46,7 +46,7 @@ const Principal: React.FC = () => {
         {/* Mensaje de bienvenida */}
         <div className="mt-16 text-center mb-6">
           <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold">
-            Bienvenido de regreso, {userName}
+            Bienvenido de regreso, {userName}! 👋
           </h1>
         </div>
          <div className="px-[20%] grid gap-6 md:grid-cols-2 lg:grid-cols-2">
