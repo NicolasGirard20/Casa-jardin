@@ -1,22 +1,26 @@
 import { CheckCircle, Circle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useFormContext } from "react-hook-form";
+
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { set } from "zod";
+import { FieldErrors, useFormContext, UseFormReturn } from "react-hook-form";
+import { ProfesionalSchema } from "../formularios/profesionalAdminForm";
+import { AlumnoSchema } from "../formularios/alumnoAdminForm";
+
 
 interface PasswordInputProps {
+    methods: UseFormReturn<any>;
     placeholderPassw: string
-    methods: any; // Assuming methods is passed from useFormContext
+
+
 }
 
 export default function PasswordAdmin(passwordProps: PasswordInputProps) {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [infoPassword, setinfoPassword] = useState(false);
     const [password, setPassword] = useState<string>("");
-    const { placeholderPassw, methods} = passwordProps;
+    const { placeholderPassw } = passwordProps;
 
-    const { register, formState: { errors } } = useFormContext();
 
     const requisitos = [
         {
@@ -36,6 +40,15 @@ export default function PasswordAdmin(passwordProps: PasswordInputProps) {
             test: (pwd: string) => pwd.length >= 8,
         },
     ];
+    const { register, formState: { errors } }  = useFormContext() as UseFormReturn<ProfesionalSchema | AlumnoSchema>;
+/*     useEffect(() => {
+        const allValid = requisitos.every(req => req.test(password));
+        if (allValid) {
+            meth.clearErrors("password");
+        }
+    }, [password, requisitos, meth]);
+
+    const { register, formState: { errors } } = meth; */
     return (
         <div className="relative">
             <Label htmlFor="password">Contraseña</Label>
@@ -43,18 +56,19 @@ export default function PasswordAdmin(passwordProps: PasswordInputProps) {
                 type={passwordVisible ? "text" : "password"}
                 id="password"
                 onFocus={() => setinfoPassword(true)}
-                className={` rounded-lg px-3 py-2 mt-1 ${errors?.password ? "border-red-600" : "border-gray-200"}  text-sm w-full border `}
+                className={` rounded-lg px-3 py-2 mt-1 ${errors.password ? "border-red-600" : "border-gray-200"}  text-sm w-full border `}
                 placeholder={placeholderPassw}
-                {...register("password")}
-                onBlur={() => setinfoPassword(false)}
-                onChange={(e)=>setPassword(e.target.value)}
+                {...register("password", {
+                    onBlur: () => setinfoPassword(false),
+                    onChange: (e) => setPassword(e.target.value)
+                })}
             />
-            {errors?.password && (
+            {errors.password?.message && (
                 <p className="absolute max-w-56 text-red-500 text-sm mt-1">
-                    {errors.password.message as string}
+                    {String(errors.password.message)}
                 </p>
             )}
-            {(infoPassword) && (
+            {(infoPassword && !requisitos.every(req => req.test(password))) && (
                 <ul className=" bg-white p-2 rounded-md border z-30 absolute text-sm text-gray-700 space-y-1">
                     {requisitos.map((req, index) => {
                         const cumple = req.test(password);

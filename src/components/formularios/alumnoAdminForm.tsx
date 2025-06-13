@@ -63,7 +63,7 @@ const alumnoSchema = (mayor: boolean, nueva: boolean) => z.object({
   responsable: responsableSchema.optional()
 })
 
-type AlumnoSchema = z.infer<ReturnType<typeof alumnoSchema>>;
+export type AlumnoSchema = z.infer<ReturnType<typeof alumnoSchema>>;
 
 interface FormProps {
   alumno: AlumnoSchema | null

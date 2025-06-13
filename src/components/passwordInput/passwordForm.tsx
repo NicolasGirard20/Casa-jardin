@@ -49,7 +49,7 @@ export default function PasswordForm(passwordProps: PasswordInputProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-             <p className="absolute max-w-56 text-red-500 text-sm mt-1">{errors.password}</p>
+             <p className="flex max-w-56 text-red-500 text-sm mt-1">{errors.password}</p>
                         {(infoPassword && !requisitos.every(req => req.test(password))) && (
                 <ul className=" bg-white p-2  rounded-md border z-30 absolute text-sm text-gray-700 space-y-1">
                     {requisitos.map((req, index) => {

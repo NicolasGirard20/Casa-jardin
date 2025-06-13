@@ -224,7 +224,7 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
                   {errors.email && <p className="text-destructive text-sm mt-1">{errors.email.message}</p>}
                 </div>
                 <div>
-                  <PasswordAdmin methods={methods}  placeholderPassw={ProfesionalProps.nueva ? "Contraseña del Profesional" : "cambiar contraseña (opcional)"} />
+                  <PasswordAdmin methods={methods} placeholderPassw={ProfesionalProps.nueva ? "Contraseña del Profesional" : "cambiar contraseña (opcional)"} />
                 </div>
                 <div>
                   <Label htmlFor="telefono">Teléfono</Label>
