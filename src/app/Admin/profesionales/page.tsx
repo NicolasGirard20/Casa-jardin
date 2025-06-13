@@ -51,11 +51,12 @@ const Profesionales = () => {
 
   //useEffect para obtener los profesionales
   useEffect(() => {
-    if (profesionales.length === 0) {
+    console.log(profesionalesListaCompleta)
+    if (profesionales.length === 0 && loading) {
       fetchProfesionales()
       handleCancel_init()
     }
-  }, [profesionales.length])
+  }, [profesionales])
 
   useEffect(() => {
     // Llamar a fetchImages después de que los cursos se hayan cargado
@@ -281,13 +282,13 @@ const Profesionales = () => {
             <div className="grid grid-cols-12 bg-gray-50 py-4 px-6 border-b border-gray-200 text-xs font-medium text-gray-500 uppercase tracking-wider">
               <div className="col-span-2">CÓDIGO</div>
               <div className="col-span-4">NOMBRE</div>
-                <div className="col-span-3">CONTACTO</div>
-                <div className="col-span-3 text-center">ACCIÓN</div>
+              <div className="col-span-3">CONTACTO</div>
+              <div className="col-span-3 text-center">ACCIÓN</div>
             </div>
-            {loading || loadingImages ? (
+            {loading ? (
               <div className="flex justify-center items-center py-12">
-              <Loader />
-            </div>
+                <Loader />
+              </div>
             ) : profesionales.length === 0 ? (
               <div className="py-12 px-6 text-center">
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mb-4">
@@ -384,7 +385,7 @@ const Profesionales = () => {
             setChanged={setChanged}
             nueva={false}
             downloadUrl={selectedProfesional.id ? imageUrls[selectedProfesional.id] : ""}
-            
+
           />
         </div>
       )}
@@ -396,23 +397,23 @@ const Profesionales = () => {
             setChanged={setChanged}
             nueva={true}
             downloadUrl=""
-            setProfesionalesListaCompleta = {setProfesionalesListaCompleta}
+            setProfesionalesListaCompleta={setProfesionalesListaCompleta}
           />
         </div>
       )}
       {/* para agregar talleres a profesional */}
       {editarCursos && selectedProfesional && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <CursoSelector 
-            persona ={{
-                id: Number(selectedProfesional.id),
-                nombre: `${selectedProfesional.nombre} ${selectedProfesional.apellido}`,
-                email: selectedProfesional.email,
-                cursos: []
+          <CursoSelector
+            persona={{
+              id: Number(selectedProfesional.id),
+              nombre: `${selectedProfesional.nombre} ${selectedProfesional.apellido}`,
+              email: selectedProfesional.email,
+              cursos: []
             }}
             esAlumno={false}
             setEditar={setEditarCursos}
-        />
+          />
         </div>
       )}
     </main>

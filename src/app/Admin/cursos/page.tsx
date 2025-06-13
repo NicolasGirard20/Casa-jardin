@@ -114,7 +114,9 @@ const Cursos: React.FC = () => {
 
   // Cargar cursos al iniciar
   useEffect(() => {
-    if (cursos.length === 0) fetchCursos();
+    if (cursos.length === 0 && loading) {
+      fetchCursos();
+    }
   }, [cursos]);
 
   // Cargar imágenes después de cargar cursos
