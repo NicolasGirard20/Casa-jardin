@@ -23,6 +23,7 @@ const Talleres = () => {
     const [downloadurls, setDownloadurls] = useState<any[]>([]);
     const [imagesLoaded, setImagesLoaded] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [loading, setLoading] = useState(true);
     //para mapear los profesionales con sus respectivos cursos
     const [profesionalesDict, setProfesionalesDict] = useState<{ [key: string]: any[] }>({});
 
@@ -31,8 +32,11 @@ const Talleres = () => {
         if (cursos.length > 0 && !imagesLoaded) {
             fetchImages();
         }
-        if (cursos.length === 0) {
+        if (cursos.length === 0 && loading) {
             fetchTalleres();
+            if(cursos.length === 0) {
+                setLoading(false);
+            }
 
         }
     }, [cursos]);
@@ -108,14 +112,21 @@ const Talleres = () => {
                             <div className="h-1 w-20 bg-indigo-500 rounded"></div>
                         </div>
                     </div>
-                    {cursos.length === 0 && (
+                    {loading && (
                         <div className="flex justify-center items-center  w-full"><Loader /></div>
                     )}
                     <div className="grid grid-cols-1 min-h-[40vh] sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 my-4">
 
-                        {cursos.length !== 0 && cursos.map((curso) => (
-                            <TallerCard key={curso.id} taller={curso} profesionales={profesionalesDict[curso.id]} />
-                        ))}
+                        {(cursos.length !== 0 && loading) ? 
+                            (cursos.map((curso) => 
+                                (
+                                    <TallerCard key={curso.id} taller={curso} profesionales={profesionalesDict[curso.id]} />
+                                ))) 
+                            :
+                            (<div className="  w-full py-12  justify-center items-center text-center absolute left-0">
+                                <p className="text-gray-500 w-full flex justify-center items-center">No hay talleres disponibles en este momento.</p>
+                            </div>)
+                        }
 
                     </div>
                 </div>
