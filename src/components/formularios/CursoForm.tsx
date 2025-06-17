@@ -106,6 +106,8 @@ const CursoForm: React.FC<CursoFormProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [generalError, setGeneralError] = useState<string | null>(null)
+  //por si solamente hay que eliminar la imagen
+  const [eliminarImagen, setEliminarImagen] = useState<boolean>(false)
   // useEffect para cargar imágenes al montar el componente
 
   const selectedCurso =
@@ -197,6 +199,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
       setValue("imagen", fileName)
       setUploadError(null)
     } else {
+      setEliminarImagen(true)
       setImagePreview(downloadUrl || "../../../../public/Images/default-no-image.png")
       setSelectedFile(null)
     }
@@ -205,7 +208,6 @@ const CursoForm: React.FC<CursoFormProps> = ({
   // Función para manejar el envío del formulario
   const onSubmit = async (data: CursoSchema) => {
     try {
-
       if (selectedCursoId === -1) {
         // Es un curso nuevo
         console.log("nuevo curso")
@@ -239,9 +241,17 @@ const CursoForm: React.FC<CursoFormProps> = ({
 
       } else if (selectedCursoId !== null) {
         // Actualizando un curso existente
-        console.log("actualizando curso")
-        const imagenUrl = selectedFile ? await handleImageUpload(selectedFile, data) : selectedFile
-        console.log("imagen modificada: ", imagenUrl)
+        if(eliminarImagen){
+          console.log("eliminando imagen del curso")
+          await handleDeleteCursoImage(selectedCurso?.imagen)
+          data.imagen = null // Asegurarse de que la imagen sea nula si se elimina
+        }
+        else{
+          console.log("actualizando curso")
+          data.imagen = selectedFile ? await handleImageUpload(selectedFile, data) : selectedFile
+          console.log("imagen modificada a: ", data.imagen)
+        }
+        
         const updateCurs = await updateCurso(selectedCursoId, {
           nombre: data.nombre,
           descripcion: data.descripcion,
@@ -249,8 +259,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
           fechaFin: new Date(data.fechaFin),
           edadMinima: Number(data.edadMinima),
           edadMaxima: Number(data.edadMaxima),
-          imagen: imagenUrl,
-
+          imagen: data.imagen,
         })
         const cursosUpd = cursos.map((curso) =>
           curso.id === selectedCursoId ? { ...curso, ...updateCurs } : curso
