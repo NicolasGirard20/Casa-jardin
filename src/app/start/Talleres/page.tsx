@@ -15,6 +15,7 @@ import { mapearImagenes } from "@/helpers/repoImages";
 import Loader from "@/components/Loaders/loading/page";
 //componente para cada taller
 import TallerCard from "@/components/start/tallerCard";
+import { set } from "zod";
 // #endregion Imports
 
 const Talleres = () => {
@@ -32,12 +33,9 @@ const Talleres = () => {
         if (cursos.length > 0 && !imagesLoaded) {
             fetchImages();
         }
-        if (cursos.length === 0 && loading) {
+        if (cursos.length === 0 ) {
             fetchTalleres();
-            if(cursos.length === 0) {
-                setLoading(false);
-            }
-
+        
         }
     }, [cursos]);
 
@@ -48,6 +46,7 @@ const Talleres = () => {
         console.log(taller);
         setCursos(taller);
         fetchProfesionales(taller);
+        setLoading(false);
     }
 
     // Método para obtener los profesionales de un curso
@@ -117,7 +116,7 @@ const Talleres = () => {
                     )}
                     <div className="grid grid-cols-1 min-h-[40vh] sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 my-4">
 
-                        {(cursos.length !== 0 && loading) ? 
+                        { (!loading && cursos.length !== 0) ? 
                             (cursos.map((curso) => 
                                 (
                                     <TallerCard key={curso.id} taller={curso} profesionales={profesionalesDict[curso.id]} />
