@@ -1,2 +1,2 @@
 # Casa-jardin
-Sitio oficial de Casa Jardín
+Sitio oficial de Casa Jardín.
