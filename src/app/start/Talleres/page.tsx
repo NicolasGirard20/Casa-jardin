@@ -32,7 +32,7 @@ const Talleres = () => {
         if (cursos.length > 0 && !imagesLoaded) {
             await fetchImages();
             setLoading(false);
-            console.log("Cursos cargados:", cursos);
+            //console.log("Cursos cargados:", cursos);
         }
     };
     fetchDatos();
