@@ -49,6 +49,8 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
   const [imagePreview, setImagePreview] = useState<string>(ProfesionalProps.downloadUrl || "../../../../public/Images/default-no-image.png");
   //esta varible no es null si hubieron cambios en la imagen
   const [imagenArchivo, setImagenArchivo] = useState<File | null>(null);
+  //esta variable es true si se quiere eliminar la imagen
+  const [eliminarImagen, setEliminarImagen] = useState<boolean>(false);
 
   const methods = useForm<ProfesionalSchema>({
     resolver: zodResolver(profesionalSchema(ProfesionalProps.nueva)),
@@ -112,8 +114,19 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
       console.log("actualizo profesional")
       console.log(imagenArchivo)
       //si hay cambios en la imagen
-      const url = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : imagenArchivo
-      console.log("imagen modificada: ", url)
+      if(eliminarImagen) {
+        console.log("eliminar imagen")
+        //borro la imagen del repo
+        if (ProfesionalProps.profesional?.imagen) {
+          await handleDeleteProfesionalImage(ProfesionalProps.profesional.imagen);
+        }
+        //seteo la imagen a null
+        data.imagen = null;
+      }
+      else{
+        data.imagen = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : imagenArchivo
+        console.log("imagen modificada: ", data.imagen)
+      }
 
       //actualizo el profesional
       if (data.password.length === 0) {
@@ -126,7 +139,7 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
           especialidad: data.especialidad,
           email: data.email,
           telefono: data.telefono,
-          imagen: url
+          imagen: data.imagen
         })
       }
       else {
@@ -140,7 +153,7 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
           email: data.email,
           telefono: data.telefono,
           password: data.password,
-          imagen: url
+          imagen: data.imagen
         })
       }
       ProfesionalProps.setChanged(true)
@@ -159,6 +172,7 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
       setImagePreview(URL.createObjectURL(file));
       setImagenArchivo(file);
     } else {
+      setEliminarImagen(true);
       setImagePreview(ProfesionalProps.downloadUrl || "../../../../public/Images/default-no-image.png");
       setImagenArchivo(null);
     }
