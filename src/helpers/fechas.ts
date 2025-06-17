@@ -31,7 +31,7 @@ export const formDate = (dateString: string) => {
     const year = date.getUTCFullYear();
     const month = String(date.getUTCMonth() + 1).padStart(2, '0');
     const day = String(date.getUTCDate()).padStart(2, '0');
-    console.log(`input: ${dateString} | output: ${year}-${month}-${day}`)
+    //console.log(`input: ${dateString} | output: ${year}-${month}-${day}`)
     //return `${year}-${month}-${day}`;
     return `${year}-${month}-${day}`; 
 }
@@ -42,7 +42,7 @@ export const displayDate = (dateString: string) => {
     const year = date.getUTCFullYear();
     const month = String(date.getUTCMonth() + 1).padStart(2, '0');
     const day = String(date.getUTCDate()).padStart(2, '0');
-    console.log(`input: ${dateString} | output: ${year}-${month}-${day}`)
+    //console.log(`input: ${dateString} | output: ${year}-${month}-${day}`)
     //return `${year}-${month}-${day}`;
     return `${day}-${month}-${year}`; 
 }
