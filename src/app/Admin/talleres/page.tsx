@@ -17,9 +17,9 @@ import CursoForm from "./../../../components/formularios/CursoForm";
 import { Alumno, getAlumnos } from "@/services/Alumno";
 import UserSelector from "@/components/Admin/userSelector";
 import { getProfesionalesByCursoId } from "@/services/profesional_curso";
-import Talleres from "@/components/talleres/page";
 
-const Cursos: React.FC = () => {
+
+const Talleres: React.FC = () => {
   // Estado para almacenar la lista de cursos
   const [cursos, setCursos] = useState<
     {
@@ -517,4 +517,4 @@ const Cursos: React.FC = () => {
   );
 };
 
-export default withAuth(Cursos);
+export default withAuth(Talleres);
