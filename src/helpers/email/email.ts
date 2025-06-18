@@ -11,7 +11,7 @@ const googleTransporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: "maldonado12net@gmail.com", // por ahora es mi correo, despues hay que cambiarlo
+    user: process.env.EMAIL_ADDRESS, // por ahora es mi correo, despues hay que cambiarlo
     pass: process.env.EMAIL_APP_PASSWORD,
   },
    tls: {
@@ -30,7 +30,7 @@ const logoPath = path.join(process.cwd(), 'public', 'Images', 'LogoCasaJardin.pn
 export async function emailTest(receptor: string){
   googleTransporter
     .sendMail({
-      from: "maldonado12net@gmail.com",
+      from: process.env.EMAIL_ADDRESS,
       to: receptor,
       subject: "Código de confirmación - Casa Jardín",
       text: "Código de confirmación",
