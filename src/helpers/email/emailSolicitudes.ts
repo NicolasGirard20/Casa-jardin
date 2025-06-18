@@ -11,7 +11,7 @@ const googleTransporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: "maldonado12net@gmail.com", // por ahora es mi correo, despues hay que cambiarlo
+    user: process.env.EMAIL_ADDRESS, // por ahora es mi correo, despues hay que cambiarlo
     pass: process.env.EMAIL_APP_PASSWORD,
   },
    tls: {
@@ -30,7 +30,7 @@ export async function emailRechazo(receptor: string, title: string, body: string
   console.log("email rechazo");
   googleTransporter
     .sendMail({
-      from: "maldonado12net@gmail.com",
+      from: process.env.EMAIL_ADDRESS,
       to: receptor,
       subject: title,
       text: body,
@@ -47,7 +47,7 @@ export async function emailAceptar(receptor: string, title: string, body: string
   console.log("email aceptar");
   googleTransporter
     .sendMail({
-      from: "maldonado12net@gmail.com",
+      from: process.env.EMAIL_ADDRESS,
       to: receptor,
       subject: title,
       text: body,
