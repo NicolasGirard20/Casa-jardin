@@ -202,7 +202,7 @@ export default function CursoSelector(props: Props) {
       {loading ? (
         <Loader className="h-12 w-12 animate-spin text-white" />
       ) : (
-        <div className="bg-white rounded-lg shadow-lg  max-w-2xl w-full mx-auto relative">
+        <div className="bg-white overflow-y-auto max-h-[80vh]  rounded-lg shadow-lg  max-w-2xl w-full mx-auto relative">
           <button 
             onClick={onCerrar} 
             className="absolute top-4 right-4 text-white hover:text-red-700 transition-colors"
@@ -217,7 +217,7 @@ export default function CursoSelector(props: Props) {
             {/* Cursos inscriptos */}
             <div className="bg-gray-50 rounded-lg p-4 mb-4">
               <h3 className="text-lg font-semibold mb-2">Cursos Inscriptos</h3>
-              <div className="max-h-48 overflow-y-auto">
+              <div className="max-h-42 overflow-y-auto">
                 <ul className="space-y-2">
                   {persona.cursos.map(curso => (
                     <li 

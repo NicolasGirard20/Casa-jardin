@@ -18,7 +18,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     port: 587,
     secure: false,
     auth: {
-      user: "maldonado12net@gmail.com",
+      user: process.env.EMAIL_ADDRESS,
       pass: process.env.EMAIL_APP_PASSWORD,
     },
     tls: {
@@ -43,7 +43,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   const mailData = {
-    from: "maldonado12net@gmail.com",
+    from: process.env.EMAIL_ADDRESS,
     to: receptor,
     subject: "Código de confirmación - Casa Jardín",
     text: "Código de confirmación",
