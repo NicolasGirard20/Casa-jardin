@@ -79,26 +79,6 @@ const Reglamentacion: React.FC<Datos> = ({ setDatosReglamentacion }) => {
                     <p>En mi carácter de alumno, manifiesto por medio de la presente mi conformidad con el reglamento establecido por el Centro Educativo Terapéutico “Casa Jardín” y con el código de convivencia que se me ha dado a conocer. De no ser cumplido el centro se reserva el derecho de admisión.</p>
                 </div>
                 <div>
-                    {alertaFinal && <div className="absolute top-2/3 right-1/3 transform -translate-x-1/3 -translate-y-1/9 bg-white p-6 rounded-md shadow-md w-96">
-                        <h2 className="text-lg font-bold mb-2">Términos y condiciones</h2>
-                        <p className="text-sm text-gray-600 mb-4">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras purus mauris, congue in elit eu, hendrerit interdum mi.
-                            <strong>Praesent lectus nibh, feugiat blandit justo fringilla, luctus semper odio.</strong>
-                        </p>
-                        <div className="flex items-center mb-4">
-                            <input type="checkbox" id="accept" className="mr-2" />
-                            <label htmlFor="accept" className="text-sm text-gray-700">I accept the terms</label>
-                        </div>
-                        <p className="text-xs text-blue-600 mb-4 cursor-pointer">Read our T&Cs</p>
-
-                        <div className="flex space-x-2">
-                            <button className="bg-gray-300 text-gray-700 py-2 px-4 rounded-md w-1/2 hover:bg-gray-400"
-                                onClick={() => setAlertaFinal(false)}>
-                                Cancelar
-                            </button>
-                        </div>
-                    </div>
-                    }
                     <div className='flex justify-center items-center mt-8 flex-col border-t p-2'>
                         <label htmlFor="firma">Firma de Padre/Madre/Tutor</label>
                         <input type="text" name="firma" id="firma" className="border rounded w-96" placeholder='Ingrese su firma' onChange={(e) => setDatosReglamentacion(prev => ({ ...prev, firma: e.target.value }))} />
