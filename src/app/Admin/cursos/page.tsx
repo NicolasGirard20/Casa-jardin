@@ -17,9 +17,9 @@ import CursoForm from "./../../../components/formularios/CursoForm";
 import { Alumno, getAlumnos } from "@/services/Alumno";
 import UserSelector from "@/components/Admin/userSelector";
 import { getProfesionalesByCursoId } from "@/services/profesional_curso";
+import Talleres from "@/components/talleres/page";
 
-
-const Talleres: React.FC = () => {
+const Cursos: React.FC = () => {
   // Estado para almacenar la lista de cursos
   const [cursos, setCursos] = useState<
     {
@@ -290,7 +290,8 @@ const Talleres: React.FC = () => {
             <p>
               ¿Estás seguro de que deseas eliminar el taller:{" "}
               <strong>{cursoAEliminar.nombre}</strong>?
-            </p>
+            <span className=" text-sm underline text-red-600" > ¡Tenga en cuenta que las solicitudes recibidas para este curso también seran borradas!</span>
+            </p> 
             <div className="flex justify-end space-x-4 mt-4">
               <button
                 onClick={() => {
@@ -517,4 +518,4 @@ const Talleres: React.FC = () => {
   );
 };
 
-export default withAuth(Talleres);
+export default withAuth(Cursos);

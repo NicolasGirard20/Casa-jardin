@@ -50,11 +50,10 @@ export async function deleteSolicitud(solicitudId: number) {
     await deleteCursoSolicitud(Number(solicitudId), Number(solicitud?.alumnoId));
     return await prisma.solicitud.delete({
       where: {
-        id: solicitud?.id,
+        id: solicitudId,
       },
     });
   }
-  console.log("SOLICITUD", solicitud);
   // si es una solicitudMayor, eliminarla
    soliBorrada = await deleteSolicitudMayor(solicitud.id);
   console.log("SOLICITUD BORRADA", soliBorrada);
@@ -63,9 +62,8 @@ export async function deleteSolicitud(solicitudId: number) {
   const cur_soli = await deleteCursoSolicitud(Number(solicitudId), Number(solicitud?.alumnoId));
   
   if(typeof cur_soli === "string") {
-    console.log("No se encontró la tabla intermedia");
     return cur_soli;}
-  console.log("CURSO SOLICITUD", cur_soli);
+  //console.log("CURSO SOLICITUD", cur_soli);
   // Eliminar la tabla intermedia entre alumno y curso
 
 
