@@ -5,6 +5,7 @@ import { PrismaClient } from "@prisma/client"
 import { getAllProfesionales_cursos } from "./profesional_curso"
 import { getAllAlumnos_cursos } from "./alumno_curso"
 import { handleDeleteCursoImage } from "@/helpers/repoImages"
+import { deleteSolicitud } from "./Solicitud/Solicitud"
 
 const prisma = new PrismaClient()
 export type Curso = {
@@ -94,7 +95,7 @@ export async function deleteCurso(id: number, cursos: any): Promise<{ success: b
     try {
 
         // Verificar si el curso tiene relaciones que impidan su eliminación
-        const [cronograma, profesorCurso, alumnoCurso, solicitud, solicitudesLeidas] = await Promise.all([
+        const [cronograma, profesorCurso, alumnoCurso, solicitud, soliAborrar] = await Promise.all([
             prisma.cronograma.findFirst({ where: { cursoId: id } }),
             prisma.profesional_Curso.findFirst({ where: { cursoId: id } }),
             prisma.alumno_Curso.findFirst({ where: { cursoId: id } }),
@@ -107,10 +108,16 @@ export async function deleteCurso(id: number, cursos: any): Promise<{ success: b
                     solicitud: true
                 }
             }),
-            // Obtener las solicitudes leídas relacionadas con el curso antes de eliminar cursoSolicitud
-            await prisma.cursoSolicitud.findMany({
-                where: { cursoId: id },
-                select: { solicitudId: true }
+            //Obtener las solicitudes leidas
+            await prisma.cursoSolicitud.findFirst({
+                where: {
+                    cursoId: id,
+                    solicitud: { leida: true }
+                },
+                include: {
+                    solicitud: true
+                },
+
             })
 
         ]);
@@ -138,17 +145,15 @@ export async function deleteCurso(id: number, cursos: any): Promise<{ success: b
             }
         }
         // Verificar si el curso tiene una imagen asociada y eliminarla
-       // console.log(cursos.find((curso: any) => curso.id === id).imagen)
+        // console.log(cursos.find((curso: any) => curso.id === id).imagen)
         const imagenCurso = cursos.find((curso: any) => curso.id === id).imagen;
-        if (imagenCurso ) await handleDeleteCursoImage(imagenCurso);
+        if (imagenCurso) await handleDeleteCursoImage(imagenCurso);
 
         // Eliminar los modelos de cursoSolicitud relacionados con solicitudes leídas 
         await prisma.cursoSolicitud.deleteMany({ where: { cursoId: id } });
-
-        // Eliminar las solicitudes leídas relacionadas con el curso
-        for (const solicitud of solicitudesLeidas) {
-            await prisma.solicitud.delete({ where: { id: solicitud.solicitudId } });
-        }
+        // Eliminar las solicitudes (menores o mayores) leídas relacionadas con el curso
+        await deleteSolicitud(Number(soliAborrar?.solicitud.id))
+        console.log("se pudo se pudo")
 
         // Eliminar el curso
         await prisma.curso.delete({ where: { id } });
@@ -156,7 +161,7 @@ export async function deleteCurso(id: number, cursos: any): Promise<{ success: b
         return { success: true, message: "Curso eliminado con éxito." };
     } catch (error) {
         console.error("Error al eliminar el curso:", error);
-        return { success: false, message: "Error al eliminar el curso. Vuelve a intentarlo más tarde!" };
+        return { success: false, message: String(error) };
     }
 }
 

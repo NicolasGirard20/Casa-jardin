@@ -290,7 +290,8 @@ const Cursos: React.FC = () => {
             <p>
               ¿Estás seguro de que deseas eliminar el taller:{" "}
               <strong>{cursoAEliminar.nombre}</strong>?
-            </p>
+            <span className=" text-sm underline text-red-600" > ¡Tenga en cuenta que las solicitudes recibidas para este curso también seran borradas!</span>
+            </p> 
             <div className="flex justify-end space-x-4 mt-4">
               <button
                 onClick={() => {

@@ -202,43 +202,6 @@ const Menores: React.FC = () => {
         let resultValidate;
         if (selectedScreen === 0 && selectedCursosId.length === 0) return "Debe seleccionar al menos un taller";
 
-        /*         if (selectedScreen === 1) {
-                    resultValidate = validateNombre(nombre);
-                    if (resultValidate) return resultValidate;
-        
-                    resultValidate = validateApellido(apellido);
-                    if (resultValidate) return resultValidate;
-        
-                    resultValidate = validateDni(String(dni));
-                    if (resultValidate) return resultValidate;
-                    console.log(JSON.stringify(datosMayor))
-                    resultValidate = validateDireccion(pais, provincia, localidad, String(calle), Number(numero));
-                    if (resultValidate) return resultValidate
-                }
-        
-                if (selectedScreen === 2) {
-                    resultValidate = validateNombre(nombreM);
-                    if (resultValidate) return resultValidate;
-        
-                    resultValidate = validateApellido(apellidoM);
-                    if (resultValidate) return resultValidate;
-        
-                    resultValidate = validateEmail(correoElelctronicoM);
-                    if (resultValidate) return resultValidate;
-        
-                    resultValidate = validateDni(String(dni));
-                    if (resultValidate) return resultValidate;
-        
-                    if (!telefonoM) {
-                        return "El teléfono no puede estar vacío";
-                    }
-                    resultValidate = validatePhoneNumber(String(telefonoM));
-                    if (resultValidate) return resultValidate;
-                    resultValidate = validateDireccion(paisM, provinciaM, localidadM, String(calleM), Number(numeroM));
-                    if (resultValidate) return resultValidate
-        
-                    console.log(JSON.stringify(datosMayor))
-                } */
         return "";
     }
 
@@ -255,15 +218,7 @@ const Menores: React.FC = () => {
         if (datosReglamentacion.firma.length < 1 && selectedScreen === 3) return setError("Debe firmar la reglamentación");
         //crear solicitud
         const solicitud = await createSolicitud()
-
-        //console.log("ALUMNO::::", alumno)
-        //crear ubicaciones del mayor/responsable
-        //crear responsable del menor
-        // console.log("datosMayor", datosMayor)
         const alumno = user
-
-        //console.log("RESPONSABLE::::", responsable)
-
         //si alumno es un string es un error
         if (typeof alumno === "string") return setError(alumno)
 
