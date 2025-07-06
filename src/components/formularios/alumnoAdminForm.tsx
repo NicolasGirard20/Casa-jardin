@@ -342,14 +342,8 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
                       type="date"
                       {...register("fechaNacimiento")}
                       className="mt-1"
-                      max={FormProps.mayor ?
-                        new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]
-                        :
-                        new Date(new Date().setFullYear(new Date().getFullYear() - 1)).toISOString().split("T")[0]}
-                      min={FormProps.mayor ?
-                        new Date(new Date().setFullYear(new Date().getFullYear() - 100)).toISOString().split("T")[0]
-                        :
-                        new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
+                      max={new Date().toISOString().split("T")[0]} // Prevenir fechas futuras
+                      min="1900-01-01" // Fecha mínima razonable
                     />
                     {errors.fechaNacimiento && <p className="text-destructive text-sm mt-1">{errors.fechaNacimiento.message}</p>}
                   </div>

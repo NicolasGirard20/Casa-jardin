@@ -80,8 +80,8 @@ const Inicio: React.FC = () => {
       <section
         className=" justify-center items-center flex py-20 "
       >
-        <div className="container relative px-4 ">
-          <h2 className="mb-8 xl:w-1/2 text-center text-balance text-2xl font-semibold lg:text-4xl">
+        <div className="container relative px-4">
+          <h2 className="mb-8 w-full text-center text-balance text-2xl font-semibold lg:text-4xl">
             ¡Bienvenido de nuevo! Estamos listos para seguir construyendo juntos.
           </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

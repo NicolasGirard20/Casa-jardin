@@ -14,6 +14,7 @@ import AlumnoAdminForm from "@/components/formularios/alumnoAdminForm";
 //para inscribir el alumno en cursos
 import { calcularEdad } from "@/helpers/fechas";
 import CursoSelector from "@/components/Admin/cursoSelector";
+import { deleteSolicitudesByAlumnoId } from "@/services/Solicitud/Solicitud";
 
 // #endregion
 
@@ -120,12 +121,14 @@ const Alumnos: React.FC = () => {
     async function handleEliminarAlumno(id: any) {
         setIsDeleting(true);
         console.log(id);
-        //elimino el responsable si el alumno es menor
-        if (mayor === false) {
-
-            const responsable = await deleteResponsableByAlumnoId(id);
+        //elimino el responsable si es que hay uno asociado al alumno
+        const responsable = await deleteResponsableByAlumnoId(id);
             console.log("responsable borrado", responsable);
-        }
+        
+        //elimino las solicitudes del alumno hay
+        const solicitudes = await deleteSolicitudesByAlumnoId(id);
+            console.log("solicitudes borradas", solicitudes);
+
         const alumnoBorrado = await deleteAlumno(id);
         console.log("alumno borrado", alumnoBorrado);
         fetchAlumnos();
