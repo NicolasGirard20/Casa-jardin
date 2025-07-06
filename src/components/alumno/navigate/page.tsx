@@ -52,7 +52,7 @@ export default function Navigate() {
         <NavLink href="/usuario/Cronograma">Calendario</NavLink>
         <NavLink href="/usuario/Solicitud/Inscripcion">Inscripción</NavLink>
         <NavLink href="/usuario/misSolicitudes">Mis Solicitudes</NavLink>
-        <NavLink href="/usuario/Cursos">Mis Cursos</NavLink>
+        <NavLink href="/usuario/Cursos">Mis Talleres</NavLink>
         <NavLink onClick={logout}>Salir</NavLink>
       </div>
       <div className="lg:hidden flex items-center">
@@ -87,7 +87,7 @@ export default function Navigate() {
           <div className="border-t w-full"></div>
           <NavLink href="/usuario/misSolicitudes">Mis Solicitudes</NavLink>
           <div className="border-t w-full"></div>
-          <NavLink href="/usuario/Cursos">Mis Cursos</NavLink>
+          <NavLink href="/usuario/Cursos">Mis Talleres</NavLink>
           <div className="border-t w-full"></div>
           <NavLink onClick={logout}>Salir</NavLink>
         </div>

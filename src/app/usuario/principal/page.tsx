@@ -58,7 +58,7 @@ const Principal: React.FC = () => {
             gradient="bg-gradient-to-br from-violet-500 to-purple-600"
           />
           <DashboardCard
-            title="Mis Cursos"
+            title="Mis Talleres"
             description="Consulta los cursos en los que estás inscrito."
             icon={BookOpen}
             onClick={() => handleNavigation("/Cursos")}
