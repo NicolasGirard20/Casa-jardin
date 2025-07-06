@@ -176,11 +176,12 @@ const ResponsableForm: React.FC<ResponsableProps> = (ResponsableProps) => {
                   })}
                   type="text"
                   maxLength={9}
-                  placeholder="DNI (sin puntos)"
+                  placeholder="DNI del responsable"
                   className="mt-1"
                   style={{ WebkitAppearance: "none", MozAppearance: "textfield" }}
                 />
                 {errors.dni && <p className="text-destructive text-sm mt-1">{errors.dni.message}</p>}
+                <span className="text-sm text-gray-400">Complete el DNI sin puntos ni espacios.</span>
               </div>
               <div>
                 <Label htmlFor="email">Email</Label>

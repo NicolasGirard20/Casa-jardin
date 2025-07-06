@@ -7,6 +7,7 @@ import { encrypt, getUserFromCookie } from "@/helpers/jwt";
 import { cookies } from "next/headers";
 import { getalumnos_cursoByIdAlumno } from "./alumno_curso";
 import { validatePasswordComplexity } from "@/helpers/validaciones";
+import { deleteSolicitudMayor } from "./Solicitud/SolicitudMayor";
 const prisma = new PrismaClient();
 
 // Definir el tipo Alumno
@@ -299,6 +300,8 @@ export async function deleteAlumno(id: number) {
     if (!foundAlumno) {
       return 'No se encontró el alumno'
     }
+   
+
     const x = await prisma.alumno.delete({
       where: { id },
     });

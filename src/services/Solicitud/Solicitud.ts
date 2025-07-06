@@ -255,3 +255,23 @@ export async function getSolicitudesCompletasByAlumno(alumnoId: number) {
   return solicitudesConRelaciones;
 }
 
+//borrar todas las solicitudes asociadas a un alumno
+export async function deleteSolicitudesByAlumnoId(alumnoId: number) {
+  // Primero, obtengo todas las solicitudes asociadas al alumno
+  const solicitudes = await prisma.solicitud.findMany({
+    where: {
+      OR: [
+        { solicitudMayores: { alumnoId: alumnoId }},
+        { solicitudMenores: { alumnoId: alumnoId }},
+      ],
+    },
+  });
+
+  // Luego, elimino cada solicitud
+  console.log("Solicitudes a eliminar:", solicitudes);
+  for (const solicitud of solicitudes) {
+    await deleteSolicitud(solicitud.id);
+  }
+
+  return "Solicitudes eliminadas correctamente";
+}

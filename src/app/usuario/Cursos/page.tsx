@@ -113,9 +113,9 @@ const MisCursos = () => {
           <div className="fixed top-0 left-0 w-full z-20 bg-white shadow-md">
             <Navigate />
           </div>
-          <div className="flex flex-wrap w-full mb-8 pl-8">
+          <div className="flex flex-wrap w-full mb-8 pl-8 justify-center">
             <div className="lg:w-1/2 w-full  lg:mb-0">
-            <h1 className="text-3xl mt-5 font-bold text-gray-900 text-center ">Cursos del estudiante</h1>
+            <h1 className="text-3xl mt-5 font-bold text-gray-900 text-center ">Talleres del estudiante</h1>
               <div className="h-1 w-20  rounded"></div>
             </div>
           </div>
@@ -125,7 +125,7 @@ const MisCursos = () => {
               <Loader />
             </div>
           ) : cursos.length === 0 ? (
-            <p className="text-center text-gray-500">No estás inscripto a ningún curso aún.</p>
+            <p className="text-center text-gray-500">No estás inscripto a ningún taller aún.</p>
           ) : (
             <div className="grid bg-white  shadow-lg rounded-md p-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 my-4">
               {cursos.map((curso) => (

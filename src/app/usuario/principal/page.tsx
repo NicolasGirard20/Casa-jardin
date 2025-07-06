@@ -5,7 +5,7 @@ import But_aside from "../../../components/but_aside/page";
 import { autorizarUser, fetchUserData } from "@/helpers/cookies";
 import withAuthUser from "../../../components/alumno/userAuth";
 import { useRouter } from "next/navigation";
-import { ChevronRight, Clipboard, Book, CalendarDays, UserCircle, BookOpen } from "lucide-react";
+import { ChevronRight, Clipboard, Book, CalendarDays, UserCircle, BookOpen, CheckSquare2 } from "lucide-react";
 import Background from "../../../../public/Images/BackgroundSolicitudes.jpg";
 import { DashboardCard } from "@/components/varios/DashboardCard";
 
@@ -32,11 +32,11 @@ const Principal: React.FC = () => {
   return (
     <main
       className="flex flex-col min-h-screen bg-cover bg-center"
-      /* style={{
-        backgroundImage: `url(${Background.src})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }} */
+    /* style={{
+      backgroundImage: `url(${Background.src})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }} */
     >
       {/* Navegación */}
       <Navigate />
@@ -49,7 +49,7 @@ const Principal: React.FC = () => {
             Bienvenido de regreso, {userName}! 👋
           </h1>
         </div>
-         <div className="px-[20%] grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+        <div className="px-[20%] grid gap-6 md:grid-cols-2 lg:grid-cols-2">
           <DashboardCard
             title="Mi Cuenta"
             description="Accede a la información de tu cuenta."
@@ -58,18 +58,25 @@ const Principal: React.FC = () => {
             gradient="bg-gradient-to-br from-violet-500 to-purple-600"
           />
           <DashboardCard
-            title="Mis Cursos"
-            description="Consulta los cursos en los que estás inscrito."
+            title="Mis talleres"
+            description="Consulta los talleres en los que estás inscrito."
             icon={BookOpen}
             onClick={() => handleNavigation("/Cursos")}
-            gradient="bg-gradient-to-br from-green-500 to-lime-600"
+            gradient="bg-gradient-to-br from-green-500 to-lime-700"
           />
           <DashboardCard
             title="Calendario"
             description="Revisa las fechas importantes y actividades."
             icon={CalendarDays}
             onClick={() => handleNavigation("/Cronograma")}
-            gradient="bg-gradient-to-br from-yellow-500 to-amber-600"
+            gradient="bg-gradient-to-br from-sky-700 to-sky-500"
+          />
+          <DashboardCard
+            title="Mis Solicitudes"
+            description="Revisa el estado de tus solicitudes de inscripción."
+            icon={CheckSquare2}
+            onClick={() => handleNavigation("/misSolicitudes")}
+            gradient="bg-gradient-to-br from-yellow-500 to-orange-600"
           />
           <DashboardCard
             title="Solicitud de Inscripción"
@@ -78,12 +85,12 @@ const Principal: React.FC = () => {
             onClick={() => handleNavigation("/Solicitud/Inscripcion")}
             gradient="bg-gradient-to-br from-blue-500 to-sky-600"
           />
-         </div>
+        </div>
       </div>
 
       {/* Botón fijo en la parte inferior */}
       <But_aside />
     </main>
   )
-}  
+}
 export default withAuthUser(Principal);

@@ -168,7 +168,7 @@ export default function TallerCard({ taller, profesionales }: TallerCardProps) {
             </div>
           </div>
 
-          <div className="space-y-4">
+{/*           <div className="space-y-4">
             <h3 className="text-xl font-semibold">Horarios </h3>
             <div className="grid gap-2">
               {selectedTallerHorarios ? (
@@ -194,7 +194,7 @@ export default function TallerCard({ taller, profesionales }: TallerCardProps) {
                 </div>
               )}
             </div>
-          </div>
+          </div> */}
         </div>
       </TallerModal>
     </>

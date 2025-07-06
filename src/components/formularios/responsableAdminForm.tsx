@@ -76,7 +76,7 @@ export const ResponsableAdminForm: React.FC = () => {
                         })}
                         type="text"
                         maxLength={9}
-                        placeholder="DNI (sin puntos) del profesional"
+                        placeholder="DNI (sin puntos) del responsable"
                         className="mt-1"
                         style={{ WebkitAppearance: "none", MozAppearance: "textfield" }}
                     />

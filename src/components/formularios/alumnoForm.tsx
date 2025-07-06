@@ -204,6 +204,7 @@ const AlumnoForm: React.FC<AlumnoProps> = (AlumnoProps) => {
                   <Label htmlFor="dni">DNI</Label>
                   <Input id="dni" placeholder="DNI del alumno" type="text" {...register("dni", { valueAsNumber: true })} className="mt-1" />
                   {errors.dni && <p className="text-destructive text-sm mt-1">{errors.dni.message}</p>}
+                  <span className="text-sm text-gray-400">Complete su DNI sin puntos ni espacios.</span>
                 </div>
                 {AlumnoProps.mayor && (
                   <div>

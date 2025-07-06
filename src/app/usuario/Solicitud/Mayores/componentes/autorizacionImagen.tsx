@@ -19,9 +19,8 @@ const AutorizacionImg: React.FC<Datos> = ({ setDatosAutorizacionImage }) => {
             <div className='flex flex-col '>
                 <h1 className='flex justify-center  font-bold text-2xl'>Autorización para uso de Imagen</h1>
                 <div className='flex  justify-center lg:w-1/2 md:1/2 sm:w-2/3 mx-auto mt-5 max-h-[45vh] overflow-y-auto border border-gray-300 rounded-lg p-4 shadow-sm'>
-                    <p className='mx-auto w-full md:'>Por medio de la presente, en mi carácter de Padre/Madre/ Tutor/Curador,
-                        autorizo al Centro Educativo y Terapéutico “Casa Jardín”,
-                        a utilizar de manera amplia, irrestricta y gratuita las imágenes
+                    <p className='mx-auto w-full md:'>Por medio de la presente, autorizo al Centro Educativo 
+                        y Terapéutico “Casa Jardín”, a utilizar de manera amplia, irrestricta y gratuita las imágenes
                         CUIDADAS del/la menor, que sean tomadas en las Actividades del mismo,
                         con la promoción, difusión y conocimiento de sus actividades.
                         <br />Renuncio expresa e irrevocablemente a todo y cualquier tipo de
