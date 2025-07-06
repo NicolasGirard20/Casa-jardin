@@ -169,7 +169,7 @@ export default function TallerCard({ taller, profesionales }: TallerCardProps) {
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Horarios </h3>
+            {/*<h3 className="text-xl font-semibold">Horarios </h3>
             <div className="grid gap-2">
               {selectedTallerHorarios ? (
                 Object.entries(selectedTallerHorarios).map(([dia, horarios]) => (
@@ -193,7 +193,7 @@ export default function TallerCard({ taller, profesionales }: TallerCardProps) {
                   <span>Cargando horarios...</span>
                 </div>
               )}
-            </div>
+            </div>*/}
           </div>
         </div>
       </TallerModal>
