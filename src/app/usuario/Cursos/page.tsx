@@ -113,7 +113,7 @@ const MisCursos = () => {
           <div className="fixed top-0 left-0 w-full z-20 bg-white shadow-md">
             <Navigate />
           </div>
-          <div className="flex flex-wrap w-full mb-8 pl-8">
+          <div className="flex flex-wrap w-full mb-8 pl-8 justify-center">
             <div className="lg:w-1/2 w-full  lg:mb-0">
             <h1 className="text-3xl mt-5 font-bold text-gray-900 text-center ">Cursos del estudiante</h1>
               <div className="h-1 w-20  rounded"></div>
