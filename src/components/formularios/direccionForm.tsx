@@ -50,7 +50,7 @@ export const DireccionForm: React.FC = () => {
       <div >
         <Label htmlFor="localidad">Localidad</Label>
         <Input
-          id="calle"
+          id="localidad"
           type="text"
           {...register(`${fieldPath}.localidad`)}
           className="mt-1"
