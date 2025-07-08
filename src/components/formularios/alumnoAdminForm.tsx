@@ -173,7 +173,22 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
         calle: "",
         numero: undefined,
       },
-      responsable: FormProps.alumno?.responsable,
+      responsable: FormProps.alumno?.responsable || {
+        id: undefined,
+        nombre: "",
+        apellido: "",
+        dni: undefined,
+        telefono: "",
+        email: "",
+        direccionId: undefined,
+        direccion: {
+          pais: "Argentina",
+          provincia: "Entre Ríos",
+          localidad: "",
+          calle: "",
+          numero: undefined,
+        }
+      },
     },
   })
 
