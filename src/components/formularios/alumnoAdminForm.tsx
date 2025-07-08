@@ -260,11 +260,13 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
     }
     //crear alumno si no existe
     else {
+      console.log("creando alumno")
+      console.log("password ", data.password)
       const newAlum = await createAlumnoAdmin({
         nombre: data.nombre,
         apellido: data.apellido,
         email: data.email,
-        password: String(data.password),
+        password: data.password,
         fechaNacimiento: new Date(data.fechaNacimiento),
         dni: Number(data.dni),
         telefono: String(data.telefono),
