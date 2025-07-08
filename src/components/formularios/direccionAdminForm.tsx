@@ -49,7 +49,7 @@ export const DireccionAdminForm: React.FC<DireccionFormProps> = ({ fieldPath }) 
       <div>
         <Label htmlFor={`${fieldPath}.localidad`}>Localidad</Label>
         <Input
-          id="localidad"
+          id={`${fieldPath}.localidad`}
           type="text"
           {...register(`${fieldPath}.localidad`)}
           className="mt-1"

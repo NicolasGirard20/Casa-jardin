@@ -42,9 +42,9 @@ export const DireccionForm: React.FC = () => {
         <Label htmlFor="pais">País</Label>
         <Input id="pais" type="text" readOnly value={"Argentina"} className="mt-1" />
       </div>
-      <div >
+      <div>
         <Label htmlFor="provincia">Provincia</Label>
-        <Input id={`${fieldPath}.provincia`} type="text" readOnly value={"Entre Ríos"} className="mt-1" />
+        <Input id="provincia" type="text" readOnly value={"Entre Ríos"} className="mt-1" />
       </div>
 
       <div >
