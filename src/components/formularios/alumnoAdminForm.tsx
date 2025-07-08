@@ -168,7 +168,7 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
       telefono: FormProps.alumno?.telefono || "",
       direccion: FormProps.alumno?.direccion || {
         pais: "Argentina",
-        provincia: "",
+        provincia: "Entre Ríos",
         localidad: "",
         calle: "",
         numero: undefined,
