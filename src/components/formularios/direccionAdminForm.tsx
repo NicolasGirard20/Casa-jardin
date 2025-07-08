@@ -2,9 +2,7 @@ import type React from "react"
 import { type FieldErrorsImpl, useFormContext } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useEffect, useState } from "react"
-import Provincias from "../ubicacion/provincia"
-import Localidades from "../ubicacion/localidad"
+
 import { DireccionSchemaType } from "@/helpers/direccion"
 
 //la prop sirve para que no se mezclen las direcciones de alumnos y responsables
@@ -16,9 +14,6 @@ interface DireccionFormProps {
 }
 
 export const DireccionAdminForm: React.FC<DireccionFormProps> = ({ fieldPath }) => {
-
-  const [provincia, setProvincia] = useState<string | null>("")
-  const [localidad, setLocalidad] = useState<string | null>("")
   const {
     register,
     formState: { errors },
@@ -37,22 +32,6 @@ export const DireccionAdminForm: React.FC<DireccionFormProps> = ({ fieldPath }) 
     return current as FieldErrorsImpl<DireccionSchemaType> | undefined
   }
 
-  useEffect(() => {
-    const provinciaRegistrada = getValues(`${fieldPath}.provincia`);
-    console.log('provinciaRegistrada', provinciaRegistrada)
-    if (provinciaRegistrada) {
-      setProvincia(provinciaRegistrada);
-    }
-  }, [getValues, provincia]);
-
-  useEffect(() => {
-    const localidadRegistrada = getValues(`${fieldPath}.localidad`);
-    console.log('localidadRegistrada', localidadRegistrada)
-    if (localidadRegistrada) {
-      setLocalidad(localidadRegistrada);
-    }
-  }, [getValues, localidad]);
-
 
   // Get errors for the current field path
   const direccionErrors = getNestedErrors(fieldPath)
@@ -65,23 +44,18 @@ export const DireccionAdminForm: React.FC<DireccionFormProps> = ({ fieldPath }) 
       </div>
       <div>
         <Label htmlFor={`${fieldPath}.provincia`}>Provincia</Label>
-        <Provincias
-          setprovincia={setProvincia}
-          provincia={provincia}
-          fieldPath={fieldPath}
-          direccionErrors={direccionErrors}
-
-        />
+        <Input id={`${fieldPath}.provincia`} type="text" readOnly value={"Entre Ríos"} className="mt-1" />
       </div>
       <div>
         <Label htmlFor={`${fieldPath}.localidad`}>Localidad</Label>
-        <Localidades
-          setLocalidad={setLocalidad}
-          provinciaName={provincia}
-          localidad={localidad}
-          fieldPath={fieldPath}
-          direccionErrors={direccionErrors}
+<Input
+          id="calle"
+          type="text"
+          {...register(`${fieldPath}.localidad`)}
+          className="mt-1"
+          placeholder="Nombre de la localidad"
         />
+        {direccionErrors?.localidad && <p className="text-destructive text-sm mt-1">{direccionErrors.localidad.message}</p>}
 
       </div>
       <div>

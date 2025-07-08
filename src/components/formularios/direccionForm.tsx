@@ -2,18 +2,17 @@ import { FieldErrorsImpl, useFormContext } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { DireccionSchemaType } from "@/helpers/direccion"
-import Provincias from "../ubicacion/provincia"
 import { useState } from "react"
-import Localidades from "../ubicacion/localidad"
 import { useEffect } from "react";
 
 
 
 export const DireccionForm: React.FC = () => {
 
-  const [provincia, setProvincia] = useState<string | null>("")
+  const [provincia, setProvincia] = useState<string | null>("Entre Ríos")
   const [localidad, setLocalidad] = useState<string | null>("")
   const [fieldPath, setFieldPath] = useState<string>("direccion"); // Default field path for the form
+  const [cambioProvincia, setCambioProvincia] = useState<boolean>(false);
 
   const {
     register,
@@ -21,19 +20,6 @@ export const DireccionForm: React.FC = () => {
   } = useFormContext()
   const { getValues } = useFormContext();
 
-  useEffect(() => {
-    const provinciaRegistrada = getValues("direccion.provincia");
-    if (provinciaRegistrada) {
-      setProvincia(provinciaRegistrada);
-    }
-  }, [getValues]);
-
-  useEffect(() => {
-    const localidadRegistrada = getValues("direccion.localidad");
-    if (localidadRegistrada) {
-      setLocalidad(localidadRegistrada);
-    }
-  }, [getValues]);
 
   // Helper function to get nested errors
   const getNestedErrors = (path: string) => {
@@ -58,25 +44,19 @@ export const DireccionForm: React.FC = () => {
       </div>
       <div >
         <Label htmlFor="provincia">Provincia</Label>
-        <Provincias
-          setprovincia={setProvincia}
-          provincia={provincia}
-          fieldPath={fieldPath}
-          direccionErrors={direccionErrors}
-
-        />
-
+        <Input id={`${fieldPath}.provincia`} type="text" readOnly value={"Entre Ríos"} className="mt-1" />
       </div>
 
       <div >
         <Label htmlFor="localidad">Localidad</Label>
-        <Localidades
-          setLocalidad={setLocalidad}
-          provinciaName={provincia}
-          localidad={localidad}
-          fieldPath={fieldPath}
-          direccionErrors={direccionErrors}
+        <Input
+          id="calle"
+          type="text"
+          {...register(`${fieldPath}.localidad`)}
+          className="mt-1"
+          placeholder="Nombre de la localidad"
         />
+        {direccionErrors?.localidad && <p className="text-destructive text-sm mt-1">{direccionErrors.localidad.message}</p>}
 
       </div>
       <div>
