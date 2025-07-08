@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Apple, Loader } from 'lucide-react';
 import { handleDeleteProfesionalImage, handleUploadProfesionalImage } from '@/helpers/repoImages';
-import { createProfesional, updateProfesional } from '@/services/profesional';
+import { createProfesional, updateProfesional, updateProfesionalImage } from '@/services/profesional';
 import { FileInput } from '../ui/fileInput';
 import PasswordAdmin from '../passwordInput/passwordAdmin';
 
@@ -77,7 +77,7 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
     //creo profesional si no existe
     if (ProfesionalProps.nueva) {
       console.log("nuevo profesional")
-
+      console.log("passw", data.password)
       //guardo el profesional con imagen
       const pro = await createProfesional({
         nombre: data.nombre,
@@ -97,11 +97,12 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
       const nuevoUrl = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : imagenArchivo
       console.log("imagen subida: ", nuevoUrl)
       //actualizo el profesional con la imagen
-      await updateProfesional(
+      await updateProfesionalImage(pro.id, nuevoUrl)      
+      /* await updateProfesional(
         pro.id, {
         ...pro,
         imagen: nuevoUrl
-      })
+      }) */
 
       //actualizo la lista de profesionales
       ProfesionalProps.setProfesionalesListaCompleta?.((prev) => [...prev, pro])

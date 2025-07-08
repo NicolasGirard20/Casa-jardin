@@ -69,7 +69,7 @@ export async function createProfesional(data: {
   if (!existingProfesional) {
     return ('El email ya está en uso');
   }
-
+  console.log("contraseña sin cambiar", data.password.trim());
   // Encriptar la contraseña
   const hashedPassword = await hashPassword(data.password.trim());
   const newProfesional = {
@@ -77,7 +77,7 @@ export async function createProfesional(data: {
     password: hashedPassword,
     rolId: 3,
   }
-
+  console.log("contraseña cambiada", hashedPassword);
   return await prisma.profesional.create({
     data: newProfesional
   });
@@ -176,4 +176,18 @@ export async function getProfesionalByCookie() {
     return null;
   }
 
+}
+
+export async function updateProfesionalImage(id: number, image?: string | null) {
+  if (!image || image === "" || image === null || image === undefined) {
+    return "No se ha proporcionado una imagen";
+  }
+  return await prisma.profesional.update({
+    where: {
+      id,
+    },
+    data: {
+      imagen: image,
+},
+  });
 }
