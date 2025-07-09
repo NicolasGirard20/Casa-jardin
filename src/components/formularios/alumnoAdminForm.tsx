@@ -84,7 +84,7 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
         if (FormProps.alumno && FormProps.alumno.direccionId) {
           const direccion = await fetchDireccion(FormProps.alumno.direccionId);
           if (direccion) {
-            methods.setValue("direccion", { ...direccion, pais: "Argentina" });
+            methods.setValue("direccion", { ...direccion, pais: "Argentina", provincia: "Entre Ríos" });
             //  console.log("direccion: ", direccion)
           }
 
@@ -112,7 +112,7 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
     if (dire) {
       return {
         pais: "Argentina" as const,
-        provincia: String(dire.localidad.provincia.nombre),
+        provincia: "Entre Ríos" as const,
         localidad: String(dire.localidad.nombre),
         calle: String(dire.calle),
         numero: Number(dire.numero)
@@ -161,7 +161,6 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
       apellido: FormProps.alumno?.apellido,
       email: FormProps.alumno?.email,
       password: "",
-      // Convertir Date a string 'YYYY-MM-DD' según la zona horaria local
       fechaNacimiento: FormProps.alumno?.fechaNacimiento ? formDate(FormProps.alumno.fechaNacimiento) : "",
       direccionId: FormProps.alumno?.direccionId,
       dni: FormProps.alumno?.dni || undefined,
@@ -173,22 +172,24 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
         calle: "",
         numero: undefined,
       },
-      responsable: FormProps.alumno?.responsable || {
-        id: undefined,
-        nombre: "",
-        apellido: "",
-        dni: undefined,
-        telefono: "",
-        email: "",
-        direccionId: undefined,
-        direccion: {
-          pais: "Argentina",
-          provincia: "Entre Ríos",
-          localidad: "",
-          calle: "",
-          numero: undefined,
+      ...( !FormProps.mayor && {
+        responsable: FormProps.alumno?.responsable || {
+          id: undefined,
+          nombre: "",
+          apellido: "",
+          dni: undefined,
+          telefono: "",
+          email: "",
+          direccionId: undefined,
+          direccion: {
+            pais: "Argentina",
+            provincia: "Entre Ríos",
+            localidad: "",
+            calle: "",
+            numero: undefined,
+          }
         }
-      },
+      })
     },
   })
 
@@ -217,7 +218,7 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
     // console.log(data.direccion)
     //paso 1 actualizar / crear direccion
     const direccion = await direccionHelper(data.direccion)
-    // console.log("direccionALumno: ", direccion)
+    console.log("direccionALumno: ", direccion)
     //paso 2 actualizar alumno
     if (FormProps.alumno?.id) {
       //cambio el direccion id por los nuevos datos
@@ -320,8 +321,8 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
 
   const cancelar = () => {
     console.log("errores alumno form: ", errors)
-    console.log(FormProps.alumno)
-    console.log(methods.getValues().responsable)
+/*     console.log(FormProps.alumno)
+    console.log(methods.getValues()) */
     FormProps.setEditar(false)
   }
 
