@@ -103,15 +103,22 @@ export async function createAlumnoAdmin(data: {
     return "El email ya está registrado";
   }
   // Encriptar la contraseña
+  console.log("Encriptando contraseña", data.password.trim())
   const hashedPassword = await hashPassword(data.password.trim());
+  console.log("hashedPassword", hashedPassword)
   data.password = hashedPassword;
 
   //  console.log("fecha:", data.fechaNacimiento)
   console.log("CREANDO ALUMNO COMO ADMIN")
   // Guardar el alumno
   const alum = await prisma.alumno.create({
-    data: alumnoTrim,
+    data: {
+      ...alumnoTrim,
+      password: hashedPassword,
+      rolId: 2, // Asignar rol de alumno
+    },
   });
+  console.log("Alumno creado", alum);
   return alum
 }
 

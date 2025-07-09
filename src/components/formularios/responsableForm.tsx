@@ -67,7 +67,7 @@ const ResponsableForm: React.FC<ResponsableProps> = (ResponsableProps) => {
       email: ResponsableProps.responsable?.email || "",
       direccion: ResponsableProps.responsable?.direccion || {
         pais: "Argentina",
-        provincia: "",
+        provincia: "Entre Rios",
         localidad: "",
         calle: "",
         numero: undefined,

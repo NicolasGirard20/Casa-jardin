@@ -173,7 +173,22 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
         calle: "",
         numero: undefined,
       },
-      responsable: FormProps.alumno?.responsable,
+      responsable: FormProps.alumno?.responsable || {
+        id: undefined,
+        nombre: "",
+        apellido: "",
+        dni: undefined,
+        telefono: "",
+        email: "",
+        direccionId: undefined,
+        direccion: {
+          pais: "Argentina",
+          provincia: "Entre Ríos",
+          localidad: "",
+          calle: "",
+          numero: undefined,
+        }
+      },
     },
   })
 
@@ -260,11 +275,13 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
     }
     //crear alumno si no existe
     else {
+      console.log("creando alumno")
+      console.log("password ", data.password)
       const newAlum = await createAlumnoAdmin({
         nombre: data.nombre,
         apellido: data.apellido,
         email: data.email,
-        password: String(data.password),
+        password: data.password,
         fechaNacimiento: new Date(data.fechaNacimiento),
         dni: Number(data.dni),
         telefono: String(data.telefono),

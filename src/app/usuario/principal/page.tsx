@@ -49,7 +49,7 @@ const Principal: React.FC = () => {
             Bienvenido de regreso, {userName}! 👋
           </h1>
         </div>
-        <div className="px-[20%] grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+        <div className="px-[5%] grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <DashboardCard
             title="Mi Cuenta"
             description="Accede a la información de tu cuenta."
