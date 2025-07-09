@@ -68,7 +68,7 @@ const principal: React.FC = () => {
               {/* Contenedor de talleres */}
              
             </div>
-                <div className="px-[15%] grid h-1/3 gap-8 md:grid-cols-2 lg:grid-cols-2">
+                <div className="px-[15%] grid h-1/3 gap-8 lg:grid-cols-2">
                 <DashboardCard
                   title='Mi Cuenta'
                   description='Accede a la información de tu cuenta.'
