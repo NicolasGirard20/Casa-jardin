@@ -68,13 +68,14 @@ const principal: React.FC = () => {
               {/* Contenedor de talleres */}
              
             </div>
-              <div className="px-[20%] grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+                <div className="px-[15%] grid h-1/3 gap-8 md:grid-cols-2 lg:grid-cols-2">
                 <DashboardCard
                   title='Mi Cuenta'
                   description='Accede a la información de tu cuenta.'
                   icon={UserCircle}
                   onClick={() => handleNavigation('/Cuenta')}
                   gradient='bg-gradient-to-br from-green-500 to-lime-600'
+                  className="min-h-[200px] text-xl" // Aumenta el tamaño
                 />
                 <DashboardCard
                   title='Calendario'
@@ -82,8 +83,9 @@ const principal: React.FC = () => {
                   icon={Calendar}
                   onClick={() => handleNavigation('/cronogramap/listar')}
                   gradient='bg-gradient-to-br from-violet-500 to-purple-600'
+                  className="min-h-[200px] text-xl" // Aumenta el tamaño
                 />
-              </div>   
+                </div>   
           </div>
         </main>
       );
