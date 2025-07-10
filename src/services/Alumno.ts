@@ -367,13 +367,15 @@ export async function dniExists(dni: number): Promise<boolean> {
     const respResults = await prisma.responsable.findUnique({ where: { dni } })
     // Busca el primer usuario que no sea null
     // si existe el dni retorna true
+    console.log("dniExists", dni)
     console.log("userResults", userResults)
     console.log("respResults", respResults)
+
     // si existe el dni en la tabla alumno o responsable, retorna true
     if (userResults || respResults) {
       return true;
     }
-    
+
     return false;
   } catch (error) {
     console.error("Error checking dni existence:", error);

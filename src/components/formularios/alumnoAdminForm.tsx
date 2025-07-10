@@ -24,7 +24,7 @@ import PasswordAdmin from "../passwordInput/passwordAdmin"
 
 
 
-const alumnoSchema = (mayor: boolean, nueva: boolean, dniOriginal?: number) => z.object({
+const alumnoSchema = (mayor: boolean, nueva: boolean, dniOriginal?: number, dniOriginalResp?:number) => z.object({
   dni: z
     .union([
       z
@@ -69,7 +69,7 @@ const alumnoSchema = (mayor: boolean, nueva: boolean, dniOriginal?: number) => z
       .regex(/(?=.*[0-9])/, { message: "Debe contener al menos un número" }), z.string().length(0)]),
   fechaNacimiento: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Debe ser una fecha válida" }),
   direccionId: z.number().optional().nullable(),
-  responsable: responsableSchema().optional()})
+  responsable: responsableSchema(dniOriginalResp ).optional()})
 
 export type AlumnoSchema = z.infer<ReturnType<typeof alumnoSchema>>;
 
@@ -162,7 +162,7 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
   }
   //seteo de formulario
   const methods = useForm<AlumnoSchema>({
-    resolver: zodResolver(alumnoSchema(FormProps.mayor, FormProps.nueva, FormProps.alumno?.dni || undefined)),
+    resolver: zodResolver(alumnoSchema(FormProps.mayor, FormProps.nueva, FormProps.alumno?.dni || undefined, FormProps.alumno?.responsable?.dni || undefined)),
     defaultValues: {
       id: FormProps.alumno?.id,
       nombre: FormProps.alumno?.nombre,
