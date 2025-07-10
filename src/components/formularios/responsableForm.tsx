@@ -9,10 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DireccionForm } from "./direccionForm"
 import { direccionHelper, direccionSchema } from "@/helpers/direccion"
 import { updateResponsable } from "@/services/responsable"
+import { dniExists } from "@/services/Alumno"
 
 
 
-const responsableSchema = z.object({
+const responsableSchema = (dniOriginal?: number) => z.object({
   nombre: z
     .string()
     .min(1, { message: "Debe completar el nombre" })
@@ -28,7 +29,17 @@ const responsableSchema = z.object({
     })
     .int()
     .min(1000000, { message: "DNI inválido, debe ser un número de 8 dígitos" })
-    .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" }),
+    .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" })
+    .refine(
+      async (dni) => {
+        // Solo valida existencia si el DNI fue cambiado
+        if (!dni || dni === dniOriginal) return true;
+        const exists = await dniExists(dni || 0);
+        return !exists;
+      },
+      { message: "El DNI ya está registrado" }
+    ),
+
   telefono: z.string().min(1, { message: "Debe completar el teléfono" }),
   email: z.string().min(1, { message: "Debe completar el email" }).email({ message: "Email inválido" }),
   alumnoId: z.number().optional(),
@@ -36,7 +47,7 @@ const responsableSchema = z.object({
   id: z.number().optional(),
 })
 
-type ResponsableSchema = z.infer<typeof responsableSchema>
+type ResponsableSchema = z.infer<ReturnType<typeof responsableSchema>>
 
 interface ResponsableProps {
   responsable: ResponsableSchema | null
@@ -57,7 +68,7 @@ const ResponsableForm: React.FC<ResponsableProps> = (ResponsableProps) => {
   }
   //seteo de formulario
   const methods = useForm<ResponsableSchema>({
-    resolver: zodResolver(responsableSchema),
+    resolver: zodResolver(responsableSchema(ResponsableProps.responsable?.dni || undefined)),
     defaultValues: {
       id: ResponsableProps.responsable?.id,
       nombre: ResponsableProps.responsable?.nombre || "",
@@ -83,20 +94,20 @@ const ResponsableForm: React.FC<ResponsableProps> = (ResponsableProps) => {
 
   const onSubmit = async (data: ResponsableSchema) => {
     //si no hay cambios
-    if(JSON.stringify(copiaComparables) === JSON.stringify({
+    if (JSON.stringify(copiaComparables) === JSON.stringify({
       nombre: data.nombre,
       apellido: data.apellido,
       dni: data.dni,
       telefono: data.telefono,
       email: data.email,
       direccion: data.direccion
-    })){
+    })) {
       console.log("no hay cambios")
       console.log(ResponsableProps.responsable)
       await new Promise((resolve) => setTimeout(resolve, 1000))
       console.log(data)
       ResponsableProps.setEditar(false)
-      return 
+      return
     }
 
     //si hay cambios
@@ -106,7 +117,7 @@ const ResponsableForm: React.FC<ResponsableProps> = (ResponsableProps) => {
 
     //paso 2 actualizar / crear responsable
     console.log("actualizar responsable")
-    const r = await updateResponsable( ResponsableProps.alumnoId,{
+    const r = await updateResponsable(ResponsableProps.alumnoId, {
       alumnoId: ResponsableProps.alumnoId,
       nombre: data.nombre,
       apellido: data.apellido,
@@ -117,11 +128,11 @@ const ResponsableForm: React.FC<ResponsableProps> = (ResponsableProps) => {
     })
     console.log("responsable actualizado: ", r)
     ResponsableProps.setChanged(true)
-      
-    
+
+
     //cerrar formulario
     ResponsableProps.setEditar(false)
-  
+
   }
 
   const cancelar = () => {
@@ -129,7 +140,7 @@ const ResponsableForm: React.FC<ResponsableProps> = (ResponsableProps) => {
     ResponsableProps.setEditar(false)
   }
 
- 
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
       <FormProvider {...methods}>

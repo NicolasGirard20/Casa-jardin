@@ -10,11 +10,12 @@ import { DireccionForm } from "./direccionForm"
 import { direccionHelper, direccionSchema } from "@/helpers/direccion"
 import { updateResponsable } from "@/services/responsable"
 import { DireccionAdminForm } from "./direccionAdminForm"
+import { dniExists } from "@/services/Alumno"
 
 
 
 
-export const responsableSchema = z.object({
+export const responsableSchema = (dniOriginal?: number) => z.object({
   id: z.number().optional(),
   nombre: z
     .string()
@@ -31,7 +32,16 @@ export const responsableSchema = z.object({
     })
     .int()
     .min(1000000, { message: "DNI inválido, debe ser un número de 8 dígitos" })
-    .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" }),
+    .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" })
+    .refine(
+      async (dni) => {
+        // Solo valida existencia si el DNI fue cambiado
+        if (!dni || dni === dniOriginal) return true;
+        const exists = await dniExists(dni||0);
+        return !exists;
+      },
+      { message: "El DNI ya está registrado" }
+    ),
   telefono: z
   .string()
   .min(1, { message: "Debe completar el teléfono" })
@@ -43,7 +53,7 @@ export const responsableSchema = z.object({
 
 })
 
-type ResponsableSchema = z.infer<typeof responsableSchema>
+type ResponsableSchema = z.infer<ReturnType<typeof responsableSchema>>
 
 export const ResponsableAdminForm: React.FC = () => {
     const {

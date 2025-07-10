@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 import { getalumnos_cursoByIdAlumno } from "./alumno_curso";
 import { validatePasswordComplexity } from "@/helpers/validaciones";
 import { deleteSolicitudMayor } from "./Solicitud/SolicitudMayor";
+import { getResponsableByAlumnoId } from "./responsable";
 const prisma = new PrismaClient();
 
 // Definir el tipo Alumno
@@ -307,7 +308,7 @@ export async function deleteAlumno(id: number) {
     if (!foundAlumno) {
       return 'No se encontró el alumno'
     }
-   
+
 
     const x = await prisma.alumno.delete({
       where: { id },
@@ -362,14 +363,19 @@ export async function emailExists(email: string): Promise<boolean> {
 export async function dniExists(dni: number): Promise<boolean> {
   // Realiza búsquedas en paralelo para cada tabla y espera el primer resultado exitoso
   try {
-    const userResults = await prisma.alumno.findUnique({ where: { dni } }
-    );
+    const userResults = await prisma.alumno.findUnique({ where: { dni } });
+    const respResults = await prisma.responsable.findUnique({ where: { dni } })
     // Busca el primer usuario que no sea null
     // si existe el dni retorna true
+    console.log("dniExists", dni)
     console.log("userResults", userResults)
-    if (userResults) {
+    console.log("respResults", respResults)
+
+    // si existe el dni en la tabla alumno o responsable, retorna true
+    if (userResults || respResults) {
       return true;
     }
+
     return false;
   } catch (error) {
     console.error("Error checking dni existence:", error);

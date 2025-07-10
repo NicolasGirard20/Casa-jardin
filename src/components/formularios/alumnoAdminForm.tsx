@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { updateAlumno, createAlumnoAdmin } from "@/services/Alumno"
+import { updateAlumno, createAlumnoAdmin, dniExists } from "@/services/Alumno"
 import { direccionHelper, direccionSchema } from "@/helpers/direccion"
 import { getDireccionCompleta } from "@/services/ubicacion/direccion"
 import React, { useState, useEffect } from "react"
@@ -24,7 +24,7 @@ import PasswordAdmin from "../passwordInput/passwordAdmin"
 
 
 
-const alumnoSchema = (mayor: boolean, nueva: boolean) => z.object({
+const alumnoSchema = (mayor: boolean, nueva: boolean, dniOriginal?: number, dniOriginalResp?:number) => z.object({
   dni: z
     .union([
       z
@@ -34,7 +34,16 @@ const alumnoSchema = (mayor: boolean, nueva: boolean) => z.object({
         })
         .int()
         .min(1000000, { message: "DNI inválido, debe ser un número de 8 dígitos" })
-        .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" }),
+        .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" })
+        .refine(
+          async (dni) => {
+            // Solo valida existencia si el DNI fue cambiado
+            if (!dni || dni === dniOriginal) return true;
+            const exists = await dniExists(dni);
+            return !exists;
+          },
+          { message: "El DNI ya está registrado" }
+        ),
       z.null(),
     ])
     .optional(),
@@ -60,8 +69,7 @@ const alumnoSchema = (mayor: boolean, nueva: boolean) => z.object({
       .regex(/(?=.*[0-9])/, { message: "Debe contener al menos un número" }), z.string().length(0)]),
   fechaNacimiento: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Debe ser una fecha válida" }),
   direccionId: z.number().optional().nullable(),
-  responsable: responsableSchema.optional()
-})
+  responsable: responsableSchema(dniOriginalResp ).optional()})
 
 export type AlumnoSchema = z.infer<ReturnType<typeof alumnoSchema>>;
 
@@ -154,7 +162,7 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
   }
   //seteo de formulario
   const methods = useForm<AlumnoSchema>({
-    resolver: zodResolver(alumnoSchema(FormProps.mayor, FormProps.nueva)),
+    resolver: zodResolver(alumnoSchema(FormProps.mayor, FormProps.nueva, FormProps.alumno?.dni || undefined, FormProps.alumno?.responsable?.dni || undefined)),
     defaultValues: {
       id: FormProps.alumno?.id,
       nombre: FormProps.alumno?.nombre,

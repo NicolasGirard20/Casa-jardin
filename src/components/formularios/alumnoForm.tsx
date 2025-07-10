@@ -8,14 +8,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { updateAlumnoCuenta } from "@/services/Alumno"
+import { dniExists, updateAlumnoCuenta } from "@/services/Alumno"
 import { direccionHelper, direccionSchema } from "@/helpers/direccion"
 import PasswordComponent from "../Password/page"
 import { useState } from "react"
 
 
 
-const alumnoSchema = (mayor: boolean) => z.object({
+const alumnoSchema = (mayor: boolean, dniOriginal?: number) => z.object({
   dni: z
     .union([
       z
@@ -25,8 +25,16 @@ const alumnoSchema = (mayor: boolean) => z.object({
         })
         .int()
         .min(1000000, { message: "DNI inválido, debe ser un número de 8 dígitos" })
-        .max(99999999, { message: "DNI inválido, debe ser un número de 8 dígitos" }),
-
+        .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" })
+        .refine(
+          async (dni) => {
+            // Solo valida existencia si el DNI fue cambiado
+            if (!dni || dni === dniOriginal) return true;
+            const exists = await dniExists(dni);
+            return !exists;
+          },
+          { message: "El DNI ya está registrado" }
+        ),
       z.null(),
     ])
     .optional(),
@@ -71,7 +79,7 @@ const AlumnoForm: React.FC<AlumnoProps> = (AlumnoProps) => {
 
   //seteo de formulario
   const methods = useForm<AlumnoSchema>({
-    resolver: zodResolver(alumnoSchema(AlumnoProps.mayor)),
+    resolver: zodResolver(alumnoSchema(AlumnoProps.mayor, AlumnoProps.alumno?.dni || undefined)),
     defaultValues: {
       //campos no modificables
       id: AlumnoProps.alumno?.id,
