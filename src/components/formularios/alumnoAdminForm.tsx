@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { updateAlumno, createAlumnoAdmin } from "@/services/Alumno"
+import { updateAlumno, createAlumnoAdmin, dniExists } from "@/services/Alumno"
 import { direccionHelper, direccionSchema } from "@/helpers/direccion"
 import { getDireccionCompleta } from "@/services/ubicacion/direccion"
 import React, { useState, useEffect } from "react"
@@ -34,7 +34,16 @@ const alumnoSchema = (mayor: boolean, nueva: boolean) => z.object({
         })
         .int()
         .min(1000000, { message: "DNI inválido, debe ser un número de 8 dígitos" })
-        .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" }),
+        .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" })
+        .refine(
+          async (dni) => {
+            // Llama a la función dniExists para validar si el DNI ya existe
+            if (!dni) return true; // Si no hay DNI, no valida existencia
+            const exists = await dniExists(dni);
+            return !exists;
+          },
+          { message: "El DNI ya está registrado" }
+        ),
       z.null(),
     ])
     .optional(),
