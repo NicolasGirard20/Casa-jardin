@@ -88,6 +88,20 @@ const SeleccionTaller: React.FC<Datos> = ({ setSelectedCursosId, selectedCursosI
         );
     }
 
+    // Helper function to get the correct image URL for a course
+    const getCourseImageUrl = (cursoId: number) => {
+        if (!images || !downloadurls) return NoImage;
+        
+        // Try to find an image that matches the course ID
+        const imageIndex = images.findIndex(imageName => {
+            // Remove file extension for comparison
+            const nameWithoutExt = imageName.replace(/\.[^/.]+$/, "");
+            return nameWithoutExt === cursoId.toString();
+        });
+        
+        return imageIndex !== -1 ? downloadurls[imageIndex] : NoImage;
+    };
+
     return (
         <div className="w-full max-w-7xl mx-auto px-4 py-2">
             <div className="text-center mb-8">
@@ -132,7 +146,7 @@ const SeleccionTaller: React.FC<Datos> = ({ setSelectedCursosId, selectedCursosI
                                 <TableCell className="py-4">
                                     <div className="relative w-[100px] md:w-[200px] lg:w-[200px] h-[80px] md:h-[120px] lg:h-[120px] rounded-lg overflow-hidden">
                                         <img
-                                            src={downloadurls[index] || NoImage}
+                                            src={getCourseImageUrl(curso.id)}
                                             alt={curso.nombre}
                                             className="absolute inset-0 w-full h-full object-cover"
                                         />
