@@ -13,7 +13,7 @@ import { dniExists } from "@/services/Alumno"
 
 
 
-const responsableSchema = z.object({
+const responsableSchema = (dniOriginal?: number) => z.object({
   nombre: z
     .string()
     .min(1, { message: "Debe completar el nombre" })
@@ -32,8 +32,8 @@ const responsableSchema = z.object({
     .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" })
     .refine(
       async (dni) => {
-        // Llama a la función dniExists para validar si el DNI ya existe
-        if (!dni) return true; // Si no hay DNI, no valida existencia
+        // Solo valida existencia si el DNI fue cambiado
+        if (!dni || dni === dniOriginal) return true;
         const exists = await dniExists(dni);
         return !exists;
       },
@@ -47,7 +47,7 @@ const responsableSchema = z.object({
   id: z.number().optional(),
 })
 
-type ResponsableSchema = z.infer<typeof responsableSchema>
+type ResponsableSchema = z.infer<ReturnType<typeof responsableSchema>>
 
 interface ResponsableProps {
   responsable: ResponsableSchema | null
@@ -68,7 +68,7 @@ const ResponsableForm: React.FC<ResponsableProps> = (ResponsableProps) => {
   }
   //seteo de formulario
   const methods = useForm<ResponsableSchema>({
-    resolver: zodResolver(responsableSchema),
+    resolver: zodResolver(responsableSchema(ResponsableProps.responsable?.dni || undefined)),
     defaultValues: {
       id: ResponsableProps.responsable?.id,
       nombre: ResponsableProps.responsable?.nombre || "",

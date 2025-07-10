@@ -24,7 +24,7 @@ import PasswordAdmin from "../passwordInput/passwordAdmin"
 
 
 
-const alumnoSchema = (mayor: boolean, nueva: boolean) => z.object({
+const alumnoSchema = (mayor: boolean, nueva: boolean, dniOriginal?: number) => z.object({
   dni: z
     .union([
       z
@@ -37,8 +37,8 @@ const alumnoSchema = (mayor: boolean, nueva: boolean) => z.object({
         .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" })
         .refine(
           async (dni) => {
-            // Llama a la función dniExists para validar si el DNI ya existe
-            if (!dni) return true; // Si no hay DNI, no valida existencia
+            // Solo valida existencia si el DNI fue cambiado
+            if (!dni || dni === dniOriginal) return true;
             const exists = await dniExists(dni);
             return !exists;
           },
@@ -69,8 +69,7 @@ const alumnoSchema = (mayor: boolean, nueva: boolean) => z.object({
       .regex(/(?=.*[0-9])/, { message: "Debe contener al menos un número" }), z.string().length(0)]),
   fechaNacimiento: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Debe ser una fecha válida" }),
   direccionId: z.number().optional().nullable(),
-  responsable: responsableSchema.optional()
-})
+  responsable: responsableSchema().optional()})
 
 export type AlumnoSchema = z.infer<ReturnType<typeof alumnoSchema>>;
 
@@ -163,7 +162,7 @@ const AlumnoAdminForm: React.FC<FormProps> = (FormProps) => {
   }
   //seteo de formulario
   const methods = useForm<AlumnoSchema>({
-    resolver: zodResolver(alumnoSchema(FormProps.mayor, FormProps.nueva)),
+    resolver: zodResolver(alumnoSchema(FormProps.mayor, FormProps.nueva, FormProps.alumno?.dni || undefined)),
     defaultValues: {
       id: FormProps.alumno?.id,
       nombre: FormProps.alumno?.nombre,

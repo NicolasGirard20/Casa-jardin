@@ -15,7 +15,7 @@ import { dniExists } from "@/services/Alumno"
 
 
 
-export const responsableSchema = z.object({
+export const responsableSchema = (dniOriginal?: number) => z.object({
   id: z.number().optional(),
   nombre: z
     .string()
@@ -35,8 +35,8 @@ export const responsableSchema = z.object({
     .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" })
     .refine(
       async (dni) => {
-        // Llama a la función dniExists para validar si el DNI ya existe
-        if (!dni) return true; // Si no hay DNI, no valida existencia
+        // Solo valida existencia si el DNI fue cambiado
+        if (!dni || dni === dniOriginal) return true;
         const exists = await dniExists(dni);
         return !exists;
       },
@@ -53,7 +53,7 @@ export const responsableSchema = z.object({
 
 })
 
-type ResponsableSchema = z.infer<typeof responsableSchema>
+type ResponsableSchema = z.infer<ReturnType<typeof responsableSchema>>
 
 export const ResponsableAdminForm: React.FC = () => {
     const {

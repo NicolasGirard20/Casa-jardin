@@ -15,7 +15,7 @@ import { useState } from "react"
 
 
 
-const alumnoSchema = (mayor: boolean) => z.object({
+const alumnoSchema = (mayor: boolean, dniOriginal?: number) => z.object({
   dni: z
     .union([
       z
@@ -28,8 +28,8 @@ const alumnoSchema = (mayor: boolean) => z.object({
         .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" })
         .refine(
           async (dni) => {
-            // Llama a la función dniExists para validar si el DNI ya existe
-            if (!dni) return true; // Si no hay DNI, no valida existencia
+            // Solo valida existencia si el DNI fue cambiado
+            if (!dni || dni === dniOriginal) return true;
             const exists = await dniExists(dni);
             return !exists;
           },
@@ -79,7 +79,7 @@ const AlumnoForm: React.FC<AlumnoProps> = (AlumnoProps) => {
 
   //seteo de formulario
   const methods = useForm<AlumnoSchema>({
-    resolver: zodResolver(alumnoSchema(AlumnoProps.mayor)),
+    resolver: zodResolver(alumnoSchema(AlumnoProps.mayor, AlumnoProps.alumno?.dni || undefined)),
     defaultValues: {
       //campos no modificables
       id: AlumnoProps.alumno?.id,
