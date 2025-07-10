@@ -125,7 +125,7 @@ const ProfesionalAdminForm: React.FC<ProfesionalProps> = (ProfesionalProps) => {
         data.imagen = null;
       }
       else{
-        data.imagen = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : imagenArchivo
+        data.imagen = imagenArchivo ? await handleImageUpload(imagenArchivo, data) : data.imagen
         console.log("imagen modificada: ", data.imagen)
       }
 
