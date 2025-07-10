@@ -248,7 +248,7 @@ const CursoForm: React.FC<CursoFormProps> = ({
         }
         else{
           console.log("actualizando curso")
-          data.imagen = selectedFile ? await handleImageUpload(selectedFile, data) : selectedFile
+          data.imagen = selectedFile ? await handleImageUpload(selectedFile, data) : data.imagen
           console.log("imagen modificada a: ", data.imagen)
         }
         
