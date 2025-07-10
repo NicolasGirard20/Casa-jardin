@@ -10,6 +10,7 @@ import { DireccionForm } from "./direccionForm"
 import { direccionHelper, direccionSchema } from "@/helpers/direccion"
 import { updateResponsable } from "@/services/responsable"
 import { DireccionAdminForm } from "./direccionAdminForm"
+import { dniExists } from "@/services/Alumno"
 
 
 
@@ -31,7 +32,16 @@ export const responsableSchema = z.object({
     })
     .int()
     .min(1000000, { message: "DNI inválido, debe ser un número de 8 dígitos" })
-    .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" }),
+    .max(999999999, { message: "DNI inválido, debe ser un número de 8 dígitos" })
+    .refine(
+      async (dni) => {
+        // Llama a la función dniExists para validar si el DNI ya existe
+        if (!dni) return true; // Si no hay DNI, no valida existencia
+        const exists = await dniExists(dni);
+        return !exists;
+      },
+      { message: "El DNI ya está registrado" }
+    ),
   telefono: z
   .string()
   .min(1, { message: "Debe completar el teléfono" })
