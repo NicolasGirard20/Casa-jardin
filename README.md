@@ -1,3 +1,3 @@
 # Casa-jardin
-Modelo de desarrollo y prueba de casa Jardín
+Modelo de desarrollo y prueba de casa Jardín.
 
