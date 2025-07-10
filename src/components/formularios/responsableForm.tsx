@@ -34,7 +34,7 @@ const responsableSchema = (dniOriginal?: number) => z.object({
       async (dni) => {
         // Solo valida existencia si el DNI fue cambiado
         if (!dni || dni === dniOriginal) return true;
-        const exists = await dniExists(dniOriginal || 0);
+        const exists = await dniExists(dni || 0);
         return !exists;
       },
       { message: "El DNI ya está registrado" }
