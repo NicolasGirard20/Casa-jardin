@@ -70,6 +70,9 @@ Vista principal del alumno.
 ---
 
 ## 👨‍🏫 Módulo del Profesional
+*Interfaz personalizada para que los profesionales gestionen su perfil.*
+
+### 📊 Dashboard e Inicio Profesional
 Vista principal del profesional.
 <img width="1917" alt="Profesional Inicio" src="https://github.com/user-attachments/assets/991fa640-7733-4350-86eb-a2ef70ce4343" />
 * **Cuenta:**  [Modificar Datos](https://github.com/user-attachments/assets/a13805c4-aeb3-471c-9ee3-9b7c41cf6131)
