@@ -4,6 +4,16 @@ Este repositorio contiene la documentación visual y el flujo de interfaces del 
 
 ---
 
+## 🛠️ Stack Tecnológico
+*Tecnologías utilizadas en el desarrollo del ecosistema.*
+
+* ![Next.js](https://img.shields.io/badge/Next.js-000?style=flat-square&logo=nextdotjs&logoColor=white) **Framework:** Next.js (React)
+* ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white) **Lenguaje:** TypeScript
+* ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white) **Base de Datos:** MongoDB
+* ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white) **Control de Versiones:** Git
+
+---
+
 ## 📑 Índice
 * [🌐 Pantallas Públicas](#-pantallas-públicas-marketing)
 * [🔐 Acceso de Usuarios](#-acceso-de-usuarios)
