@@ -25,6 +25,8 @@ Este repositorio contiene la documentación visual y el flujo de interfaces del 
 ---
 
 ## 📑 Índice
+* [🎯 Propósito del Proyecto](#-propósito-del-proyecto)
+* [📈 Metodología de Trabajo](#-metodología-de-trabajo)
 * [🌐 Pantallas Públicas](#-pantallas-públicas-marketing)
 * [🔐 Acceso de Usuarios](#-acceso-de-usuarios)
 * [⚙️ Panel de Administración](#️-panel-de-administración-cms)
