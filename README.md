@@ -9,7 +9,7 @@ Este repositorio contiene la documentación visual y el flujo de interfaces del 
 * [🔐 Acceso de Usuarios](#-acceso-de-usuarios)
 * [⚙️ Panel de Administración](#️-panel-de-administración-cms)
 * [🎓 Módulo del Alumno](#-módulo-del-alumno)
-* [👨‍🏫 Módulo del Profesional](#-módulo-del-profesional)
+* [👨 Módulo del Profesional](#-módulo-del-profesional)
 
 ---
 
@@ -69,7 +69,7 @@ Vista principal del alumno.
 
 ---
 
-## 👨‍🏫 Módulo del Profesional
+## 👨 Módulo del Profesional
 *Interfaz personalizada para que los profesionales gestionen su perfil.*
 
 ### 📊 Dashboard e Inicio Profesional
