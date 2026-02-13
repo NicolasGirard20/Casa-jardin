@@ -1,7 +1,6 @@
-<img width="1899" height="848" alt="image" src="https://github.com/user-attachments/assets/2c664e58-a9d5-4b5a-9f63-067956136456" /># Casa-jardin
 Modelo de desarrollo y prueba de casa Jardín
 
-# Pantallas estáticas publicitarias
+## Pantallas estáticas publicitarias
 Inicio
 <img width="1903" height="855" alt="image" src="https://github.com/user-attachments/assets/37bbd0ba-0657-4ee7-8a9c-6b8987474b65" />
 <img width="1852" height="791" alt="image" src="https://github.com/user-attachments/assets/36a0bb35-755d-49df-bcd3-80d21f63b8c6" />
@@ -19,7 +18,7 @@ Login
 Signup
 <img width="1849" height="836" alt="image" src="https://github.com/user-attachments/assets/1cf11883-18c6-43fd-8f86-d0f0360a9174" />
 
-#Admin
+# Admin
 Inicio
 <img width="1917" height="855" alt="image" src="https://github.com/user-attachments/assets/1b603625-d5f2-4bbd-b751-43953e348683" />
 
