@@ -4,6 +4,16 @@ Este repositorio contiene la documentación visual y el flujo de interfaces del 
 
 ---
 
+## 👥 Equipo de Trabajo
+| Integrante | Rol  |
+| :--- | :--- |
+| **Nicolás Girard** | Product Owner |
+| **Mateo Maldonado** | Scrum Master |
+| **Alan Benner** | Developer |
+| **Sebastián Zarate** | Developer |
+
+---
+
 ## 🛠️ Stack Tecnológico
 *Tecnologías utilizadas en el desarrollo del ecosistema.*
 
@@ -20,6 +30,20 @@ Este repositorio contiene la documentación visual y el flujo de interfaces del 
 * [⚙️ Panel de Administración](#️-panel-de-administración-cms)
 * [🎓 Módulo del Alumno](#-módulo-del-alumno)
 * [👨 Módulo del Profesional](#-módulo-del-profesional)
+* [📦 Entregables y Documentación Final](#-entregables-y-documentación-final)
+
+---
+
+## 🎯 Propósito del Proyecto
+Casa Jardín es una academia que ofrece múltiples talleres anuales. El sistema tiene como objetivo transformar la gestión manual —anteriormente basada en papel y WhatsApp— en una solución digital robusta que optimice el registro de inscripciones, el control de cobros y el uso de espacios físicos (aulas).
+
+---
+
+## 📈 Metodología de Trabajo
+* El desarrollo se realizó bajo una **implementación ad hoc de SCRUM**, dividida en **7 Sprints** de trabajo iterativo.
+* **Gestión de Tareas:** Se utilizó un **Taskboard** para el seguimiento de Historias de Usuario.
+* **Validación:** Cada funcionalidad fue sometida a bancos de pruebas (registro, login, gestión de altas, bajas y modificaciones) para garantizar su correcto funcionamiento.
+* **Diseño:** El prototipado de interfaces se realizó previamente en **Figma**.
 
 ---
 
@@ -89,5 +113,32 @@ Vista principal del profesional.
 
 ### 📅 Planificación
 * **Gestión de Espacios:** [Calendario Académico](https://github.com/user-attachments/assets/816e4af5-1844-4eec-87d2-2a274c300ff1) | [Modificar Horarios de Aulas](https://github.com/user-attachments/assets/01f5d64b-0377-404d-82cd-b288e24e50c4)
+
+---
+
+## 📦 Entregables y Documentación Final
+*Recursos detallados sobre el funcionamiento y construcción del sistema.*
+
+### 🚀 Proyecto en Producción
+El sistema se encuentra desplegado y funcional para pruebas de usuario.
+* **URL de Acceso:** [Link al proyecto] *(https://casa-jardin-teal.vercel.app/start/Inicio)*
+* **Prototipo de Alta Fidelidad:** [Ver en Figma](https://www.figma.com/design/f7kFFXyEBtuXBGhWXCG3wR/Casa-Jardin---Prototipos-de-Interfaces?node-id=0-1)
+
+### 📄 Documentación Técnica
+Se ha elaborado un cuerpo documental exhaustivo siguiendo estándares de ingeniería:
+* **Especificación de Requisitos:** Redactada bajo el estándar **IEEE 830**, detallando requerimientos funcionales y no funcionales.
+* **Diagramas de Arquitectura:** Incluye Diagramas de Casos de Uso, Entidad-Relación (Base de Datos NoSQL) y Diagramas de Secuencia.
+* **Modelo de Datos:** Implementado en MongoDB, optimizado para la gestión flexible de talleres y usuarios.
+
+### 📘 Manual de Usuario
+El sistema incluye guías de uso diferenciadas por rol de usuario para facilitar la adopción tecnológica en la academia:
+* **Guía Admin:** Configuración de talleres, gestión de profesionales y reportes de inscripción.
+* **Guía Profesional:** Gestión de aulas, horarios y consulta de listas de alumnos.
+* **Guía Alumno:** Proceso de inscripción autogestionado y seguimiento académico.
+
+---
+
+## 🏁 Conclusión del Proyecto
+La implementación de esta plataforma web ha ofrecido a **Casa Jardín** la posibilidad de reducir significativamente el uso de medios manuales (papel y WhatsApp), optimizando la visibilidad de los talleres y facilitando la gestión interna. Gracias al enfoque modular en **Next.js**, el sistema queda preparado para futuras expansiones, como la integración de pagos online o métricas de asistencia.
 
 ---
